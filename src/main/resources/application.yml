@@ -21,3 +21,6 @@ app:
   invoice-api:
     base-url: "http://localhost:3000/"
     get-invoice-by-uuid: "/invoices/{uuid}"
+  tool:
+    logging:
+      enabled: true

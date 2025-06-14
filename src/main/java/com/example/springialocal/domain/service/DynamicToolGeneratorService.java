@@ -11,7 +11,11 @@ import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.ClientRequest;
+import org.springframework.web.reactive.function.client.ExchangeFilterFunction;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
@@ -25,10 +29,12 @@ public class DynamicToolGeneratorService {
 
     private final ObjectMapper objectMapper;
     private final WebClient.Builder webClientBuilder;
+    private final boolean toolLoggingEnabled;
 
-    public DynamicToolGeneratorService(ObjectMapper objectMapper, WebClient.Builder webClientBuilder) {
+    public DynamicToolGeneratorService(ObjectMapper objectMapper, WebClient.Builder webClientBuilder, @Value("${app.tool.logging.enabled:false}") boolean toolLoggingEnabled) {
         this.objectMapper = objectMapper;
         this.webClientBuilder = webClientBuilder;
+        this.toolLoggingEnabled = toolLoggingEnabled;
     }
 
     public List<DynamicTool> generateToolsFromEndpoints(List<OpenApiEndpoint> endpoints) {
@@ -181,23 +187,39 @@ public class DynamicToolGeneratorService {
         try {
             JsonNode inputJson = objectMapper.readTree(input);
             
-            WebClient webClient = webClientBuilder.build();
+            WebClient webClient = webClientBuilder
+                    .filter(logRequestHeaders())
+                    .build();
+
             String url = buildUrl(endpoint, inputJson);
-            
+
+            Object requestBody = null;
+            if (inputJson.has("requestBody")) {
+                requestBody = inputJson.get("requestBody");
+            }
+
+            if (toolLoggingEnabled) {
+                log.info("Executing tool: {}", endpoint.operationId());
+                log.info("Request: {} {}", endpoint.method().toUpperCase(), url);
+                if (requestBody != null) {
+                    log.info("Request Body: {}", objectMapper.writeValueAsString(requestBody));
+                }
+            }
+
             WebClient.RequestHeadersSpec<?> request = switch (endpoint.method().toLowerCase()) {
                 case "get" -> webClient.get().uri(url);
                 case "post" -> {
                     WebClient.RequestBodySpec bodySpec = webClient.post().uri(url);
-                    if (inputJson.has("requestBody")) {
-                        yield bodySpec.bodyValue(inputJson.get("requestBody"));
+                    if (requestBody != null) {
+                        yield bodySpec.bodyValue(requestBody);
                     } else {
                         yield bodySpec;
                     }
                 }
                 case "put" -> {
                     WebClient.RequestBodySpec bodySpec = webClient.put().uri(url);
-                    if (inputJson.has("requestBody")) {
-                        yield bodySpec.bodyValue(inputJson.get("requestBody"));
+                    if (requestBody != null) {
+                        yield bodySpec.bodyValue(requestBody);
                     } else {
                         yield bodySpec;
                     }
@@ -205,8 +227,8 @@ public class DynamicToolGeneratorService {
                 case "delete" -> webClient.delete().uri(url);
                 case "patch" -> {
                     WebClient.RequestBodySpec bodySpec = webClient.patch().uri(url);
-                    if (inputJson.has("requestBody")) {
-                        yield bodySpec.bodyValue(inputJson.get("requestBody"));
+                    if (requestBody != null) {
+                        yield bodySpec.bodyValue(requestBody);
                     } else {
                         yield bodySpec;
                     }
@@ -215,13 +237,17 @@ public class DynamicToolGeneratorService {
             };
             
             // Add headers if needed
-            request = addHeaders(request, inputJson);
+            request = addHeaders(request, endpoint, inputJson);
             
-            Mono<String> response = request.retrieve()
+            String response = request.retrieve()
                     .bodyToMono(String.class)
-                    .onErrorReturn("Error executing request: " + endpoint.path());
-            
-            return response.block();
+                    .onErrorReturn("Error executing request: " + endpoint.path())
+                    .block();
+
+            if (toolLoggingEnabled) {
+                log.info("Response: {}", response);
+            }
+            return response;
             
         } catch (Exception e) {
             log.error("Error executing endpoint: {} {}", endpoint.path(), e.getMessage());
@@ -262,20 +288,34 @@ public class DynamicToolGeneratorService {
         return fullUrl;
     }
 
-    private WebClient.RequestHeadersSpec<?> addHeaders(WebClient.RequestHeadersSpec<?> request, JsonNode inputJson) {
+    private WebClient.RequestHeadersSpec<?> addHeaders(WebClient.RequestHeadersSpec<?> request, OpenApiEndpoint endpoint, JsonNode inputJson) {
         // Add common headers
-        request = request.header("Content-Type", "application/json")
-                        .header("Accept", "application/json");
-        
+        request.header("Content-Type", "application/json");
+        request.header("Accept", "application/json");
+
         // Add custom headers from parameters
-        // This could be extended to handle header parameters from the OpenAPI spec
-        
+        if (endpoint.parameters() != null) {
+            for (OpenApiParameter param : endpoint.parameters()) {
+                if ("header".equals(param.in()) && inputJson.has(param.name())) {
+                    String value = inputJson.get(param.name()).asText();
+                    request.header(param.name(), value);
+                }
+            }
+        }
         return request;
     }
 
-    public List<FunctionCallback> convertToFunctionCallbacks(List<DynamicTool> tools) {
-        System.out.println("---> convertToFunctionCallbacks");
-        
+    private ExchangeFilterFunction logRequestHeaders() {
+        return (clientRequest, next) -> {
+            if (toolLoggingEnabled) {
+                HttpHeaders headers = clientRequest.headers();
+                log.info("Request Headers: {}", headers);
+            }
+            return next.exchange(clientRequest);
+        };
+    }
+
+    public List<FunctionCallback> convertToFunctionCallbacks(List<DynamicTool> tools) {       
         List<FunctionCallback> callbacks = new ArrayList<>();
         
         for (DynamicTool tool : tools) {
