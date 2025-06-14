@@ -18,6 +18,7 @@ public class ChatController {
 
     @PostMapping
     public ChatResponse chat(@Valid @RequestBody ChatRequest request) {
-        return chatService.generateResponse(request.getMessage());
+        System.out.println("---> controler");
+        return chatService.chat(request.getMessage(), "123");
     }
 }
