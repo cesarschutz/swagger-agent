@@ -41,7 +41,7 @@ class DynamicToolGeneratorServiceTest {
 
     @BeforeEach
     void setUp() {
-        dynamicToolGeneratorService = new DynamicToolGeneratorService(new ObjectMapper(), webClientBuilder);
+        dynamicToolGeneratorService = new DynamicToolGeneratorService(new ObjectMapper(), webClientBuilder, false);
         when(webClientBuilder.build()).thenReturn(webClient);
     }
 

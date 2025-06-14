@@ -1,25 +1,25 @@
 package com.example.springialocal.domain.service;
 
-import org.springframework.ai.model.function.FunctionCallback;
-import org.springframework.ai.model.function.FunctionCallbackWrapper;
 import com.example.springialocal.domain.tool.model.DynamicTool;
 import com.example.springialocal.domain.tool.model.OpenApiEndpoint;
 import com.example.springialocal.domain.tool.model.OpenApiParameter;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.example.springialocal.domain.tool.model.ToolExecutionResult;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.ai.model.function.FunctionCallback;
+import org.springframework.ai.model.function.FunctionCallbackWrapper;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
-import org.springframework.web.reactive.function.client.ClientRequest;
-import org.springframework.web.reactive.function.client.ExchangeFilterFunction;
+import org.springframework.web.reactive.function.client.ClientResponse;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Function;
 
 @Service
@@ -31,28 +31,25 @@ public class DynamicToolGeneratorService {
     private final WebClient.Builder webClientBuilder;
     private final boolean toolLoggingEnabled;
 
-    public DynamicToolGeneratorService(ObjectMapper objectMapper, WebClient.Builder webClientBuilder, @Value("${app.tool.logging.enabled:false}") boolean toolLoggingEnabled) {
+    public DynamicToolGeneratorService(ObjectMapper objectMapper,
+                                       WebClient.Builder webClientBuilder,
+                                       @Value("${app.tool.logging.enabled:false}") boolean toolLoggingEnabled) {
         this.objectMapper = objectMapper;
         this.webClientBuilder = webClientBuilder;
         this.toolLoggingEnabled = toolLoggingEnabled;
     }
 
     public List<DynamicTool> generateToolsFromEndpoints(List<OpenApiEndpoint> endpoints) {
-        System.out.println("---> generateToolsFromEndpoints");
-        
         List<DynamicTool> tools = new ArrayList<>();
-        
         for (OpenApiEndpoint endpoint : endpoints) {
             try {
-                DynamicTool tool = generateToolFromEndpoint(endpoint);
-                tools.add(tool);
-                log.debug("Generated tool: {} for endpoint: {} {}", tool.getName(), endpoint.method(), endpoint.path());
+                tools.add(generateToolFromEndpoint(endpoint));
             } catch (Exception e) {
-                log.error("Error generating tool for endpoint: {} {}", endpoint.method(), endpoint.path(), e);
+                if (toolLoggingEnabled) {
+                    log.error("Error generating tool for endpoint: {} {}", endpoint.method(), endpoint.path(), e);
+                }
             }
         }
-        
-        log.info("Generated {} tools from {} endpoints", tools.size(), endpoints.size());
         return tools;
     }
 
@@ -75,8 +72,6 @@ public class DynamicToolGeneratorService {
         if (endpoint.operationId() != null && !endpoint.operationId().isEmpty()) {
             return endpoint.operationId();
         }
-        
-        // Generate name from method and path
         String path = endpoint.path().replaceAll("[^a-zA-Z0-9]", "_");
         return endpoint.method().toLowerCase() + "_" + path;
     }
@@ -133,7 +128,6 @@ public class DynamicToolGeneratorService {
             }
         }
         
-        // Add request body if present
         if (endpoint.requestBody() != null) {
             ObjectNode bodySchema = objectMapper.createObjectNode();
             bodySchema.put("type", "object");
@@ -153,7 +147,6 @@ public class DynamicToolGeneratorService {
         try {
             return objectMapper.writeValueAsString(schema);
         } catch (Exception e) {
-            log.error("Error generating JSON schema for endpoint: {}", endpoint.operationId(), e);
             return "{}";
         }
     }
@@ -175,83 +168,85 @@ public class DynamicToolGeneratorService {
         return (Object input) -> {
             try {
                 String jsonInput = objectMapper.writeValueAsString(input);
-                return executeEndpoint(endpoint, jsonInput);
+                ToolExecutionResult result = executeEndpoint(endpoint, jsonInput);
+                return objectMapper.writeValueAsString(result);
             } catch (Exception e) {
-                log.error("Error executing endpoint: {} {}", endpoint.method(), endpoint.path(), e);
-                return "Error executing endpoint: " + e.getMessage();
+                if (toolLoggingEnabled) {
+                    log.error("Error executing endpoint function for: {} {}", endpoint.method(), endpoint.path(), e);
+                }
+                try {
+                    return objectMapper.writeValueAsString(new ToolExecutionResult(500, "Error executing endpoint: " + e.getMessage()));
+                } catch (JsonProcessingException ex) {
+                    return "{\"httpStatusCode\":500,\"body\":\"Error executing endpoint: " + e.getMessage() + "\"}";
+                }
             }
         };
     }
 
-    private String executeEndpoint(OpenApiEndpoint endpoint, String input) {
+    private ToolExecutionResult executeEndpoint(OpenApiEndpoint endpoint, String input) {
         try {
             JsonNode inputJson = objectMapper.readTree(input);
-            
-            WebClient webClient = webClientBuilder
-                    .filter(logRequestHeaders())
-                    .build();
+            WebClient.Builder webClientBuilderWithLogging = webClientBuilder;
 
+            if (toolLoggingEnabled) {
+                webClientBuilderWithLogging = webClientBuilder.clone().filter((request, next) -> {
+                    log.info("Request: {} {}", request.method(), request.url());
+                    log.info("Request Headers: {}", request.headers());
+                    return next.exchange(request);
+                });
+            }
+
+            WebClient webClient = webClientBuilderWithLogging.build();
             String url = buildUrl(endpoint, inputJson);
 
             Object requestBody = null;
             if (inputJson.has("requestBody")) {
                 requestBody = inputJson.get("requestBody");
-            }
-
-            if (toolLoggingEnabled) {
-                log.info("Executing tool: {}", endpoint.operationId());
-                log.info("Request: {} {}", endpoint.method().toUpperCase(), url);
-                if (requestBody != null) {
+                if (toolLoggingEnabled) {
                     log.info("Request Body: {}", objectMapper.writeValueAsString(requestBody));
                 }
             }
 
-            WebClient.RequestHeadersSpec<?> request = switch (endpoint.method().toLowerCase()) {
+            WebClient.RequestHeadersSpec<?> requestSpec = switch (endpoint.method().toLowerCase()) {
                 case "get" -> webClient.get().uri(url);
                 case "post" -> {
                     WebClient.RequestBodySpec bodySpec = webClient.post().uri(url);
-                    if (requestBody != null) {
-                        yield bodySpec.bodyValue(requestBody);
-                    } else {
-                        yield bodySpec;
-                    }
+                    yield (requestBody != null) ? bodySpec.bodyValue(requestBody) : bodySpec;
                 }
                 case "put" -> {
                     WebClient.RequestBodySpec bodySpec = webClient.put().uri(url);
-                    if (requestBody != null) {
-                        yield bodySpec.bodyValue(requestBody);
-                    } else {
-                        yield bodySpec;
-                    }
+                    yield (requestBody != null) ? bodySpec.bodyValue(requestBody) : bodySpec;
                 }
                 case "delete" -> webClient.delete().uri(url);
                 case "patch" -> {
                     WebClient.RequestBodySpec bodySpec = webClient.patch().uri(url);
-                    if (requestBody != null) {
-                        yield bodySpec.bodyValue(requestBody);
-                    } else {
-                        yield bodySpec;
-                    }
+                    yield (requestBody != null) ? bodySpec.bodyValue(requestBody) : bodySpec;
                 }
                 default -> throw new IllegalArgumentException("Unsupported HTTP method: " + endpoint.method());
             };
-            
-            // Add headers if needed
-            request = addHeaders(request, endpoint, inputJson);
-            
-            String response = request.retrieve()
-                    .bodyToMono(String.class)
-                    .onErrorReturn("Error executing request: " + endpoint.path())
-                    .block();
 
-            if (toolLoggingEnabled) {
-                log.info("Response: {}", response);
-            }
-            return response;
-            
+            WebClient.RequestHeadersSpec<?> finalRequest = addHeaders(requestSpec, endpoint, inputJson);
+
+            return finalRequest.exchangeToMono(response -> {
+                if (toolLoggingEnabled) {
+                    log.info("Response Status: {}", response.statusCode());
+                    log.info("Response Headers: {}", response.headers().asHttpHeaders());
+                }
+                return response.bodyToMono(String.class)
+                        .defaultIfEmpty("")
+                        .map(body -> new ToolExecutionResult(response.statusCode().value(), body));
+            }).map(result -> {
+                if (toolLoggingEnabled) {
+                    log.info("Response Body: {}", result.body());
+                }
+                return result;
+            }).block();
+
         } catch (Exception e) {
-            log.error("Error executing endpoint: {} {}", endpoint.path(), e.getMessage());
-            return "Error: " + e.getMessage();
+            if (toolLoggingEnabled) {
+                log.error("Error during endpoint execution for: {} {}", endpoint.method(), endpoint.path(), e);
+            }
+            return new ToolExecutionResult(500, "Error: " + e.getMessage());
         }
     }
 
@@ -259,7 +254,6 @@ public class DynamicToolGeneratorService {
         String baseUrl = endpoint.baseUrl();
         String path = endpoint.path();
         
-        // Replace path parameters
         if (endpoint.parameters() != null) {
             for (OpenApiParameter param : endpoint.parameters()) {
                 if ("path".equals(param.in()) && inputJson.has(param.name())) {
@@ -269,7 +263,6 @@ public class DynamicToolGeneratorService {
             }
         }
         
-        // Add query parameters
         List<String> queryParams = new ArrayList<>();
         if (endpoint.parameters() != null) {
             for (OpenApiParameter param : endpoint.parameters()) {
@@ -289,35 +282,22 @@ public class DynamicToolGeneratorService {
     }
 
     private WebClient.RequestHeadersSpec<?> addHeaders(WebClient.RequestHeadersSpec<?> request, OpenApiEndpoint endpoint, JsonNode inputJson) {
-        // Add common headers
-        request.header("Content-Type", "application/json");
-        request.header("Accept", "application/json");
+        request = request.header("Content-Type", "application/json")
+                       .header("Accept", "application/json");
 
-        // Add custom headers from parameters
         if (endpoint.parameters() != null) {
             for (OpenApiParameter param : endpoint.parameters()) {
                 if ("header".equals(param.in()) && inputJson.has(param.name())) {
                     String value = inputJson.get(param.name()).asText();
-                    request.header(param.name(), value);
+                    request = request.header(param.name(), value);
                 }
             }
         }
         return request;
     }
 
-    private ExchangeFilterFunction logRequestHeaders() {
-        return (clientRequest, next) -> {
-            if (toolLoggingEnabled) {
-                HttpHeaders headers = clientRequest.headers();
-                log.info("Request Headers: {}", headers);
-            }
-            return next.exchange(clientRequest);
-        };
-    }
-
-    public List<FunctionCallback> convertToFunctionCallbacks(List<DynamicTool> tools) {       
+    public List<FunctionCallback> convertToFunctionCallbacks(List<DynamicTool> tools) {
         List<FunctionCallback> callbacks = new ArrayList<>();
-        
         for (DynamicTool tool : tools) {
             try {
                 FunctionCallback callback = FunctionCallbackWrapper.builder(tool.getFunction())
@@ -325,15 +305,13 @@ public class DynamicToolGeneratorService {
                         .withDescription(tool.getDescription())
                         .withInputTypeSchema(tool.getJsonSchema())
                         .build();
-                
                 callbacks.add(callback);
-                log.debug("Created function callback for tool: {}", tool.getName());
             } catch (Exception e) {
-                log.error("Error creating function callback for tool: {}", tool.getName(), e);
+                if (toolLoggingEnabled) {
+                    log.error("Error creating function callback for tool: {}", tool.getName(), e);
+                }
             }
         }
-        
-        log.info("Created {} function callbacks from {} tools", callbacks.size(), tools.size());
         return callbacks;
     }
 }

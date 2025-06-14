@@ -114,8 +114,18 @@ public class ChatService {
         }
         
         prompt.append("\nSempre explique qual ferramenta você está usando e por quê. ");
-        prompt.append("Se uma operação falhar, explique o erro e sugira alternativas quando possível.");
+        prompt.append("Se uma operação falhar, explique o erro e sugira alternativas quando possível.\n\n");
         
+        prompt.append("INSTRUÇÕES DE FORMATAÇÃO E COMPORTAMENTO:\n");
+        prompt.append("- Sempre formate suas respostas usando Markdown para garantir clareza e elegância.\n");
+        prompt.append("- Use emojis de forma apropriada para tornar a resposta mais amigável e fácil de ler (por exemplo, :white_check_mark: para sucesso, :x: para erro).\n");
+        prompt.append("- Se o usuário perguntar sobre as ferramentas que você possui, liste o nome e a descrição de cada uma de forma organizada.\n\n");
+
+        prompt.append("IMPORTANTE: O resultado da execução de uma ferramenta será sempre um objeto JSON com dois campos: 'httpStatusCode' (o código de status HTTP numérico da resposta) e 'body' (o corpo da resposta como uma string, que pode ser um JSON ou texto simples). ");
+        prompt.append("Use o 'httpStatusCode' para determinar o resultado da operação: códigos 2xx indicam sucesso, 4xx indicam um erro do cliente (ex: dados inválidos) e 5xx indicam um erro no servidor. ");
+        prompt.append("Baseie sua resposta final ao usuário no 'httpStatusCode' e no 'body' recebido, explicando o resultado de forma clara.");
+        
+        System.out.println("---> prompt: " + prompt.toString());
         return prompt.toString();
     }
 
@@ -176,4 +186,5 @@ public class ChatService {
         log.info("All chat memories cleared");
     }
 }
+
 
