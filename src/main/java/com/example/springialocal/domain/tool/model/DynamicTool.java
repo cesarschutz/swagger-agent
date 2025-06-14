@@ -6,13 +6,13 @@ public class DynamicTool {
     private String name;
     private String description;
     private OpenApiEndpoint endpoint;
-    private Function<String, String> function;
+    private Function<Object, String> function;
     private String jsonSchema;
 
     public DynamicTool() {
     }
 
-    public DynamicTool(String name, String description, OpenApiEndpoint endpoint, Function<String, String> function, String jsonSchema) {
+    public DynamicTool(String name, String description, OpenApiEndpoint endpoint, Function<Object, String> function, String jsonSchema) {
         this.name = name;
         this.description = description;
         this.endpoint = endpoint;
@@ -68,11 +68,11 @@ public class DynamicTool {
         this.endpoint = endpoint;
     }
 
-    public Function<String, String> getFunction() {
+    public Function<Object, String> getFunction() {
         return function;
     }
 
-    public void setFunction(Function<String, String> function) {
+    public void setFunction(Function<Object, String> function) {
         this.function = function;
     }
 
@@ -88,7 +88,7 @@ public class DynamicTool {
         private String name;
         private String description;
         private OpenApiEndpoint endpoint;
-        private Function<String, String> function;
+        private Function<Object, String> function;
         private String jsonSchema;
 
         public Builder name(String name) {
@@ -106,7 +106,7 @@ public class DynamicTool {
             return this;
         }
 
-        public Builder function(Function<String, String> function) {
+        public Builder function(Function<Object, String> function) {
             this.function = function;
             return this;
         }

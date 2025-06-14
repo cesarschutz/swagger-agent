@@ -34,7 +34,7 @@ public class ChatControllerTest {
         ChatRequest request = new ChatRequest();
         request.setMessage("Hello");
         ChatResponse mockResponse = new ChatResponse("assistant", "Hi there!");
-        //when(chatService.chat(anyString(), null)).thenReturn(mockResponse);
+        when(chatService.chat(anyString(), anyString())).thenReturn(mockResponse);
 
         // When & Then
         mockMvc.perform(post("/api/chat")

@@ -54,7 +54,7 @@ public class DynamicToolGeneratorService {
         String toolName = generateToolName(endpoint);
         String description = generateToolDescription(endpoint);
         String jsonSchema = generateJsonSchema(endpoint);
-        Function<String, String> function = generateFunction(endpoint);
+        Function<Object, String> function = generateFunction(endpoint);
         
         return DynamicTool.builder()
                 .name(toolName)
@@ -165,10 +165,11 @@ public class DynamicToolGeneratorService {
         };
     }
 
-    private Function<String, String> generateFunction(OpenApiEndpoint endpoint) {
-        return (String input) -> {
+    private Function<Object, String> generateFunction(OpenApiEndpoint endpoint) {
+        return (Object input) -> {
             try {
-                return executeEndpoint(endpoint, input);
+                String jsonInput = objectMapper.writeValueAsString(input);
+                return executeEndpoint(endpoint, jsonInput);
             } catch (Exception e) {
                 log.error("Error executing endpoint: {} {}", endpoint.method(), endpoint.path(), e);
                 return "Error executing endpoint: " + e.getMessage();
