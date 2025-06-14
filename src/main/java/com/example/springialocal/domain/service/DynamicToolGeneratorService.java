@@ -32,6 +32,8 @@ public class DynamicToolGeneratorService {
     }
 
     public List<DynamicTool> generateToolsFromEndpoints(List<OpenApiEndpoint> endpoints) {
+        System.out.println("---> generateToolsFromEndpoints");
+        
         List<DynamicTool> tools = new ArrayList<>();
         
         for (OpenApiEndpoint endpoint : endpoints) {
@@ -271,6 +273,8 @@ public class DynamicToolGeneratorService {
     }
 
     public List<FunctionCallback> convertToFunctionCallbacks(List<DynamicTool> tools) {
+        System.out.println("---> convertToFunctionCallbacks");
+        
         List<FunctionCallback> callbacks = new ArrayList<>();
         
         for (DynamicTool tool : tools) {
