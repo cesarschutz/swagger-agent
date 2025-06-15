@@ -1,10 +1,6 @@
-package com.example.springialocal.domain.service;
+package com.example.springialocal.service;
 
-import com.example.springialocal.domain.tool.model.OpenApiEndpoint;
-import com.example.springialocal.domain.tool.model.OpenApiMediaType;
-import com.example.springialocal.domain.tool.model.OpenApiParameter;
-import com.example.springialocal.domain.tool.model.OpenApiRequestBody;
-import com.example.springialocal.domain.tool.model.OpenApiResponse;
+import com.example.springialocal.model.*;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.Operation;
 import io.swagger.v3.oas.models.PathItem;
@@ -13,7 +9,6 @@ import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.oas.models.parameters.Parameter;
 import io.swagger.v3.oas.models.servers.Server;
 import io.swagger.v3.parser.OpenAPIV3Parser;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -24,7 +19,10 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Stream;
 
 @Service
@@ -37,7 +35,7 @@ public class OpenApiParserService {
 
     public List<OpenApiEndpoint> parseAllOpenApiFiles() {
         List<OpenApiEndpoint> allEndpoints = new ArrayList<>();
-        
+
         try {
             Path directory = Paths.get(openApiDirectory);
             if (!Files.exists(directory)) {
@@ -47,16 +45,16 @@ public class OpenApiParserService {
 
             try (Stream<Path> files = Files.walk(directory)) {
                 files.filter(Files::isRegularFile)
-                     .filter(path -> path.toString().endsWith(".json") || path.toString().endsWith(".yaml") || path.toString().endsWith(".yml"))
-                     .forEach(file -> {
-                         try {
-                             List<OpenApiEndpoint> endpoints = parseOpenApiFile(file.toFile());
-                             allEndpoints.addAll(endpoints);
-                             log.info("Parsed {} endpoints from file: {}", endpoints.size(), file.getFileName());
-                         } catch (Exception e) {
-                             log.error("Error parsing OpenAPI file: {}", file.getFileName(), e);
-                         }
-                     });
+                        .filter(path -> path.toString().endsWith(".json") || path.toString().endsWith(".yaml") || path.toString().endsWith(".yml"))
+                        .forEach(file -> {
+                            try {
+                                List<OpenApiEndpoint> endpoints = parseOpenApiFile(file.toFile());
+                                allEndpoints.addAll(endpoints);
+                                log.info("Parsed {} endpoints from file: {}", endpoints.size(), file.getFileName());
+                            } catch (Exception e) {
+                                log.error("Error parsing OpenAPI file: {}", file.getFileName(), e);
+                            }
+                        });
             }
         } catch (IOException e) {
             log.error("Error reading OpenAPI directory: {}", openApiDirectory, e);
@@ -68,28 +66,28 @@ public class OpenApiParserService {
 
     public List<OpenApiEndpoint> parseOpenApiFile(File file) {
         List<OpenApiEndpoint> endpoints = new ArrayList<>();
-        
+
         try {
             OpenAPIV3Parser parser = new OpenAPIV3Parser();
             OpenAPI openAPI = parser.read(file.getAbsolutePath());
-            
+
             if (openAPI == null) {
                 log.error("Failed to parse OpenAPI file: {}", file.getName());
                 return endpoints;
             }
 
             String baseUrl = extractBaseUrl(openAPI);
-            
+
             if (openAPI.getPaths() != null) {
                 openAPI.getPaths().forEach((path, pathItem) -> {
                     endpoints.addAll(extractEndpointsFromPath(path, pathItem, baseUrl));
                 });
             }
-            
+
         } catch (Exception e) {
             log.error("Error parsing OpenAPI file: {}", file.getName(), e);
         }
-        
+
         return endpoints;
     }
 
@@ -103,9 +101,9 @@ public class OpenApiParserService {
 
     private List<OpenApiEndpoint> extractEndpointsFromPath(String path, PathItem pathItem, String baseUrl) {
         List<OpenApiEndpoint> endpoints = new ArrayList<>();
-        
+
         Map<PathItem.HttpMethod, Operation> operations = pathItem.readOperationsMap();
-        
+
         operations.forEach((httpMethod, operation) -> {
             try {
                 OpenApiEndpoint endpoint = buildEndpoint(path, httpMethod.name(), operation, baseUrl);
@@ -114,7 +112,7 @@ public class OpenApiParserService {
                 log.error("Error building endpoint for {} {}", httpMethod, path, e);
             }
         });
-        
+
         return endpoints;
     }
 
@@ -139,19 +137,19 @@ public class OpenApiParserService {
 
     private List<OpenApiParameter> extractParameters(Operation operation) {
         List<OpenApiParameter> parameters = new ArrayList<>();
-        
+
         if (operation.getParameters() != null) {
             operation.getParameters().forEach(parameter -> {
                 parameters.add(buildParameter(parameter));
             });
         }
-        
+
         return parameters;
     }
 
     private OpenApiParameter buildParameter(Parameter parameter) {
         Schema schema = parameter.getSchema();
-        
+
         return new OpenApiParameter(
                 parameter.getName(),
                 parameter.getIn(),
@@ -160,23 +158,23 @@ public class OpenApiParserService {
                 schema != null ? schema.getType() : "string",
                 schema != null ? schema.getFormat() : null,
                 schema != null ? schema.getDefault() : null,
-                schema != null && schema.getEnum() != null ? 
-                schema.getEnum().stream().map(Object::toString).toList() : null);
+                schema != null && schema.getEnum() != null ?
+                        schema.getEnum().stream().map(Object::toString).toList() : null);
     }
 
     private OpenApiRequestBody extractRequestBody(Operation operation) {
         if (operation.getRequestBody() == null) {
             return null;
         }
-        
+
         Map<String, OpenApiMediaType> content = new HashMap<>();
-        
+
         if (operation.getRequestBody().getContent() != null) {
             operation.getRequestBody().getContent().forEach((mediaType, mediaTypeObject) -> {
                 content.put(mediaType, buildMediaType(mediaTypeObject));
             });
         }
-        
+
         return new OpenApiRequestBody(
                 operation.getRequestBody().getDescription(),
                 operation.getRequestBody().getRequired() != null ? operation.getRequestBody().getRequired() : false,
@@ -185,26 +183,25 @@ public class OpenApiParserService {
 
     private Map<String, OpenApiResponse> extractResponses(Operation operation) {
         Map<String, OpenApiResponse> responses = new HashMap<>();
-        
+
         if (operation.getResponses() != null) {
             operation.getResponses().forEach((statusCode, response) -> {
                 Map<String, OpenApiMediaType> content = new HashMap<>();
-                
+
                 if (response.getContent() != null) {
                     response.getContent().forEach((mediaType, mediaTypeObject) -> {
                         content.put(mediaType, buildMediaType(mediaTypeObject));
                     });
                 }
-                
+
                 responses.put(statusCode, new OpenApiResponse(response.getDescription(), content));
             });
         }
-        
+
         return responses;
     }
 
     private OpenApiMediaType buildMediaType(MediaType mediaType) {
         return new OpenApiMediaType(mediaType.getSchema(), mediaType.getExample());
     }
-}
-
+} 

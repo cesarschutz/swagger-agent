@@ -1,8 +1,9 @@
-package com.example.springialocal.application.controller;
+package com.example.springialocal.controller;
 
-import com.example.springialocal.application.dto.ChatRequest;
-import com.example.springialocal.application.dto.ChatResponse;
-import com.example.springialocal.domain.service.ChatService;
+import com.example.springialocal.dto.ChatRequest;
+import com.example.springialocal.dto.ChatResponse;
+import com.example.springialocal.service.ChatService;
+import com.example.springialocal.service.SystemPromptService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +28,9 @@ public class ChatControllerTest {
 
     @MockBean
     private ChatService chatService;
+
+    @MockBean
+    private SystemPromptService systemPromptService;
 
     @Test
     void chat_whenValidRequest_shouldReturnSuccess() throws Exception {

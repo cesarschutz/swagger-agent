@@ -1,16 +1,17 @@
-package com.example.springialocal.domain.service;
+package com.example.springialocal.service;
 
-import com.example.springialocal.domain.tool.model.DynamicTool;
-import com.example.springialocal.domain.tool.model.OpenApiEndpoint;
-import com.example.springialocal.domain.tool.model.OpenApiParameter;
+import com.example.springialocal.model.DynamicTool;
+import com.example.springialocal.model.OpenApiEndpoint;
+import com.example.springialocal.model.OpenApiParameter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Answers;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.reactive.function.client.ClientResponse;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
@@ -27,8 +28,7 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class DynamicToolGeneratorServiceTest {
 
-    @Mock
-    private ObjectMapper objectMapper;
+    private ObjectMapper objectMapper = new ObjectMapper();
 
     @Mock(answer = Answers.RETURNS_DEEP_STUBS)
     private WebClient.Builder webClientBuilder;
@@ -36,12 +36,11 @@ class DynamicToolGeneratorServiceTest {
     @Mock(answer = Answers.RETURNS_DEEP_STUBS)
     private WebClient webClient;
 
-    @InjectMocks
     private DynamicToolGeneratorService dynamicToolGeneratorService;
 
     @BeforeEach
     void setUp() {
-        dynamicToolGeneratorService = new DynamicToolGeneratorService(new ObjectMapper(), webClientBuilder, false);
+        dynamicToolGeneratorService = new DynamicToolGeneratorService(objectMapper, webClientBuilder, false);
         when(webClientBuilder.build()).thenReturn(webClient);
     }
 
@@ -63,15 +62,14 @@ class DynamicToolGeneratorServiceTest {
         );
 
         WebClient.RequestHeadersUriSpec requestHeadersUriSpec = webClient.get();
-        WebClient.RequestHeadersSpec requestHeadersSpec = requestHeadersUriSpec.uri(anyString());
-        WebClient.ResponseSpec responseSpec = requestHeadersSpec.retrieve();
+        WebClient.RequestHeadersSpec requestHeadersSpec = requestHeadersUriSpec.uri(any(String.class));
 
         when(webClient.get()).thenReturn(requestHeadersUriSpec);
-        when(requestHeadersUriSpec.uri(anyString())).thenReturn(requestHeadersSpec);
-        when(requestHeadersSpec.header(anyString(), anyString())).thenReturn(requestHeadersSpec);
-        when(requestHeadersSpec.retrieve()).thenReturn(responseSpec);
-        when(responseSpec.bodyToMono(String.class)).thenReturn(Mono.just("{\"result\":\"success\"}"));
-
+        when(requestHeadersUriSpec.uri(any(String.class))).thenReturn(requestHeadersSpec);
+        when(requestHeadersSpec.exchange()).thenReturn(Mono.just(ClientResponse.create(HttpStatus.OK)
+                .header("Content-Type", "application/json")
+                .body("{\"result\":\"success\"}")
+                .build()));
 
         // When
         List<DynamicTool> tools = dynamicToolGeneratorService.generateToolsFromEndpoints(Collections.singletonList(endpoint));
@@ -86,6 +84,6 @@ class DynamicToolGeneratorServiceTest {
         String result = function.apply(functionInput);
 
         assertNotNull(result);
-        assertEquals("{\"result\":\"success\"}", result);
+        assertEquals("{\"httpStatusCode\":200,\"body\":\"{\\\"result\\\":\\\"success\\\"}\"}", result);
     }
 } 

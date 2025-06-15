@@ -1,4 +1,4 @@
-package com.example.springialocal.application.dto;
+package com.example.springialocal.dto;
 
 public class ChatResponse {
     private String role;
@@ -26,4 +26,4 @@ public class ChatResponse {
     public void setContent(String content) {
         this.content = content;
     }
-}
+} 

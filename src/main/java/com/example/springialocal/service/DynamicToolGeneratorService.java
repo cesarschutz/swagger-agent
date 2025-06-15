@@ -1,9 +1,9 @@
-package com.example.springialocal.domain.service;
+package com.example.springialocal.service;
 
-import com.example.springialocal.domain.tool.model.DynamicTool;
-import com.example.springialocal.domain.tool.model.OpenApiEndpoint;
-import com.example.springialocal.domain.tool.model.OpenApiParameter;
-import com.example.springialocal.domain.tool.model.ToolExecutionResult;
+import com.example.springialocal.model.DynamicTool;
+import com.example.springialocal.model.OpenApiEndpoint;
+import com.example.springialocal.model.OpenApiParameter;
+import com.example.springialocal.model.ToolExecutionResult;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -16,7 +16,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.ClientResponse;
 import org.springframework.web.reactive.function.client.WebClient;
-import reactor.core.publisher.Mono;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -58,7 +57,7 @@ public class DynamicToolGeneratorService {
         String description = generateToolDescription(endpoint);
         String jsonSchema = generateJsonSchema(endpoint);
         Function<Object, String> function = generateFunction(endpoint);
-        
+
         return DynamicTool.builder()
                 .name(toolName)
                 .description(description)
@@ -78,16 +77,16 @@ public class DynamicToolGeneratorService {
 
     private String generateToolDescription(OpenApiEndpoint endpoint) {
         StringBuilder description = new StringBuilder();
-        
+
         if (endpoint.summary() != null && !endpoint.summary().isEmpty()) {
             description.append(endpoint.summary());
         } else if (endpoint.description() != null && !endpoint.description().isEmpty()) {
             description.append(endpoint.description());
         } else {
             description.append("Executes ").append(endpoint.method().toUpperCase())
-                      .append(" request to ").append(endpoint.path());
+                    .append(" request to ").append(endpoint.path());
         }
-        
+
         if (endpoint.parameters() != null && !endpoint.parameters().isEmpty()) {
             description.append(" Parameters: ");
             List<String> paramNames = endpoint.parameters().stream()
@@ -95,55 +94,55 @@ public class DynamicToolGeneratorService {
                     .toList();
             description.append(String.join(", ", paramNames));
         }
-        
+
         return description.toString();
     }
 
     private String generateJsonSchema(OpenApiEndpoint endpoint) {
         ObjectNode schema = objectMapper.createObjectNode();
         schema.put("type", "object");
-        
+
         ObjectNode properties = objectMapper.createObjectNode();
         List<String> required = new ArrayList<>();
-        
+
         if (endpoint.parameters() != null) {
             for (OpenApiParameter param : endpoint.parameters()) {
                 ObjectNode paramSchema = objectMapper.createObjectNode();
                 paramSchema.put("type", mapOpenApiTypeToJsonSchemaType(param.type()));
                 paramSchema.put("description", param.description() != null ? param.description() : "");
-                
+
                 if (param.enumValues() != null && !param.enumValues().isEmpty()) {
                     paramSchema.set("enum", objectMapper.valueToTree(param.enumValues()));
                 }
-                
+
                 if (param.defaultValue() != null) {
                     paramSchema.set("default", objectMapper.valueToTree(param.defaultValue()));
                 }
-                
+
                 properties.set(param.name(), paramSchema);
-                
+
                 if (param.required()) {
                     required.add(param.name());
                 }
             }
         }
-        
+
         if (endpoint.requestBody() != null) {
             ObjectNode bodySchema = objectMapper.createObjectNode();
             bodySchema.put("type", "object");
             bodySchema.put("description", "Request body data");
             properties.set("requestBody", bodySchema);
-            
+
             if (endpoint.requestBody().required()) {
                 required.add("requestBody");
             }
         }
-        
+
         schema.set("properties", properties);
         if (!required.isEmpty()) {
             schema.set("required", objectMapper.valueToTree(required));
         }
-        
+
         try {
             return objectMapper.writeValueAsString(schema);
         } catch (Exception e) {
@@ -153,7 +152,7 @@ public class DynamicToolGeneratorService {
 
     private String mapOpenApiTypeToJsonSchemaType(String openApiType) {
         if (openApiType == null) return "string";
-        
+
         return switch (openApiType.toLowerCase()) {
             case "integer", "int32", "int64" -> "integer";
             case "number", "float", "double" -> "number";
@@ -227,69 +226,47 @@ public class DynamicToolGeneratorService {
 
             WebClient.RequestHeadersSpec<?> finalRequest = addHeaders(requestSpec, endpoint, inputJson);
 
-            return finalRequest.exchangeToMono(response -> {
-                if (toolLoggingEnabled) {
-                    log.info("Response Status: {}", response.statusCode());
-                    log.info("Response Headers: {}", response.headers().asHttpHeaders());
-                }
-                return response.bodyToMono(String.class)
-                        .defaultIfEmpty("")
-                        .map(body -> new ToolExecutionResult(response.statusCode().value(), body));
-            }).map(result -> {
-                if (toolLoggingEnabled) {
-                    log.info("Response Body: {}", result.body());
-                }
-                return result;
-            }).block();
+            ClientResponse response = finalRequest.exchange().block();
+
+            String responseBody = response.bodyToMono(String.class).block();
+
+            if (toolLoggingEnabled) {
+                log.info("Response Status: {}", response.statusCode());
+                log.info("Response Headers: {}", response.headers().asHttpHeaders());
+                log.info("Response Body: {}", responseBody);
+            }
+
+            return new ToolExecutionResult(response.statusCode().value(), responseBody);
 
         } catch (Exception e) {
             if (toolLoggingEnabled) {
-                log.error("Error during endpoint execution for: {} {}", endpoint.method(), endpoint.path(), e);
+                log.error("Error executing endpoint: {} {}", endpoint.method(), endpoint.path(), e);
             }
             return new ToolExecutionResult(500, "Error: " + e.getMessage());
         }
     }
 
     private String buildUrl(OpenApiEndpoint endpoint, JsonNode inputJson) {
-        String baseUrl = endpoint.baseUrl();
-        String path = endpoint.path();
-        
+        String url = endpoint.baseUrl() + endpoint.path();
+
         if (endpoint.parameters() != null) {
             for (OpenApiParameter param : endpoint.parameters()) {
-                if ("path".equals(param.in()) && inputJson.has(param.name())) {
+                if (inputJson.has(param.name())) {
                     String value = inputJson.get(param.name()).asText();
-                    path = path.replace("{" + param.name() + "}", value);
+                    if ("path".equalsIgnoreCase(param.in())) {
+                        url = url.replace("{" + param.name() + "}", value);
+                    }
                 }
             }
         }
-        
-        List<String> queryParams = new ArrayList<>();
-        if (endpoint.parameters() != null) {
-            for (OpenApiParameter param : endpoint.parameters()) {
-                if ("query".equals(param.in()) && inputJson.has(param.name())) {
-                    String value = inputJson.get(param.name()).asText();
-                    queryParams.add(param.name() + "=" + value);
-                }
-            }
-        }
-        
-        String fullUrl = baseUrl + path;
-        if (!queryParams.isEmpty()) {
-            fullUrl += "?" + String.join("&", queryParams);
-        }
-        
-        return fullUrl;
+        return url;
     }
 
     private WebClient.RequestHeadersSpec<?> addHeaders(WebClient.RequestHeadersSpec<?> request, OpenApiEndpoint endpoint, JsonNode inputJson) {
-        request = request.header("Content-Type", "application/json")
-                       .header("Accept", "application/json");
-
         if (endpoint.parameters() != null) {
             for (OpenApiParameter param : endpoint.parameters()) {
-                if ("header".equals(param.in()) && inputJson.has(param.name())) {
-                    String value = inputJson.get(param.name()).asText();
-                    request = request.header(param.name(), value);
+                if ("header".equalsIgnoreCase(param.in()) && inputJson.has(param.name())) {
+                    request.header(param.name(), inputJson.get(param.name()).asText());
                 }
             }
         }
@@ -297,22 +274,15 @@ public class DynamicToolGeneratorService {
     }
 
     public List<FunctionCallback> convertToFunctionCallbacks(List<DynamicTool> tools) {
-        List<FunctionCallback> callbacks = new ArrayList<>();
+        List<FunctionCallback> functionCallbacks = new ArrayList<>();
         for (DynamicTool tool : tools) {
-            try {
-                FunctionCallback callback = FunctionCallbackWrapper.builder(tool.getFunction())
-                        .withName(tool.getName())
-                        .withDescription(tool.getDescription())
-                        .withInputTypeSchema(tool.getJsonSchema())
-                        .build();
-                callbacks.add(callback);
-            } catch (Exception e) {
-                if (toolLoggingEnabled) {
-                    log.error("Error creating function callback for tool: {}", tool.getName(), e);
-                }
-            }
+            FunctionCallbackWrapper<Object, String> f = FunctionCallbackWrapper.builder(tool.getFunction())
+                    .withName(tool.getName())
+                    .withDescription(tool.getDescription())
+                    .withInputTypeSchema(tool.getJsonSchema())
+                    .build();
+            functionCallbacks.add(f);
         }
-        return callbacks;
+        return functionCallbacks;
     }
-}
-
+} 

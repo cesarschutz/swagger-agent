@@ -1,4 +1,4 @@
-package com.example.springialocal.application.dto;
+package com.example.springialocal.dto;
 
 import jakarta.validation.constraints.NotBlank;
 
@@ -20,4 +20,4 @@ public class ChatRequest {
     public void setMessage(String message) {
         this.message = message;
     }
-}
+} 

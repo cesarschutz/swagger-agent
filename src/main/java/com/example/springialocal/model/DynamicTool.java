@@ -1,4 +1,4 @@
-package com.example.springialocal.domain.tool.model;
+package com.example.springialocal.model;
 
 import java.util.function.Function;
 
@@ -30,17 +30,17 @@ public class DynamicTool {
         sb.append("Description: ").append(description).append("\n");
         sb.append("Method: ").append(endpoint.method().toUpperCase()).append("\n");
         sb.append("Path: ").append(endpoint.path()).append("\n");
-        
+
         if (endpoint.parameters() != null && !endpoint.parameters().isEmpty()) {
             sb.append("Parameters:\n");
             for (OpenApiParameter param : endpoint.parameters()) {
                 sb.append("  - ").append(param.name())
-                  .append(" (").append(param.type()).append(")")
-                  .append(param.required() ? " [REQUIRED]" : " [OPTIONAL]")
-                  .append(": ").append(param.description()).append("\n");
+                        .append(" (").append(param.type()).append(")")
+                        .append(param.required() ? " [REQUIRED]" : " [OPTIONAL]")
+                        .append(": ").append(param.description()).append("\n");
             }
         }
-        
+
         return sb.toString();
     }
 
@@ -120,5 +120,4 @@ public class DynamicTool {
             return new DynamicTool(name, description, endpoint, function, jsonSchema);
         }
     }
-}
-
+} 

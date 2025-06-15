@@ -1,4 +1,4 @@
-package com.example.springialocal.domain.tool.model;
+package com.example.springialocal.model;
 
 /**
  * Represents the result of a tool execution.
