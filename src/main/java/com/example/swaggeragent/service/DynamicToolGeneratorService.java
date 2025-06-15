@@ -83,7 +83,7 @@ public class DynamicToolGeneratorService {
                 ? endpoint.operationId()
                 : endpoint.method().toLowerCase() + "_" + endpoint.path().replaceAll("[^a-zA-Z0-9]", "_");
 
-        String baseName = controllerName + "." + operationName;
+        String baseName = controllerName + "_" + operationName;
 
         String toolName = baseName;
         int counter = 1;
