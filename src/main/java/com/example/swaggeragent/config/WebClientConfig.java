@@ -1,4 +1,4 @@
-package com.example.springialocal.config;
+package com.example.swaggeragent.config;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,8 +18,7 @@ public class WebClientConfig {
     public WebClient.Builder webClientBuilder(@Value("${app.tool.logging.enabled:false}") boolean toolLoggingEnabled) {
         WebClient.Builder builder = WebClient.builder();
         if (toolLoggingEnabled) {
-            builder.filter(logRequest())
-                   .filter(logResponse());
+            builder.filter(logRequest()).filter(logResponse());
         }
         return builder;
     }

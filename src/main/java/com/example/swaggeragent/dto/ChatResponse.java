@@ -1,4 +1,4 @@
-package com.example.springialocal.dto;
+package com.example.swaggeragent.dto;
 
 public class ChatResponse {
     private String role;

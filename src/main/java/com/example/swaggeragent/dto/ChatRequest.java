@@ -1,4 +1,4 @@
-package com.example.springialocal.dto;
+package com.example.swaggeragent.dto;
 
 import jakarta.validation.constraints.NotBlank;
 

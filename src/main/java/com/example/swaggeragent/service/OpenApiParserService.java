@@ -1,6 +1,5 @@
-package com.example.springialocal.service;
+package com.example.swaggeragent.service;
 
-import com.example.springialocal.model.*;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.Operation;
 import io.swagger.v3.oas.models.PathItem;
@@ -13,6 +12,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+
+import com.example.swaggeragent.model.*;
 
 import java.io.File;
 import java.io.IOException;

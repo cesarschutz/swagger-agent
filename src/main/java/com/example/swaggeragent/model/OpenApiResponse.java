@@ -1,4 +1,4 @@
-package com.example.springialocal.model;
+package com.example.swaggeragent.model;
 
 import java.util.Map;
 

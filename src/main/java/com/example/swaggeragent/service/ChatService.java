@@ -1,8 +1,5 @@
-package com.example.springialocal.service;
+package com.example.swaggeragent.service;
 
-import com.example.springialocal.dto.ChatResponse;
-import com.example.springialocal.model.DynamicTool;
-import com.example.springialocal.model.OpenApiEndpoint;
 import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,6 +9,10 @@ import org.springframework.ai.chat.memory.InMemoryChatMemory;
 import org.springframework.ai.model.function.FunctionCallback;
 import org.springframework.ai.openai.OpenAiChatModel;
 import org.springframework.stereotype.Service;
+
+import com.example.swaggeragent.dto.ChatResponse;
+import com.example.swaggeragent.model.DynamicTool;
+import com.example.swaggeragent.model.OpenApiEndpoint;
 
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;

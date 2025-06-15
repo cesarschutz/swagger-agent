@@ -1,9 +1,9 @@
-package com.example.springialocal.service;
+package com.example.swaggeragent.service;
 
-import com.example.springialocal.model.DynamicTool;
-import com.example.springialocal.model.OpenApiEndpoint;
-import com.example.springialocal.model.OpenApiParameter;
-import com.example.springialocal.model.ToolExecutionResult;
+import com.example.swaggeragent.model.DynamicTool;
+import com.example.swaggeragent.model.OpenApiEndpoint;
+import com.example.swaggeragent.model.OpenApiParameter;
+import com.example.swaggeragent.model.ToolExecutionResult;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -30,12 +30,13 @@ public class DynamicToolGeneratorService {
     private final WebClient.Builder webClientBuilder;
     private final boolean toolLoggingEnabled;
 
-    public DynamicToolGeneratorService(ObjectMapper objectMapper,
-                                       WebClient.Builder webClientBuilder,
-                                       @Value("${app.tool.logging.enabled:false}") boolean toolLoggingEnabled) {
-        this.objectMapper = objectMapper;
-        this.webClientBuilder = webClientBuilder;
-        this.toolLoggingEnabled = toolLoggingEnabled;
+    public DynamicToolGeneratorService(
+        ObjectMapper objectMapper,
+        WebClient.Builder webClientBuilder,
+        @Value("${app.tool.logging.enabled:false}") boolean toolLoggingEnabled) {
+            this.objectMapper = objectMapper;
+            this.webClientBuilder = webClientBuilder;
+            this.toolLoggingEnabled = toolLoggingEnabled;
     }
 
     public List<DynamicTool> generateToolsFromEndpoints(List<OpenApiEndpoint> endpoints) {

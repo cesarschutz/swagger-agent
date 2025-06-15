@@ -1,13 +1,14 @@
-package com.example.springialocal.controller;
+package com.example.swaggeragent.controller;
 
-import com.example.springialocal.dto.ChatRequest;
-import com.example.springialocal.dto.ChatResponse;
-import com.example.springialocal.service.ChatService;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.example.swaggeragent.dto.ChatRequest;
+import com.example.swaggeragent.dto.ChatResponse;
+import com.example.swaggeragent.service.ChatService;
 
 @RestController
 @RequestMapping("/api/chat")

@@ -1,4 +1,4 @@
-package com.example.springialocal;
+package com.example.swaggeragent;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

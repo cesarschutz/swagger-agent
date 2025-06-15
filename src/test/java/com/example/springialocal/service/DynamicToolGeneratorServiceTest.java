@@ -1,8 +1,9 @@
 package com.example.springialocal.service;
 
-import com.example.springialocal.model.DynamicTool;
-import com.example.springialocal.model.OpenApiEndpoint;
-import com.example.springialocal.model.OpenApiParameter;
+import com.example.swaggeragent.model.DynamicTool;
+import com.example.swaggeragent.model.OpenApiEndpoint;
+import com.example.swaggeragent.model.OpenApiParameter;
+import com.example.swaggeragent.service.DynamicToolGeneratorService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

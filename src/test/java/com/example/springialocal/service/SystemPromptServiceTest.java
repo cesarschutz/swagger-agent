@@ -1,10 +1,12 @@
 package com.example.springialocal.service;
 
-import com.example.springialocal.model.DynamicTool;
-import com.example.springialocal.model.OpenApiEndpoint;
-import com.example.springialocal.model.OpenApiParameter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import com.example.swaggeragent.model.DynamicTool;
+import com.example.swaggeragent.model.OpenApiEndpoint;
+import com.example.swaggeragent.model.OpenApiParameter;
+import com.example.swaggeragent.service.SystemPromptService;
 
 import java.util.Collections;
 import java.util.List;

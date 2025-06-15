@@ -1,9 +1,10 @@
 package com.example.springialocal.controller;
 
-import com.example.springialocal.dto.ChatRequest;
-import com.example.springialocal.dto.ChatResponse;
-import com.example.springialocal.service.ChatService;
-import com.example.springialocal.service.SystemPromptService;
+import com.example.swaggeragent.controller.ChatController;
+import com.example.swaggeragent.dto.ChatRequest;
+import com.example.swaggeragent.dto.ChatResponse;
+import com.example.swaggeragent.service.ChatService;
+import com.example.swaggeragent.service.SystemPromptService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
