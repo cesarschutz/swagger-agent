@@ -26,6 +26,7 @@ public class ChatService {
     private final OpenApiParserService openApiParserService;
     private final DynamicToolGeneratorService dynamicToolGeneratorService;
     private final SystemPromptService systemPromptService;
+    private final ToolLoggerService toolLoggerService;
 
     private ChatClient chatClient;
     private List<DynamicTool> currentTools;
@@ -37,11 +38,13 @@ public class ChatService {
             OpenAiChatModel chatModel,
             OpenApiParserService openApiParserService,
             DynamicToolGeneratorService dynamicToolGeneratorService,
-            SystemPromptService systemPromptService) {
+            SystemPromptService systemPromptService,
+            ToolLoggerService toolLoggerService) {
         this.chatModel = chatModel;
         this.openApiParserService = openApiParserService;
         this.dynamicToolGeneratorService = dynamicToolGeneratorService;
         this.systemPromptService = systemPromptService;
+        this.toolLoggerService = toolLoggerService;
     }
 
     @PostConstruct
@@ -56,6 +59,9 @@ public class ChatService {
 
             // Generate dynamic tools
             currentTools = dynamicToolGeneratorService.generateToolsFromEndpoints(endpoints);
+
+            // Log the tools
+            toolLoggerService.logTools(currentTools);
 
             // Convert to function callbacks
             currentFunctionCallbacks = dynamicToolGeneratorService.convertToFunctionCallbacks(currentTools);
