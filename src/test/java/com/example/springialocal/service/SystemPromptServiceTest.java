@@ -7,6 +7,8 @@ import com.example.swaggeragent.model.DynamicTool;
 import com.example.swaggeragent.model.OpenApiEndpoint;
 import com.example.swaggeragent.model.OpenApiParameter;
 import com.example.swaggeragent.service.SystemPromptService;
+import com.example.swaggeragent.service.ToolLoggerService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.Collections;
 import java.util.List;
@@ -20,7 +22,9 @@ class SystemPromptServiceTest {
 
     @BeforeEach
     void setUp() {
-        systemPromptService = new SystemPromptService();
+        ObjectMapper objectMapper = new ObjectMapper();
+        ToolLoggerService toolLoggerService = new ToolLoggerService(objectMapper);
+        systemPromptService = new SystemPromptService(toolLoggerService);
     }
 
     @Test
