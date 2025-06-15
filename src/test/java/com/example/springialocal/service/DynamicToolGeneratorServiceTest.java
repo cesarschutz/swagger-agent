@@ -1,22 +1,21 @@
 package com.example.springialocal.service;
 
-import com.example.swaggeragent.model.DynamicTool;
-import com.example.swaggeragent.model.OpenApiEndpoint;
-import com.example.swaggeragent.model.OpenApiParameter;
+import com.example.swaggeragent.model.*;
 import com.example.swaggeragent.service.DynamicToolGeneratorService;
+import com.example.swaggeragent.service.OpenApiParserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.swagger.v3.oas.models.media.Schema;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Answers;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.reactive.function.client.ClientResponse;
-import org.springframework.web.reactive.function.client.WebClient;
-import reactor.core.publisher.Mono;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.RestTemplate;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -24,56 +23,56 @@ import java.util.function.Function;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class DynamicToolGeneratorServiceTest {
 
-    private ObjectMapper objectMapper = new ObjectMapper();
+    @Mock
+    private OpenApiParserService openApiParserService;
 
-    @Mock(answer = Answers.RETURNS_DEEP_STUBS)
-    private WebClient.Builder webClientBuilder;
+    @Mock
+    private RestTemplate restTemplate;
 
-    @Mock(answer = Answers.RETURNS_DEEP_STUBS)
-    private WebClient webClient;
-
+    @InjectMocks
     private DynamicToolGeneratorService dynamicToolGeneratorService;
 
     @BeforeEach
     void setUp() {
-        dynamicToolGeneratorService = new DynamicToolGeneratorService(objectMapper, webClientBuilder, false);
-        when(webClientBuilder.build()).thenReturn(webClient);
+        // This simulates a successful response from the RestTemplate
+        when(restTemplate.exchange(anyString(), any(HttpMethod.class), any(), eq(String.class)))
+                .thenReturn(new ResponseEntity<>("{\"result\":\"success\"}", HttpStatus.OK));
     }
 
     @Test
-    void generatedFunction_shouldAcceptMapAndReturnString() throws Exception {
+    void generateTools_shouldCreateDynamicTools() {
         // Given
-        var parameter = new OpenApiParameter("param1", "query", "Test parameter", true, "string", null, null, null);
-        var endpoint = new OpenApiEndpoint(
-                "test-endpoint",
-                "GET",
-                "/test",
-                "Test Summary",
-                "Test Description",
-                "http://localhost:8080",
-                List.of(parameter),
-                null,
-                null,
-                null
+        List<OpenApiParameter> parameters = List.of(
+                new OpenApiParameter("param1", "query", "description1", true, "string", null, null, null, null)
+        );
+        var requestBody = new OpenApiRequestBody("Request body description", true, Map.of("application/json", new OpenApiMediaType(new Schema<>(), "{}")));
+        var response = new OpenApiResponse("Success", Map.of("application/json", new OpenApiMediaType(new Schema<>(), "{}")));
+
+        List<OpenApiEndpoint> endpoints = List.of(
+                new OpenApiEndpoint(
+                        "test-endpoint",
+                        "GET",
+                        "/test",
+                        "Test Summary",
+                        "Test Description",
+                        "http://localhost:8080",
+                        parameters,
+                        requestBody,
+                        Map.of("200", response),
+                        List.of("test")
+                )
         );
 
-        WebClient.RequestHeadersUriSpec requestHeadersUriSpec = webClient.get();
-        WebClient.RequestHeadersSpec requestHeadersSpec = requestHeadersUriSpec.uri(any(String.class));
-
-        when(webClient.get()).thenReturn(requestHeadersUriSpec);
-        when(requestHeadersUriSpec.uri(any(String.class))).thenReturn(requestHeadersSpec);
-        when(requestHeadersSpec.exchange()).thenReturn(Mono.just(ClientResponse.create(HttpStatus.OK)
-                .header("Content-Type", "application/json")
-                .body("{\"result\":\"success\"}")
-                .build()));
+        when(openApiParserService.parseAllOpenApiFiles()).thenReturn(endpoints);
 
         // When
-        List<DynamicTool> tools = dynamicToolGeneratorService.generateToolsFromEndpoints(Collections.singletonList(endpoint));
+        List<DynamicTool> tools = dynamicToolGeneratorService.generateToolsFromEndpoints(endpoints);
         assertFalse(tools.isEmpty());
         DynamicTool tool = tools.get(0);
         Function<Object, String> function = tool.getFunction();

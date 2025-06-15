@@ -112,6 +112,15 @@ public class DynamicToolGeneratorService {
                 paramSchema.put("type", mapOpenApiTypeToJsonSchemaType(param.type()));
                 paramSchema.put("description", param.description() != null ? param.description() : "");
 
+                if ("array".equals(param.type()) && param.items() != null) {
+                    ObjectNode itemsSchema = objectMapper.createObjectNode();
+                    itemsSchema.put("type", mapOpenApiTypeToJsonSchemaType(param.items().type()));
+                    if (param.items().format() != null) {
+                        itemsSchema.put("format", param.items().format());
+                    }
+                    paramSchema.set("items", itemsSchema);
+                }
+
                 if (param.enumValues() != null && !param.enumValues().isEmpty()) {
                     paramSchema.set("enum", objectMapper.valueToTree(param.enumValues()));
                 }

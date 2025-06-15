@@ -150,6 +150,11 @@ public class OpenApiParserService {
 
     private OpenApiParameter buildParameter(Parameter parameter) {
         Schema schema = parameter.getSchema();
+        OpenApiParameterItems items = null;
+        if (schema != null && "array".equals(schema.getType()) && schema.getItems() != null) {
+            Schema<?> itemsSchema = schema.getItems();
+            items = new OpenApiParameterItems(itemsSchema.getType(), itemsSchema.getFormat());
+        }
 
         return new OpenApiParameter(
                 parameter.getName(),
@@ -160,7 +165,8 @@ public class OpenApiParserService {
                 schema != null ? schema.getFormat() : null,
                 schema != null ? schema.getDefault() : null,
                 schema != null && schema.getEnum() != null ?
-                        schema.getEnum().stream().map(Object::toString).toList() : null);
+                        schema.getEnum().stream().map(Object::toString).toList() : null,
+                items);
     }
 
     private OpenApiRequestBody extractRequestBody(Operation operation) {

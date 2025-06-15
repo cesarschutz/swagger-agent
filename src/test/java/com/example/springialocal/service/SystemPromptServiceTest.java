@@ -26,8 +26,11 @@ class SystemPromptServiceTest {
     @Test
     void generateSystemPrompt_withTools_shouldContainToolInfo() {
         // Given
-        var parameter = new OpenApiParameter("param1", "query", "Test parameter", true, "string", null, null, null);
-        var endpoint = new OpenApiEndpoint("test-endpoint", "GET", "/test", "Test Summary", "Test Description", "http://localhost:8080", List.of(parameter), null, null, null);
+        List<OpenApiParameter> parameters = List.of(
+                new OpenApiParameter("param1", "query", "description1", true, "string", null, null, null, null),
+                new OpenApiParameter("param2", "header", "description2", false, "integer", null, null, null, null)
+        );
+        var endpoint = new OpenApiEndpoint("test-endpoint", "GET", "/test", "Test Summary", "Test Description", "http://localhost:8080", parameters, null, null, null);
         var tool = DynamicTool.builder().name("testTool").description("A test tool").endpoint(endpoint).build();
         List<DynamicTool> tools = Collections.singletonList(tool);
 

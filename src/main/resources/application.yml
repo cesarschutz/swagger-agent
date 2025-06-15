@@ -23,4 +23,4 @@ app:
     get-invoice-by-uuid: "/invoices/{uuid}"
   tool:
     logging:
-      enabled: true
+      enabled: false
