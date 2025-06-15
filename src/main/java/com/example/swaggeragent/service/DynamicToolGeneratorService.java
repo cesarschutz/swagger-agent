@@ -41,9 +41,15 @@ public class DynamicToolGeneratorService {
 
     public List<DynamicTool> generateToolsFromEndpoints(List<OpenApiEndpoint> endpoints) {
         List<DynamicTool> tools = new ArrayList<>();
+        List<String> usedNames = new ArrayList<>();
+
         for (OpenApiEndpoint endpoint : endpoints) {
             try {
-                tools.add(generateToolFromEndpoint(endpoint));
+                String toolName = generateToolName(endpoint, usedNames);
+                usedNames.add(toolName);
+
+                DynamicTool tool = generateToolFromEndpoint(endpoint, toolName);
+                tools.add(tool);
             } catch (Exception e) {
                 if (toolLoggingEnabled) {
                     log.error("Error generating tool for endpoint: {} {}", endpoint.method(), endpoint.path(), e);
@@ -53,8 +59,7 @@ public class DynamicToolGeneratorService {
         return tools;
     }
 
-    private DynamicTool generateToolFromEndpoint(OpenApiEndpoint endpoint) {
-        String toolName = generateToolName(endpoint);
+    private DynamicTool generateToolFromEndpoint(OpenApiEndpoint endpoint, String toolName) {
         String description = generateToolDescription(endpoint);
         String jsonSchema = generateJsonSchema(endpoint);
         Function<Object, String> function = generateFunction(endpoint);
@@ -68,12 +73,24 @@ public class DynamicToolGeneratorService {
                 .build();
     }
 
-    private String generateToolName(OpenApiEndpoint endpoint) {
-        if (endpoint.operationId() != null && !endpoint.operationId().isEmpty()) {
-            return endpoint.operationId();
+    private String generateToolName(OpenApiEndpoint endpoint, List<String> usedNames) {
+        String controllerName = "general";
+        if (endpoint.tags() != null && !endpoint.tags().isEmpty()) {
+            controllerName = endpoint.tags().get(0).replace("-controller", "");
         }
-        String path = endpoint.path().replaceAll("[^a-zA-Z0-9]", "_");
-        return endpoint.method().toLowerCase() + "_" + path;
+
+        String operationName = endpoint.operationId() != null && !endpoint.operationId().isEmpty()
+                ? endpoint.operationId()
+                : endpoint.method().toLowerCase() + "_" + endpoint.path().replaceAll("[^a-zA-Z0-9]", "_");
+
+        String baseName = controllerName + "." + operationName;
+
+        String toolName = baseName;
+        int counter = 1;
+        while (usedNames.contains(toolName)) {
+            toolName = baseName + "_" + counter++;
+        }
+        return toolName;
     }
 
     private String generateToolDescription(OpenApiEndpoint endpoint) {
@@ -84,17 +101,44 @@ public class DynamicToolGeneratorService {
         } else if (endpoint.description() != null && !endpoint.description().isEmpty()) {
             description.append(endpoint.description());
         } else {
-            description.append("Executes ").append(endpoint.method().toUpperCase())
-                    .append(" request to ").append(endpoint.path());
+            description.append("Executes a ").append(endpoint.method().toUpperCase())
+                    .append(" request to the path '").append(endpoint.path()).append("'.");
         }
 
-        if (endpoint.parameters() != null && !endpoint.parameters().isEmpty()) {
-            description.append(" Parameters: ");
-            List<String> paramNames = endpoint.parameters().stream()
-                    .map(p -> p.name() + (p.required() ? "*" : ""))
-                    .toList();
-            description.append(String.join(", ", paramNames));
+        if (!description.toString().endsWith(".")) {
+            description.append(".");
         }
+
+        description.append(" This tool is used to perform an operation related to '").append(String.join(", ", endpoint.tags())).append("'.");
+
+        if (endpoint.parameters() != null && !endpoint.parameters().isEmpty()) {
+            description.append(" It requires the following parameters: ");
+            List<String> paramDetails = endpoint.parameters().stream()
+                    .map(p -> String.format("%s in %s (%s, %s)", p.name(), p.in(), p.type(), p.required() ? "required" : "optional"))
+                    .toList();
+            description.append(String.join("; ", paramDetails)).append(".");
+        }
+
+        if (endpoint.requestBody() != null && endpoint.requestBody().required()) {
+            description.append(" A request body is required.");
+        }
+
+        endpoint.responses().forEach((statusCode, response) -> {
+            if (statusCode.startsWith("2")) { // Success responses
+                description.append(" On success (HTTP ").append(statusCode).append("), it returns ");
+                if (response.content() != null && !response.content().isEmpty()) {
+                    String mediaType = response.content().keySet().iterator().next();
+                    String schemaRef = response.content().get(mediaType).schema().get$ref();
+                    if (schemaRef != null) {
+                        description.append("a '").append(schemaRef.substring(schemaRef.lastIndexOf('/') + 1)).append("' object.");
+                    } else {
+                        description.append("a response of type '").append(mediaType).append("'.");
+                    }
+                } else {
+                    description.append("no content.");
+                }
+            }
+        });
 
         return description.toString();
     }

@@ -58,11 +58,21 @@ public class ToolLoggerService {
         if (params != null && !params.isEmpty()) {
             System.out.printf("  📥 %s Parameters:%n", groupName);
             for (OpenApiParameter param : params) {
-                System.out.printf("     - %s (%s) %s: %s%n",
-                        param.name(),
-                        param.type(),
-                        param.required() ? "[REQUIRED]" : "[OPTIONAL]",
-                        param.description());
+                String requiredInfo = param.required() ? "REQUIRED" : "OPTIONAL";
+                System.out.printf("     - %s (%s) [%s]: %s%n", param.name(), param.type(), requiredInfo, param.description());
+
+                if (param.format() != null) {
+                    System.out.printf("       Format: %s%n", param.format());
+                }
+                if (param.defaultValue() != null) {
+                    System.out.printf("       Default: %s%n", param.defaultValue());
+                }
+                if (param.enumValues() != null && !param.enumValues().isEmpty()) {
+                    System.out.printf("       Enum Values: %s%n", param.enumValues());
+                }
+                if (param.items() != null) {
+                    System.out.printf("       Items Type: %s%n", param.items().type());
+                }
             }
         }
     }
@@ -76,8 +86,11 @@ public class ToolLoggerService {
             }
             requestBody.content().forEach((mediaType, mediaTypeObject) -> {
                 System.out.printf("     - Media Type: %s%n", mediaType);
-                if (mediaTypeObject.schema() != null) {
+                if (mediaTypeObject.schema() != null && mediaTypeObject.schema().get$ref() != null) {
                     System.out.printf("       Schema: %s%n", mediaTypeObject.schema().get$ref());
+                }
+                if (mediaTypeObject.example() != null) {
+                    System.out.printf("       Example: %s%n", mediaTypeObject.example().toString());
                 }
             });
         }
@@ -96,6 +109,9 @@ public class ToolLoggerService {
                     System.out.printf("    - Content-Type: %s%n", mediaType);
                     if (mediaTypeObject.schema() != null && mediaTypeObject.schema().get$ref() != null) {
                         System.out.printf("      Schema: %s%n", mediaTypeObject.schema().get$ref());
+                    }
+                    if (mediaTypeObject.example() != null) {
+                        System.out.printf("      Example: %s%n", mediaTypeObject.example().toString());
                     }
                 });
             }
