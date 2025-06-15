@@ -1,7 +1,9 @@
 package com.example.swaggeragent.model;
 
+import io.swagger.v3.oas.models.media.Schema;
+
 public record OpenApiMediaType(
-        Object schema,
+        Schema schema,
         Object example
 ) {
 } 
