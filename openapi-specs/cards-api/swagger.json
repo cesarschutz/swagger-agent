@@ -1,0 +1,335 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Cards API",
+    "description": "API para gerenciamento de cartões de crédito e débito",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3000",
+      "description": "Servidor de desenvolvimento"
+    }
+  ],
+  "paths": {
+    "/cards": {
+      "get": {
+        "tags": ["cards-controller"],
+        "summary": "Lista todos os cartões",
+        "description": "Retorna uma lista de todos os cartões cadastrados no sistema",
+        "operationId": "getAllCards",
+        "responses": {
+          "200": {
+            "description": "Lista de cartões retornada com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Card"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro interno do servidor"
+          }
+        }
+      },
+      "post": {
+        "tags": ["cards-controller"],
+        "summary": "Cria um novo cartão",
+        "description": "Cria um novo cartão no sistema",
+        "operationId": "createCard",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateCardRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Cartão criado com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Card"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Dados inválidos"
+          },
+          "500": {
+            "description": "Erro interno do servidor"
+          }
+        }
+      }
+    },
+    "/cards/{uuid}": {
+      "get": {
+        "tags": ["cards-controller"],
+        "summary": "Busca um cartão por UUID",
+        "description": "Retorna os dados de um cartão específico baseado no UUID fornecido",
+        "operationId": "getCardByUuid",
+        "parameters": [
+          {
+            "name": "uuid",
+            "in": "path",
+            "description": "UUID único do cartão",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "example": "333"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Cartão encontrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Card"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Cartão não encontrado"
+          },
+          "500": {
+            "description": "Erro interno do servidor"
+          }
+        }
+      },
+      "put": {
+        "tags": ["cards-controller"],
+        "summary": "Atualiza um cartão",
+        "description": "Atualiza os dados de um cartão existente",
+        "operationId": "updateCard",
+        "parameters": [
+          {
+            "name": "uuid",
+            "in": "path",
+            "description": "UUID único do cartão",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateCardRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Cartão atualizado com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Card"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Cartão não encontrado"
+          },
+          "400": {
+            "description": "Dados inválidos"
+          },
+          "500": {
+            "description": "Erro interno do servidor"
+          }
+        }
+      }
+    },
+    "/cards/{uuid}/block": {
+      "post": {
+        "tags": ["cards-controller"],
+        "summary": "Bloqueia um cartão",
+        "description": "Bloqueia um cartão específico, impedindo seu uso",
+        "operationId": "blockCard",
+        "parameters": [
+          {
+            "name": "uuid",
+            "in": "path",
+            "description": "UUID único do cartão a ser bloqueado",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BlockCardRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Cartão bloqueado com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Card"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Cartão não encontrado"
+          },
+          "400": {
+            "description": "Cartão já está bloqueado ou dados inválidos"
+          },
+          "500": {
+            "description": "Erro interno do servidor"
+          }
+        }
+      }
+    },
+    "/cards/{uuid}/unblock": {
+      "post": {
+        "tags": ["cards-controller"],
+        "summary": "Desbloqueia um cartão",
+        "description": "Desbloqueia um cartão previamente bloqueado",
+        "operationId": "unblockCard",
+        "parameters": [
+          {
+            "name": "uuid",
+            "in": "path",
+            "description": "UUID único do cartão a ser desbloqueado",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Cartão desbloqueado com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Card"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Cartão não encontrado"
+          },
+          "400": {
+            "description": "Cartão já está ativo ou dados inválidos"
+          },
+          "500": {
+            "description": "Erro interno do servidor"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Card": {
+        "type": "object",
+        "properties": {
+          "uuid": {
+            "type": "string",
+            "description": "Identificador único do cartão"
+          },
+          "productName": {
+            "type": "string",
+            "description": "Nome do produto do cartão"
+          },
+          "lastFourNumbers": {
+            "type": "string",
+            "description": "Últimos quatro dígitos do cartão"
+          },
+          "status": {
+            "$ref": "#/components/schemas/CardStatus"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Data de criação do cartão"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Data da última atualização"
+          }
+        }
+      },
+      "CardStatus": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": ["ATIVO", "BLOQUEADO", "CANCELADO"],
+            "description": "Status atual do cartão"
+          }
+        }
+      },
+      "CreateCardRequest": {
+        "type": "object",
+        "required": ["productName", "customerUuid"],
+        "properties": {
+          "productName": {
+            "type": "string",
+            "description": "Nome do produto do cartão"
+          },
+          "customerUuid": {
+            "type": "string",
+            "format": "uuid",
+            "description": "UUID do cliente"
+          }
+        }
+      },
+      "UpdateCardRequest": {
+        "type": "object",
+        "properties": {
+          "productName": {
+            "type": "string",
+            "description": "Nome do produto do cartão"
+          }
+        }
+      },
+      "BlockCardRequest": {
+        "type": "object",
+        "required": ["reason"],
+        "properties": {
+          "reason": {
+            "type": "string",
+            "description": "Motivo do bloqueio do cartão"
+          }
+        }
+      }
+    }
+  }
+}
+

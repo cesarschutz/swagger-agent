@@ -1,0 +1,1193 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Swagger Agent - Transformando APIs em Ferramentas de IA</title>
+    <meta name="description" content="Projeto educativo que demonstra como transformar especificações OpenAPI/Swagger em ferramentas inteligentes para agentes de IA usando Spring AI">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --primary-dark: #1d4ed8;
+            --secondary-color: #10b981;
+            --accent-color: #f59e0b;
+            --text-primary: #1f2937;
+            --text-secondary: #6b7280;
+            --text-light: #9ca3af;
+            --bg-primary: #ffffff;
+            --bg-secondary: #f9fafb;
+            --bg-accent: #f3f4f6;
+            --border-color: #e5e7eb;
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+            --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+            --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --gradient-secondary: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --gradient-accent: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            line-height: 1.6;
+            color: var(--text-primary);
+            background-color: var(--bg-primary);
+            overflow-x: hidden;
+        }
+
+        /* Header e Navegação */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border-color);
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        .nav {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 800;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-secondary);
+            font-weight: 500;
+            transition: color 0.3s ease;
+            position: relative;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary-color);
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--primary-color);
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000"><defs><radialGradient id="a" cx="50%" cy="50%"><stop offset="0%" stop-color="%23ffffff" stop-opacity="0.1"/><stop offset="100%" stop-color="%23ffffff" stop-opacity="0"/></radialGradient></defs><circle cx="200" cy="200" r="100" fill="url(%23a)"/><circle cx="800" cy="300" r="150" fill="url(%23a)"/><circle cx="400" cy="700" r="120" fill="url(%23a)"/></svg>');
+            opacity: 0.3;
+        }
+
+        .hero-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-text h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            color: white;
+            margin-bottom: 1.5rem;
+            line-height: 1.1;
+        }
+
+        .hero-text .subtitle {
+            font-size: 1.25rem;
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 1rem 2rem;
+            border-radius: 0.75rem;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            border: none;
+            font-size: 1rem;
+        }
+
+        .btn-primary {
+            background: white;
+            color: var(--primary-color);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-xl);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(10px);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.5);
+        }
+
+        .hero-visual {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .tech-stack {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+            max-width: 400px;
+        }
+
+        .tech-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .tech-card:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .tech-card i {
+            font-size: 2.5rem;
+            color: white;
+            margin-bottom: 0.5rem;
+        }
+
+        .tech-card h3 {
+            color: white;
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        /* Seções de Conteúdo */
+        .section {
+            padding: 5rem 0;
+        }
+
+        .section:nth-child(even) {
+            background: var(--bg-secondary);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .section-header h2 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+        }
+
+        .section-header p {
+            font-size: 1.125rem;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Cards de Conceitos */
+        .concepts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .concept-card {
+            background: var(--bg-primary);
+            border-radius: 1rem;
+            padding: 2rem;
+            box-shadow: var(--shadow-md);
+            transition: all 0.3s ease;
+            border: 1px solid var(--border-color);
+        }
+
+        .concept-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-xl);
+        }
+
+        .concept-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+            font-size: 1.5rem;
+            color: white;
+        }
+
+        .concept-card:nth-child(1) .concept-icon { background: var(--gradient-primary); }
+        .concept-card:nth-child(2) .concept-icon { background: var(--gradient-secondary); }
+        .concept-card:nth-child(3) .concept-icon { background: var(--gradient-accent); }
+        .concept-card:nth-child(4) .concept-icon { background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%); }
+
+        .concept-card h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+        }
+
+        .concept-card p {
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* Fluxo do Projeto */
+        .flow-container {
+            position: relative;
+            margin: 3rem 0;
+        }
+
+        .flow-steps {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            position: relative;
+        }
+
+        .flow-step {
+            background: var(--bg-primary);
+            border-radius: 1rem;
+            padding: 2rem;
+            text-align: center;
+            box-shadow: var(--shadow-md);
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .flow-step:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-xl);
+        }
+
+        .step-number {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--primary-color);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            margin: 0 auto 1rem;
+        }
+
+        .flow-step h4 {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .flow-step p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        /* Recursos e Funcionalidades */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .feature-card {
+            background: var(--bg-primary);
+            border-radius: 1rem;
+            padding: 2rem;
+            box-shadow: var(--shadow-md);
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-xl);
+        }
+
+        .feature-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .feature-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 0.75rem;
+            background: var(--gradient-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.25rem;
+        }
+
+        .feature-card h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .feature-list {
+            list-style: none;
+        }
+
+        .feature-list li {
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .feature-list li::before {
+            content: '✓';
+            color: var(--secondary-color);
+            font-weight: 600;
+        }
+
+        /* Demo Section */
+        .demo-container {
+            background: var(--bg-primary);
+            border-radius: 1rem;
+            padding: 2rem;
+            box-shadow: var(--shadow-lg);
+            margin-top: 3rem;
+        }
+
+        .demo-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .demo-preview {
+            background: var(--bg-secondary);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            border: 1px solid var(--border-color);
+        }
+
+        .demo-code {
+            background: #1f2937;
+            color: #f9fafb;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            font-family: 'Courier New', monospace;
+            font-size: 0.875rem;
+            overflow-x: auto;
+            margin: 1rem 0;
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--text-primary);
+            color: white;
+            padding: 3rem 0 1rem;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            text-align: center;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .footer-links a {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: white;
+        }
+
+        /* Responsividade */
+        @media (max-width: 768px) {
+            .hero-content {
+                grid-template-columns: 1fr;
+                text-align: center;
+                gap: 2rem;
+            }
+
+            .hero-text h1 {
+                font-size: 2.5rem;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .concepts-grid,
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .flow-steps {
+                grid-template-columns: 1fr;
+            }
+
+            .tech-stack {
+                grid-template-columns: 1fr;
+                max-width: 300px;
+            }
+        }
+
+        /* Animações */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-on-scroll {
+            opacity: 0;
+            animation: fadeInUp 0.6s ease forwards;
+        }
+
+        /* Scroll suave */
+        html {
+            scroll-behavior: smooth;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <nav class="nav">
+            <div class="logo">
+                <i class="fas fa-robot"></i> Swagger Agent
+            </div>
+            <ul class="nav-links">
+                <li><a href="#conceitos">Conceitos</a></li>
+                <li><a href="#como-funciona">Como Funciona</a></li>
+                <li><a href="#recursos">Recursos</a></li>
+                <li><a href="#demo">Demo</a></li>
+                <li><a href="chat.html" class="btn btn-primary" style="padding: 0.5rem 1rem;">
+                    <i class="fas fa-comments"></i> Testar Chat
+                </a></li>
+            </ul>
+        </nav>
+    </header>
+
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <div class="hero-text">
+                <h1>Transforme APIs em Ferramentas de IA</h1>
+                <p class="subtitle">
+                    Descubra como o Swagger Agent converte automaticamente especificações OpenAPI/Swagger 
+                    em ferramentas inteligentes que agentes de IA podem usar para interagir com seus sistemas.
+                </p>
+                <div class="cta-buttons">
+                    <a href="chat.html" class="btn btn-primary">
+                        <i class="fas fa-play"></i>
+                        Experimentar Agora
+                    </a>
+                    <a href="#conceitos" class="btn btn-secondary">
+                        <i class="fas fa-book"></i>
+                        Aprender Mais
+                    </a>
+                </div>
+            </div>
+            <div class="hero-visual">
+                <div class="tech-stack">
+                    <div class="tech-card">
+                        <i class="fab fa-java"></i>
+                        <h3>Spring AI</h3>
+                    </div>
+                    <div class="tech-card">
+                        <i class="fas fa-file-code"></i>
+                        <h3>OpenAPI</h3>
+                    </div>
+                    <div class="tech-card">
+                        <i class="fas fa-robot"></i>
+                        <h3>Agentes IA</h3>
+                    </div>
+                    <div class="tech-card">
+                        <i class="fas fa-tools"></i>
+                        <h3>Ferramentas</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Seção de Conceitos -->
+    <section id="conceitos" class="section">
+        <div class="container">
+            <div class="section-header">
+                <h2>Conceitos Fundamentais</h2>
+                <p>
+                    Entenda os pilares tecnológicos que tornam possível a transformação de APIs em ferramentas inteligentes
+                </p>
+            </div>
+            
+            <div class="concepts-grid">
+                <div class="concept-card animate-on-scroll">
+                    <div class="concept-icon">
+                        <i class="fas fa-brain"></i>
+                    </div>
+                    <h3>Inteligência Artificial (IA)</h3>
+                    <p>
+                        A IA é a capacidade de máquinas simularem a inteligência humana, processando informações, 
+                        aprendendo padrões e tomando decisões. No contexto deste projeto, utilizamos modelos de 
+                        linguagem avançados (LLMs) como GPT-4 que podem compreender linguagem natural e executar 
+                        tarefas complexas através de instruções textuais.
+                    </p>
+                </div>
+
+                <div class="concept-card animate-on-scroll">
+                    <div class="concept-icon">
+                        <i class="fas fa-user-robot"></i>
+                    </div>
+                    <h3>Agentes de IA</h3>
+                    <p>
+                        Agentes são sistemas de IA autônomos que podem perceber seu ambiente, tomar decisões e 
+                        executar ações para atingir objetivos específicos. Eles podem usar ferramentas externas, 
+                        manter memória de conversas e raciocinar sobre problemas complexos, funcionando como 
+                        assistentes inteligentes especializados.
+                    </p>
+                </div>
+
+                <div class="concept-card animate-on-scroll">
+                    <div class="concept-icon">
+                        <i class="fab fa-java"></i>
+                    </div>
+                    <h3>Spring Framework</h3>
+                    <p>
+                        Spring é um framework Java robusto e maduro para desenvolvimento de aplicações empresariais. 
+                        O Spring AI é uma extensão moderna que facilita a integração de capacidades de IA em 
+                        aplicações Spring, oferecendo abstrações para modelos de linguagem, embeddings e 
+                        ferramentas de IA.
+                    </p>
+                </div>
+
+                <div class="concept-card animate-on-scroll">
+                    <div class="concept-icon">
+                        <i class="fas fa-file-code"></i>
+                    </div>
+                    <h3>OpenAPI/Swagger</h3>
+                    <p>
+                        OpenAPI (anteriormente Swagger) é uma especificação padrão para descrever APIs REST. 
+                        Ela define endpoints, parâmetros, tipos de dados e respostas de forma estruturada e 
+                        legível por máquinas. Isso permite documentação automática, geração de código e, 
+                        no nosso caso, criação dinâmica de ferramentas para IA.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Como Funciona -->
+    <section id="como-funciona" class="section">
+        <div class="container">
+            <div class="section-header">
+                <h2>Como o Swagger Agent Funciona</h2>
+                <p>
+                    Um processo automatizado que transforma especificações de API em ferramentas inteligentes
+                </p>
+            </div>
+
+            <div class="flow-container">
+                <div class="flow-steps">
+                    <div class="flow-step animate-on-scroll">
+                        <div class="step-number">1</div>
+                        <h4>Leitura de Especificações</h4>
+                        <p>
+                            O sistema varre recursivamente todas as pastas em busca de arquivos swagger.json, 
+                            permitindo organização por projetos e microserviços.
+                        </p>
+                    </div>
+
+                    <div class="flow-step animate-on-scroll">
+                        <div class="step-number">2</div>
+                        <h4>Parsing e Análise</h4>
+                        <p>
+                            Cada especificação OpenAPI é analisada para extrair endpoints, parâmetros, 
+                            schemas de request/response e metadados importantes.
+                        </p>
+                    </div>
+
+                    <div class="flow-step animate-on-scroll">
+                        <div class="step-number">3</div>
+                        <h4>Geração de Ferramentas</h4>
+                        <p>
+                            Para cada endpoint, uma ferramenta dinâmica é criada com nome único, descrição 
+                            detalhada e função executável que a IA pode chamar.
+                        </p>
+                    </div>
+
+                    <div class="flow-step animate-on-scroll">
+                        <div class="step-number">4</div>
+                        <h4>Integração com IA</h4>
+                        <p>
+                            As ferramentas são registradas no agente de IA, que recebe um prompt otimizado 
+                            explicando como e quando usar cada ferramenta.
+                        </p>
+                    </div>
+
+                    <div class="flow-step animate-on-scroll">
+                        <div class="step-number">5</div>
+                        <h4>Execução Inteligente</h4>
+                        <p>
+                            Quando o usuário faz uma pergunta, a IA analisa a solicitação, escolhe as 
+                            ferramentas apropriadas e executa as chamadas de API necessárias.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Recursos e Funcionalidades -->
+    <section id="recursos" class="section">
+        <div class="container">
+            <div class="section-header">
+                <h2>Recursos e Funcionalidades</h2>
+                <p>
+                    Tecnologias avançadas que tornam o Swagger Agent uma solução robusta e profissional
+                </p>
+            </div>
+
+            <div class="features-grid">
+                <div class="feature-card animate-on-scroll">
+                    <div class="feature-header">
+                        <div class="feature-icon">
+                            <i class="fas fa-search"></i>
+                        </div>
+                        <h3>Descoberta Automática</h3>
+                    </div>
+                    <ul class="feature-list">
+                        <li>Varredura recursiva de diretórios</li>
+                        <li>Suporte a múltiplos projetos</li>
+                        <li>Detecção automática de mudanças</li>
+                        <li>Organização por microserviços</li>
+                    </ul>
+                </div>
+
+                <div class="feature-card animate-on-scroll">
+                    <div class="feature-header">
+                        <div class="feature-icon">
+                            <i class="fas fa-cogs"></i>
+                        </div>
+                        <h3>Geração Inteligente</h3>
+                    </div>
+                    <ul class="feature-list">
+                        <li>Nomes únicos por projeto/controller</li>
+                        <li>Descrições contextualizadas</li>
+                        <li>Validação de parâmetros</li>
+                        <li>Tratamento de erros robusto</li>
+                    </ul>
+                </div>
+
+                <div class="feature-card animate-on-scroll">
+                    <div class="feature-header">
+                        <div class="feature-icon">
+                            <i class="fas fa-comments"></i>
+                        </div>
+                        <h3>Chat Avançado</h3>
+                    </div>
+                    <ul class="feature-list">
+                        <li>Streaming de respostas em tempo real</li>
+                        <li>Sessões isoladas por usuário</li>
+                        <li>Memória de conversação</li>
+                        <li>Interface responsiva e elegante</li>
+                    </ul>
+                </div>
+
+                <div class="feature-card animate-on-scroll">
+                    <div class="feature-header">
+                        <div class="feature-icon">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <h3>Monitoramento</h3>
+                    </div>
+                    <ul class="feature-list">
+                        <li>Logs detalhados de ferramentas</li>
+                        <li>Métricas de uso</li>
+                        <li>Cache de metadados</li>
+                        <li>Debugging avançado</li>
+                    </ul>
+                </div>
+
+                <div class="feature-card animate-on-scroll">
+                    <div class="feature-header">
+                        <div class="feature-icon">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <h3>Arquitetura Robusta</h3>
+                    </div>
+                    <ul class="feature-list">
+                        <li>Código bem documentado em português</li>
+                        <li>Padrões de design profissionais</li>
+                        <li>Tratamento de exceções</li>
+                        <li>Testes e validações</li>
+                    </ul>
+                </div>
+
+                <div class="feature-card animate-on-scroll">
+                    <div class="feature-header">
+                        <div class="feature-icon">
+                            <i class="fas fa-puzzle-piece"></i>
+                        </div>
+                        <h3>Extensibilidade</h3>
+                    </div>
+                    <ul class="feature-list">
+                        <li>Arquitetura modular</li>
+                        <li>Fácil adição de novos recursos</li>
+                        <li>Configuração flexível</li>
+                        <li>Integração com outros sistemas</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- Demo Section -->
+    <section id="demo" class="section">
+        <div class="container">
+            <div class="section-header">
+                <h2>Demonstração Prática</h2>
+                <p>
+                    Veja como o Swagger Agent transforma uma especificação OpenAPI em ferramentas utilizáveis pela IA
+                </p>
+            </div>
+
+            <div class="demo-container">
+                <div class="demo-header">
+                    <h3>Exemplo: API de Cartões</h3>
+                    <p>Transformação de um endpoint REST em ferramenta de IA</p>
+                </div>
+
+                <div class="demo-preview">
+                    <h4>1. Especificação OpenAPI Original</h4>
+                    <div class="demo-code">
+{
+  "paths": {
+    "/cards": {
+      "get": {
+        "summary": "Lista todos os cartões",
+        "operationId": "getAllCards",
+        "tags": ["cards-controller"],
+        "parameters": [
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista de cartões",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/Card" }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+                    </div>
+
+                    <h4>2. Ferramenta Gerada Automaticamente</h4>
+                    <div class="demo-code">
+Nome da Ferramenta: cards_cards_getAllCards
+
+Descrição: [CARDS API - cards-controller] Lista todos os cartões. 
+Parâmetros necessários: status (string, opcional). 
+Em caso de sucesso (HTTP 200), retorna um array de objetos Card.
+
+Função: Executa GET /cards com validação de parâmetros e 
+tratamento de erros automático.
+                    </div>
+
+                    <h4>3. Uso pela IA</h4>
+                    <div class="demo-code">
+Usuário: "Quais cartões ativos temos no sistema?"
+
+IA: Vou consultar os cartões ativos para você.
+    [Executa: cards_cards_getAllCards(status: "active")]
+    
+    Encontrei 15 cartões ativos no sistema:
+    - Cartão Premium (ID: 001) - Status: Ativo
+    - Cartão Gold (ID: 002) - Status: Ativo
+    - Cartão Platinum (ID: 003) - Status: Ativo
+    ...
+                    </div>
+                </div>
+
+                <div style="text-align: center; margin-top: 2rem;">
+                    <a href="chat.html" class="btn btn-primary">
+                        <i class="fas fa-rocket"></i>
+                        Testar o Sistema Completo
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Seção de Benefícios para Equipes -->
+    <section class="section">
+        <div class="container">
+            <div class="section-header">
+                <h2>Por Que Usar o Swagger Agent?</h2>
+                <p>
+                    Benefícios práticos para equipes de desenvolvimento que estão iniciando com IA
+                </p>
+            </div>
+
+            <div class="concepts-grid">
+                <div class="concept-card animate-on-scroll">
+                    <div class="concept-icon">
+                        <i class="fas fa-rocket"></i>
+                    </div>
+                    <h3>Produtividade Instantânea</h3>
+                    <p>
+                        Transforme suas APIs existentes em ferramentas de IA sem reescrever código. 
+                        Se você já tem especificações OpenAPI, o sistema funciona imediatamente. 
+                        Isso significa que sua equipe pode começar a experimentar com IA usando 
+                        a infraestrutura que já possui.
+                    </p>
+                </div>
+
+                <div class="concept-card animate-on-scroll">
+                    <div class="concept-icon">
+                        <i class="fas fa-graduation-cap"></i>
+                    </div>
+                    <h3>Aprendizado Prático</h3>
+                    <p>
+                        Este projeto serve como um laboratório educativo completo. Desenvolvedores 
+                        podem entender na prática como agentes de IA funcionam, como integrar 
+                        modelos de linguagem em aplicações Java, e como criar interfaces 
+                        inteligentes que realmente agregam valor.
+                    </p>
+                </div>
+
+                <div class="concept-card animate-on-scroll">
+                    <div class="concept-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <h3>Democratização da IA</h3>
+                    <p>
+                        Permite que usuários não-técnicos interajam com sistemas complexos usando 
+                        linguagem natural. Em vez de precisar conhecer endpoints, parâmetros e 
+                        formatos JSON, eles podem simplesmente conversar com a IA para obter 
+                        informações e executar operações.
+                    </p>
+                </div>
+
+                <div class="concept-card animate-on-scroll">
+                    <div class="concept-icon">
+                        <i class="fas fa-cogs"></i>
+                    </div>
+                    <h3>Arquitetura Escalável</h3>
+                    <p>
+                        O design modular permite fácil extensão para novos casos de uso. 
+                        Adicione novos microserviços, modifique prompts, integre diferentes 
+                        modelos de IA ou customize a interface - tudo foi pensado para 
+                        crescer junto com as necessidades da sua organização.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Seção Técnica -->
+    <section class="section">
+        <div class="container">
+            <div class="section-header">
+                <h2>Detalhes Técnicos</h2>
+                <p>
+                    Informações para desenvolvedores sobre a implementação e arquitetura
+                </p>
+            </div>
+
+            <div class="features-grid">
+                <div class="feature-card animate-on-scroll">
+                    <div class="feature-header">
+                        <div class="feature-icon">
+                            <i class="fab fa-java"></i>
+                        </div>
+                        <h3>Stack Tecnológico</h3>
+                    </div>
+                    <ul class="feature-list">
+                        <li>Java 17+ com Spring Boot 3.x</li>
+                        <li>Spring AI para integração com LLMs</li>
+                        <li>OpenAPI 3.0 para especificações</li>
+                        <li>WebFlux para streaming reativo</li>
+                        <li>Jackson para processamento JSON</li>
+                        <li>HTML5/CSS3/JavaScript moderno</li>
+                    </ul>
+                </div>
+
+                <div class="feature-card animate-on-scroll">
+                    <div class="feature-header">
+                        <div class="feature-icon">
+                            <i class="fas fa-code"></i>
+                        </div>
+                        <h3>Padrões de Código</h3>
+                    </div>
+                    <ul class="feature-list">
+                        <li>Arquitetura em camadas bem definidas</li>
+                        <li>Injeção de dependência com Spring</li>
+                        <li>Tratamento de exceções centralizado</li>
+                        <li>Logging estruturado e detalhado</li>
+                        <li>Documentação em português</li>
+                        <li>Código limpo e manutenível</li>
+                    </ul>
+                </div>
+
+                <div class="feature-card animate-on-scroll">
+                    <div class="feature-header">
+                        <div class="feature-icon">
+                            <i class="fas fa-database"></i>
+                        </div>
+                        <h3>Gerenciamento de Estado</h3>
+                    </div>
+                    <ul class="feature-list">
+                        <li>Memória de conversação por sessão</li>
+                        <li>Cache de metadados de ferramentas</li>
+                        <li>Sessões isoladas por usuário</li>
+                        <li>Persistência configurável</li>
+                        <li>Limpeza automática de recursos</li>
+                        <li>Monitoramento de performance</li>
+                    </ul>
+                </div>
+
+                <div class="feature-card animate-on-scroll">
+                    <div class="feature-header">
+                        <div class="feature-icon">
+                            <i class="fas fa-network-wired"></i>
+                        </div>
+                        <h3>Comunicação</h3>
+                    </div>
+                    <ul class="feature-list">
+                        <li>REST APIs com validação automática</li>
+                        <li>Server-Sent Events para streaming</li>
+                        <li>CORS configurado para desenvolvimento</li>
+                        <li>Timeout e retry configuráveis</li>
+                        <li>Compressão de respostas</li>
+                        <li>Rate limiting opcional</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Call to Action Final -->
+    <section class="section" style="background: var(--gradient-primary); color: white;">
+        <div class="container" style="text-align: center;">
+            <h2 style="color: white; margin-bottom: 1rem;">Pronto para Começar?</h2>
+            <p style="font-size: 1.125rem; margin-bottom: 2rem; opacity: 0.9;">
+                Experimente o Swagger Agent agora e veja como é fácil transformar suas APIs em ferramentas inteligentes
+            </p>
+            <div class="cta-buttons">
+                <a href="chat.html" class="btn btn-primary">
+                    <i class="fas fa-play"></i>
+                    Testar Interface de Chat
+                </a>
+                <a href="https://github.com/seu-usuario/swagger-agent" class="btn btn-secondary">
+                    <i class="fab fa-github"></i>
+                    Ver Código no GitHub
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-links">
+                <a href="#conceitos">Conceitos</a>
+                <a href="#como-funciona">Como Funciona</a>
+                <a href="#recursos">Recursos</a>
+                <a href="#demo">Demo</a>
+                <a href="chat.html">Chat</a>
+            </div>
+            <p style="color: rgba(255, 255, 255, 0.6); margin-top: 1rem;">
+                © 2024 Swagger Agent - Projeto Educativo para Demonstração de IA e APIs
+            </p>
+            <p style="color: rgba(255, 255, 255, 0.5); font-size: 0.875rem; margin-top: 0.5rem;">
+                Desenvolvido com Spring AI, OpenAPI e muito aprendizado
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        // Animação de scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        // Observar elementos com animação
+        document.querySelectorAll('.animate-on-scroll').forEach(el => {
+            observer.observe(el);
+        });
+
+        // Efeito de parallax suave no hero
+        window.addEventListener('scroll', () => {
+            const scrolled = window.pageYOffset;
+            const hero = document.querySelector('.hero');
+            if (hero) {
+                hero.style.transform = `translateY(${scrolled * 0.5}px)`;
+            }
+        });
+
+        // Smooth scroll para links internos
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Header transparente no scroll
+        window.addEventListener('scroll', () => {
+            const header = document.querySelector('.header');
+            if (window.scrollY > 100) {
+                header.style.background = 'rgba(255, 255, 255, 0.98)';
+                header.style.boxShadow = '0 2px 20px rgba(0, 0, 0, 0.1)';
+            } else {
+                header.style.background = 'rgba(255, 255, 255, 0.95)';
+                header.style.boxShadow = 'none';
+            }
+        });
+    </script>
+</body>
+</html>
+

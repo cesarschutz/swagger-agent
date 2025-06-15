@@ -1,0 +1,292 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Invoices API",
+    "description": "API para gerenciamento de faturas de cartões",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3000",
+      "description": "Servidor de desenvolvimento"
+    }
+  ],
+  "paths": {
+    "/invoices": {
+      "get": {
+        "tags": ["invoices-controller"],
+        "summary": "Lista todas as faturas",
+        "description": "Retorna uma lista de todas as faturas do sistema",
+        "operationId": "getAllInvoices",
+        "parameters": [
+          {
+            "name": "cardUuid",
+            "in": "query",
+            "description": "UUID do cartão para filtrar faturas",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "description": "Status da fatura para filtrar",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": ["ABERTA", "PAGA", "VENCIDA", "CANCELADA"]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista de faturas retornada com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Invoice"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro interno do servidor"
+          }
+        }
+      }
+    },
+    "/invoices/{uuid}": {
+      "get": {
+        "tags": ["invoices-controller"],
+        "summary": "Busca uma fatura por UUID",
+        "description": "Retorna os dados de uma fatura específica baseada no UUID fornecido",
+        "operationId": "getInvoiceByUuid",
+        "parameters": [
+          {
+            "name": "uuid",
+            "in": "path",
+            "description": "UUID único da fatura",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Fatura encontrada",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Invoice"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Fatura não encontrada"
+          },
+          "500": {
+            "description": "Erro interno do servidor"
+          }
+        }
+      }
+    },
+    "/invoices/{uuid}/pay": {
+      "post": {
+        "tags": ["invoices-controller"],
+        "summary": "Paga uma fatura",
+        "description": "Registra o pagamento de uma fatura específica",
+        "operationId": "payInvoice",
+        "parameters": [
+          {
+            "name": "uuid",
+            "in": "path",
+            "description": "UUID único da fatura a ser paga",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PayInvoiceRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Fatura paga com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Invoice"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Fatura não encontrada"
+          },
+          "400": {
+            "description": "Fatura já está paga ou dados inválidos"
+          },
+          "500": {
+            "description": "Erro interno do servidor"
+          }
+        }
+      }
+    },
+    "/invoices/{uuid}/transactions": {
+      "get": {
+        "tags": ["invoices-controller"],
+        "summary": "Lista transações de uma fatura",
+        "description": "Retorna todas as transações associadas a uma fatura específica",
+        "operationId": "getInvoiceTransactions",
+        "parameters": [
+          {
+            "name": "uuid",
+            "in": "path",
+            "description": "UUID único da fatura",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista de transações retornada com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Transaction"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Fatura não encontrada"
+          },
+          "500": {
+            "description": "Erro interno do servidor"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Invoice": {
+        "type": "object",
+        "properties": {
+          "uuid": {
+            "type": "string",
+            "description": "Identificador único da fatura"
+          },
+          "cardUuid": {
+            "type": "string",
+            "description": "UUID do cartão associado"
+          },
+          "amount": {
+            "type": "number",
+            "format": "decimal",
+            "description": "Valor total da fatura"
+          },
+          "dueDate": {
+            "type": "string",
+            "format": "date",
+            "description": "Data de vencimento da fatura"
+          },
+          "status": {
+            "$ref": "#/components/schemas/InvoiceStatus"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Data de criação da fatura"
+          },
+          "paidAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Data do pagamento (se paga)"
+          }
+        }
+      },
+      "InvoiceStatus": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": ["ABERTA", "PAGA", "VENCIDA", "CANCELADA"],
+            "description": "Status atual da fatura"
+          }
+        }
+      },
+      "PayInvoiceRequest": {
+        "type": "object",
+        "required": ["amount", "paymentMethod"],
+        "properties": {
+          "amount": {
+            "type": "number",
+            "format": "decimal",
+            "description": "Valor do pagamento"
+          },
+          "paymentMethod": {
+            "type": "string",
+            "enum": ["PIX", "BOLETO", "DEBITO_AUTOMATICO", "TRANSFERENCIA"],
+            "description": "Método de pagamento utilizado"
+          }
+        }
+      },
+      "Transaction": {
+        "type": "object",
+        "properties": {
+          "uuid": {
+            "type": "string",
+            "description": "Identificador único da transação"
+          },
+          "description": {
+            "type": "string",
+            "description": "Descrição da transação"
+          },
+          "amount": {
+            "type": "number",
+            "format": "decimal",
+            "description": "Valor da transação"
+          },
+          "date": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Data da transação"
+          },
+          "merchant": {
+            "type": "string",
+            "description": "Nome do estabelecimento"
+          },
+          "category": {
+            "type": "string",
+            "description": "Categoria da transação"
+          }
+        }
+      }
+    }
+  }
+}
+

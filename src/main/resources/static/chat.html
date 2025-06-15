@@ -20,8 +20,10 @@
             --text-muted: #6c757d;
             --border-color: #dee2e6;
             --border-radius: 0.75rem;
-            --shadow: 0 4px_12px rgba(0, 0, 0, 0.05);
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
             --transition: all 0.2s ease-in-out;
+            --success-color: #198754;
+            --warning-color: #fd7e14;
         }
 
         * {
@@ -39,7 +41,7 @@
             align-items: center;
             min-height: 100vh;
             padding: 2rem;
-            gap: 4rem;
+            gap: 2rem;
         }
         
         .logo-container {
@@ -48,15 +50,156 @@
         }
 
         .logo-container img {
-            max-width: 250px;
+            max-width: 200px;
             width: 100%;
         }
 
-        .chat-wrapper {
+        .main-container {
+            display: flex;
+            gap: 1.5rem;
             width: 100%;
-            max-width: 800px;
+            max-width: 1400px;
             height: 90vh;
             max-height: 900px;
+        }
+
+        .tools-panel {
+            width: 350px;
+            background-color: var(--bg-color);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .tools-header {
+            padding: 1rem 1.5rem;
+            background-color: var(--surface-color);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .tools-header h3 {
+            font-weight: 600;
+            color: var(--text-color);
+            font-size: 1rem;
+        }
+
+        .tools-count {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 1rem;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .tools-content {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding: 1rem;
+        }
+
+        .project-section {
+            margin-bottom: 1.5rem;
+        }
+
+        .project-header {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 0.75rem;
+            background-color: var(--surface-color);
+            border-radius: 0.5rem;
+            border: 1px solid var(--border-color);
+            cursor: pointer;
+            transition: var(--transition);
+            margin-bottom: 0.5rem;
+        }
+
+        .project-header:hover {
+            background-color: #f1f3f4;
+        }
+
+        .project-header.collapsed .project-icon {
+            transform: rotate(-90deg);
+        }
+
+        .project-icon {
+            transition: transform 0.2s ease;
+            color: var(--text-muted);
+        }
+
+        .project-name {
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: var(--text-color);
+        }
+
+        .project-tools {
+            display: block;
+            margin-left: 1rem;
+        }
+
+        .project-tools.collapsed {
+            display: none;
+        }
+
+        .tool-item {
+            padding: 0.75rem;
+            background-color: var(--surface-color);
+            border-radius: 0.5rem;
+            border: 1px solid var(--border-color);
+            margin-bottom: 0.5rem;
+            transition: var(--transition);
+            cursor: pointer;
+        }
+
+        .tool-item:hover {
+            border-color: var(--primary-color);
+            box-shadow: 0 2px 8px rgba(13, 110, 253, 0.1);
+        }
+
+        .tool-name {
+            font-weight: 600;
+            font-size: 0.85rem;
+            color: var(--text-color);
+            margin-bottom: 0.25rem;
+        }
+
+        .tool-method {
+            display: inline-block;
+            padding: 0.125rem 0.5rem;
+            border-radius: 0.25rem;
+            font-size: 0.7rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .method-get { background-color: #d1ecf1; color: #0c5460; }
+        .method-post { background-color: #d4edda; color: #155724; }
+        .method-put { background-color: #fff3cd; color: #856404; }
+        .method-delete { background-color: #f8d7da; color: #721c24; }
+
+        .tool-path {
+            font-family: 'Courier New', monospace;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+        }
+
+        .tool-description {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            line-height: 1.4;
+        }
+
+        .chat-wrapper {
+            flex-grow: 1;
             background-color: var(--bg-color);
             border-radius: var(--border-radius);
             box-shadow: var(--shadow);
@@ -68,17 +211,32 @@
 
         .header {
             padding: 1rem 1.5rem;
-            background-color: var(--bg-color);
+            background-color: var(--surface-color);
             border-bottom: 1px solid var(--border-color);
             display: flex;
-            justify-content: center;
+            justify-content: space-between;
             align-items: center;
-            position: relative;
         }
 
         .header h3 {
             font-weight: 600;
             color: var(--text-color);
+        }
+
+        .session-info {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .session-id {
+            font-family: 'Courier New', monospace;
+            background-color: var(--bg-color);
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            border: 1px solid var(--border-color);
         }
 
         .chat-messages {
@@ -174,7 +332,7 @@
         .input-container {
             padding: 1rem 1.5rem;
             border-top: 1px solid var(--border-color);
-            background-color: var(--bg-color);
+            background-color: var(--surface-color);
         }
 
         .input-form {
@@ -249,9 +407,22 @@
                 transform: scale(1.0);
             }
         }
-        .clear-button {
-            position: absolute;
-            right: 1rem;
+
+        .loading-tools {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-muted);
+        }
+
+        .loading-tools i {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
         }
 
         ::-webkit-scrollbar {
@@ -268,6 +439,22 @@
             background: var(--border-color);
         }
 
+        @media (max-width: 1200px) {
+            .main-container {
+                flex-direction: column;
+                height: auto;
+            }
+            
+            .tools-panel {
+                width: 100%;
+                max-height: 300px;
+            }
+            
+            .chat-wrapper {
+                height: 600px;
+            }
+        }
+
     </style>
 </head>
 <body>
@@ -275,20 +462,41 @@
         <img src="logo.png" alt="Company Logo">
     </div>
 
-    <div class="chat-wrapper">
-        <div class="header">
-            <h3>Chat</h3>
+    <div class="main-container">
+        <div class="tools-panel">
+            <div class="tools-header">
+                <i class="fas fa-tools"></i>
+                <h3>Ferramentas Disponíveis</h3>
+                <span class="tools-count" id="toolsCount">0</span>
+            </div>
+            <div class="tools-content" id="toolsContent">
+                <div class="loading-tools">
+                    <i class="fas fa-spinner"></i>
+                    <p>Carregando ferramentas...</p>
+                </div>
+            </div>
         </div>
-        <div class="chat-messages" id="chatMessages">
-            <!-- Messages will be appended here -->
-        </div>
-        <div class="input-container">
-            <form class="input-form" id="chatForm">
-                <textarea id="messageInput" placeholder="Digite sua mensagem..." rows="1" required></textarea>
-                <button id="sendButton" type="submit">
-                    <i class="fa-solid fa-paper-plane"></i>
-                </button>
-            </form>
+
+        <div class="chat-wrapper">
+            <div class="header">
+                <h3>Chat com IA</h3>
+                <div class="session-info">
+                    <i class="fas fa-user"></i>
+                    <span>Sessão:</span>
+                    <span class="session-id" id="sessionId"></span>
+                </div>
+            </div>
+            <div class="chat-messages" id="chatMessages">
+                <!-- Messages will be appended here -->
+            </div>
+            <div class="input-container">
+                <form class="input-form" id="chatForm">
+                    <textarea id="messageInput" placeholder="Digite sua mensagem..." rows="1" required></textarea>
+                    <button id="sendButton" type="submit">
+                        <i class="fa-solid fa-paper-plane"></i>
+                    </button>
+                </form>
+            </div>
         </div>
     </div>
 
@@ -445,3 +653,359 @@
     </script>
 </body>
 </html> 
+    <script>
+        // Gera um ID de sessão único para este usuário
+        const sessionId = 'session_' + Math.random().toString(36).substr(2, 9) + '_' + Date.now();
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            const chatMessages = document.getElementById('chatMessages');
+            const messageInput = document.getElementById('messageInput');
+            const chatForm = document.getElementById('chatForm');
+            const sendButton = document.getElementById('sendButton');
+            const sessionIdElement = document.getElementById('sessionId');
+            const toolsContent = document.getElementById('toolsContent');
+            const toolsCount = document.getElementById('toolsCount');
+            
+            // Exibe o ID da sessão
+            sessionIdElement.textContent = sessionId.substring(0, 12) + '...';
+            
+            const apiUrl = window.location.origin + '/api/chat';
+            const streamApiUrl = window.location.origin + '/api/chat/stream';
+            const toolsApiUrl = window.location.origin + '/api/tools';
+
+            // Carrega as ferramentas disponíveis
+            loadAvailableTools();
+
+            // Auto-resize textarea
+            messageInput.addEventListener('input', function() {
+                this.style.height = 'auto';
+                this.style.height = (this.scrollHeight) + 'px';
+            });
+
+            // Handle form submission
+            chatForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                sendMessage();
+            });
+
+            // Send with Enter (but allow new lines with Shift+Enter)
+            messageInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    sendMessage();
+                }
+            });
+
+            function loadAvailableTools() {
+                fetch(toolsApiUrl)
+                    .then(response => response.json())
+                    .then(data => {
+                        displayTools(data);
+                    })
+                    .catch(error => {
+                        console.error('Erro ao carregar ferramentas:', error);
+                        toolsContent.innerHTML = `
+                            <div class="loading-tools">
+                                <i class="fas fa-exclamation-triangle" style="color: var(--warning-color);"></i>
+                                <p>Erro ao carregar ferramentas</p>
+                            </div>
+                        `;
+                    });
+            }
+
+            function displayTools(data) {
+                toolsCount.textContent = data.totalTools;
+                
+                if (data.totalTools === 0) {
+                    toolsContent.innerHTML = `
+                        <div class="loading-tools">
+                            <i class="fas fa-info-circle" style="color: var(--text-muted);"></i>
+                            <p>Nenhuma ferramenta disponível</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                let html = '';
+                Object.entries(data.toolsByProject).forEach(([projectName, tools]) => {
+                    html += `
+                        <div class="project-section">
+                            <div class="project-header" onclick="toggleProject(this)">
+                                <i class="fas fa-chevron-down project-icon"></i>
+                                <span class="project-name">${projectName}</span>
+                                <span style="margin-left: auto; font-size: 0.8rem; color: var(--text-muted);">${tools.length}</span>
+                            </div>
+                            <div class="project-tools">
+                    `;
+                    
+                    tools.forEach(tool => {
+                        const methodClass = `method-${tool.method.toLowerCase()}`;
+                        html += `
+                            <div class="tool-item" onclick="insertToolExample('${tool.name}')">
+                                <div class="tool-name">${tool.name}</div>
+                                <div class="tool-method ${methodClass}">${tool.method}</div>
+                                <div class="tool-path">${tool.path}</div>
+                                <div class="tool-description">${tool.description}</div>
+                            </div>
+                        `;
+                    });
+                    
+                    html += `
+                            </div>
+                        </div>
+                    `;
+                });
+
+                toolsContent.innerHTML = html;
+            }
+
+            window.toggleProject = function(header) {
+                header.classList.toggle('collapsed');
+                const tools = header.nextElementSibling;
+                tools.classList.toggle('collapsed');
+            };
+
+            window.insertToolExample = function(toolName) {
+                const exampleText = `Como usar a ferramenta "${toolName}"?`;
+                messageInput.value = exampleText;
+                messageInput.focus();
+                messageInput.style.height = 'auto';
+                messageInput.style.height = (messageInput.scrollHeight) + 'px';
+            };
+
+            function sendMessage() {
+                const messageText = messageInput.value.trim();
+                if (!messageText) return;
+                
+                addMessage(messageText, 'user');
+                messageInput.value = '';
+                messageInput.style.height = 'auto';
+                
+                sendButton.disabled = true;
+                
+                // Usa streaming para melhor experiência
+                sendMessageWithStreaming(messageText);
+            }
+
+            function sendMessageWithStreaming(messageText) {
+                showTypingIndicator();
+                
+                fetch(streamApiUrl, {
+                    method: 'POST',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Accept': 'text/event-stream'
+                    },
+                    body: JSON.stringify({ 
+                        message: messageText,
+                        sessionId: sessionId 
+                    })
+                })
+                .then(response => {
+                    hideTypingIndicator();
+                    
+                    if (!response.ok) {
+                        throw new Error(`HTTP ${response.status}`);
+                    }
+                    
+                    const reader = response.body.getReader();
+                    const decoder = new TextDecoder();
+                    let botMessageDiv = null;
+                    let botContentDiv = null;
+                    let accumulatedText = '';
+                    
+                    function readStream() {
+                        reader.read().then(({ done, value }) => {
+                            if (done) {
+                                sendButton.disabled = false;
+                                messageInput.focus();
+                                return;
+                            }
+                            
+                            const chunk = decoder.decode(value);
+                            const lines = chunk.split('\n');
+                            
+                            lines.forEach(line => {
+                                if (line.startsWith('data: ')) {
+                                    const data = line.substring(6);
+                                    
+                                    if (data === '[DONE]') {
+                                        sendButton.disabled = false;
+                                        messageInput.focus();
+                                        return;
+                                    }
+                                    
+                                    if (data.trim()) {
+                                        accumulatedText += data;
+                                        
+                                        // Cria a mensagem do bot se ainda não existe
+                                        if (!botMessageDiv) {
+                                            botMessageDiv = createBotMessage();
+                                            botContentDiv = botMessageDiv.querySelector('.message-content');
+                                            chatMessages.appendChild(botMessageDiv);
+                                        }
+                                        
+                                        // Atualiza o conteúdo com markdown
+                                        const contentWithoutTime = botContentDiv.innerHTML.replace(/<div class="message-time">.*?<\/div>$/, '');
+                                        botContentDiv.innerHTML = marked.parse(accumulatedText) + 
+                                            `<div class="message-time">${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>`;
+                                        
+                                        // Scroll para baixo
+                                        chatMessages.scrollTop = chatMessages.scrollHeight;
+                                    }
+                                }
+                            });
+                            
+                            readStream();
+                        }).catch(error => {
+                            console.error('Erro no streaming:', error);
+                            hideTypingIndicator();
+                            addMessage('Erro ao receber resposta em streaming.', 'bot');
+                            sendButton.disabled = false;
+                            messageInput.focus();
+                        });
+                    }
+                    
+                    readStream();
+                })
+                .catch(error => {
+                    console.error('Erro:', error);
+                    hideTypingIndicator();
+                    addMessage('Erro de comunicação. Tentando método alternativo...', 'bot');
+                    
+                    // Fallback para método síncrono
+                    sendMessageSync(messageText);
+                });
+            }
+
+            function sendMessageSync(messageText) {
+                fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        message: messageText,
+                        sessionId: sessionId 
+                    })
+                })
+                .then(async response => {
+                    if (response.ok) {
+                        const data = await response.json();
+                        if (data && data.content) {
+                            addMessage(data.content, 'bot');
+                        } else {
+                            addMessage('Desculpe, recebi uma resposta inesperada do servidor.', 'bot');
+                        }
+                    } else {
+                        const errorText = await response.text();
+                        console.error("Server error:", response.status, errorText);
+                        addMessage('Desculpe, ocorreu um erro ao processar sua mensagem.', 'bot');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    addMessage('Erro de comunicação com o servidor.', 'bot');
+                })
+                .finally(() => {
+                    sendButton.disabled = false;
+                    messageInput.focus();
+                });
+            }
+
+            function createBotMessage() {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = 'message bot';
+
+                const avatarDiv = document.createElement('div');
+                avatarDiv.className = 'avatar';
+                
+                const avatarImg = document.createElement('img');
+                avatarImg.src = 'icone.png';
+                avatarImg.alt = 'bot avatar';
+                avatarDiv.appendChild(avatarImg);
+
+                const contentDiv = document.createElement('div');
+                contentDiv.className = 'message-content';
+
+                messageDiv.appendChild(avatarDiv);
+                messageDiv.appendChild(contentDiv);
+                
+                return messageDiv;
+            }
+
+            function addMessage(text, type) {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = `message ${type}`;
+
+                const avatarDiv = document.createElement('div');
+                avatarDiv.className = 'avatar';
+                
+                const avatarImg = document.createElement('img');
+                avatarImg.src = type === 'bot' ? 'icone.png' : 'data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=';
+                avatarImg.alt = `${type} avatar`;
+                if(type === 'user') {
+                    avatarDiv.style.visibility = 'hidden';
+                }
+
+                avatarDiv.appendChild(avatarImg);
+
+                const contentDiv = document.createElement('div');
+                contentDiv.className = 'message-content';
+
+                const timeDiv = document.createElement('div');
+                timeDiv.className = 'message-time';
+                timeDiv.textContent = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+                if (type === 'bot') {
+                    contentDiv.innerHTML = marked.parse(text);
+                } else {
+                    const p = document.createElement('p');
+                    p.textContent = text;
+                    contentDiv.appendChild(p);
+                }
+                
+                contentDiv.appendChild(timeDiv);
+
+                messageDiv.appendChild(avatarDiv);
+                messageDiv.appendChild(contentDiv);
+                chatMessages.appendChild(messageDiv);
+
+                // Scroll to bottom
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+
+            function showTypingIndicator() {
+                const indicator = document.createElement('div');
+                indicator.id = 'typing-indicator';
+                indicator.className = 'message bot';
+                indicator.innerHTML = `
+                    <div class="avatar">
+                        <img src="icone.png" alt="bot avatar">
+                    </div>
+                    <div class="typing-indicator">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                `;
+                chatMessages.appendChild(indicator);
+                indicator.querySelector('.typing-indicator').style.display = 'block';
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+
+            function hideTypingIndicator() {
+                const indicator = document.getElementById('typing-indicator');
+                if (indicator) {
+                    indicator.remove();
+                }
+            }
+
+            // Adiciona mensagem de boas-vindas
+            addMessage(`Olá! Sou seu assistente de IA com acesso a ${toolsCount.textContent || 'várias'} ferramentas. Como posso ajudar hoje?`, 'bot');
+
+            // Initial focus
+            messageInput.focus();
+        });
+    </script>
+</body>
+</html>
+
