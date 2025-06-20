@@ -961,10 +961,6 @@
                         <div class="stat-label">Ferramentas Dinâmicas</div>
                     </div>
                 </div>
-
-                <div style="text-align:center;">
-                    <img src="src/main/resources/static/img/fluxo.png" alt="Fluxo Swagger Agent" style="max-width: 100%; width: 400px; height: auto; border-radius: 1rem;">
-                </div>
             </div>
         </section>
 
@@ -1193,20 +1189,117 @@ Content-Type: application/json
         <!-- Spring AI Tools Section -->
         <section id="spring-ai-tools" class="section" style="background: var(--light-color);">
             <div class="container">
-                <h2 class="section-title scroll-animate">🔧 Spring AI & Ferramentas Dinâmicas</h2>
+                <h2 class="section-title scroll-animate">🔧 Arquitetura</h2>
                 <p class="section-subtitle scroll-animate">
-                    Como o Swagger Agent utiliza o Spring AI para conectar IA com APIs de forma inteligente
+                    Entenda como o Swagger Agent funciona e como utiliza o Spring AI para conectar IA com APIs de forma inteligente
                 </p>
 
-                <div class="features-grid scroll-animate">
-                    <div class="feature-card" style="text-align: center;">
-                        <h3 class="feature-title">🚀 Spring AI - Fundação Inteligente</h3>
-                        <img src="src/main/resources/static/img/springai.png" alt="Spring AI Framework" style="max-width: 100%; height: auto; border-radius: 0.5rem; margin-top: 1rem;">
+                <!-- Nova seção: Como o Projeto Funciona -->
+                <div class="feature-card scroll-animate" style="margin-bottom: 3rem;">
+                    <h3 class="feature-title">🏗️ Como o Swagger Agent Funciona</h3>
+                    <p class="feature-description" style="text-align: left; margin-bottom: 2rem;">
+                        O Swagger Agent é um intermediário inteligente que conecta modelos de linguagem (LLMs) a APIs externas através de especificações OpenAPI. O processo funciona em duas fases principais:
+                    </p>
+                    
+                    <div style="text-align: left; margin-bottom: 2rem;">
+                        <h4 style="color: var(--primary-color); margin-bottom: 1rem; font-weight: 600;">📋 Fase 1: Inicialização e Geração de Ferramentas</h4>
+                        <p style="margin-bottom: 1rem; line-height: 1.6;">
+                            Durante a inicialização da aplicação, o Swagger Agent:
+                        </p>
+                        <ul style="margin-left: 2rem; margin-bottom: 1.5rem;">
+                            <li>Lê as especificações OpenAPI da pasta <code>openapi-specs/</code></li>
+                            <li>Analisa cada endpoint e gera automaticamente "ferramentas" (tools) que podem ser invocadas por LLMs</li>
+                            <li>Registra essas ferramentas como beans do Spring, tornando-as disponíveis para o sistema</li>
+                        </ul>
+                        
+                        <h4 style="color: var(--primary-color); margin-bottom: 1rem; font-weight: 600;">🔄 Fase 2: Execução e Interação</h4>
+                        <p style="margin-bottom: 1rem; line-height: 1.6;">
+                            Durante uma conversa com o usuário:
+                        </p>
+                        <ul style="margin-left: 2rem; margin-bottom: 1.5rem;">
+                            <li>O usuário envia uma pergunta ou solicitação via interface de chat</li>
+                            <li>O LLM analisa a pergunta e decide qual ferramenta usar para responder</li>
+                            <li>O agente executa a ferramenta correspondente, fazendo a chamada para a API externa</li>
+                            <li>O resultado é processado e retornado ao LLM, que gera uma resposta final para o usuário</li>
+                        </ul>
                     </div>
                     
-                    <div class="feature-card" style="text-align: center;">
-                        <h3 class="feature-title">🔄 Fluxo de Execução</h3>
-                        <img src="src/main/resources/static/img/toolSpring.png" alt="Fluxo de Tools no Spring AI" style="max-width: 100%; height: auto; border-radius: 0.5rem; margin-top: 1rem;">
+                    <div style="text-align: center;">
+                        <h4 style="color: var(--primary-color); margin-bottom: 1.5rem; font-weight: 600;">📊 Arquitetura do Sistema</h4>
+                        <div class="mermaid" style="background-color: var(--light-color); padding: 2rem; border-radius: 1rem; box-shadow: var(--shadow); width: 100%; margin: 0 auto;">
+                            graph TD
+                                subgraph "Interface do Usuário"
+                                    A["💻 Frontend<br>(Interface de Chat)"]
+                                end
+                            
+                                subgraph "Backend (Swagger Agent)"
+                                    B["Controller<br>(/api/chat)"]
+                                    C["Orquestrador<br>(ChatService)"]
+                                    D["Gerador de Ferramentas<br>(OpenAPI Parser)"]
+                                    E["Executor de Ferramentas"]
+                                    F["Modelo de IA<br>(Spring AI)"]
+                                end
+                            
+                                subgraph "Configuração"
+                                    G["📄 Specs OpenAPI<br>(.yaml)"]
+                                end
+                            
+                                subgraph "Sistemas Externos"
+                                    H["🌐 API Externa<br>(Ex: Petstore)"]
+                                    I["☁️ Provedor LLM<br>(OpenAI, Ollama, etc.)"]
+                                end
+                            
+                                %% Fluxo de Interação do Usuário
+                                A -- "1. Prompt do Usuário" --> B
+                                B -- "2. Repassa" --> C
+                                C -- "3. Consulta" --> F
+                                F -- "4. Decide usar ferramenta" --> C
+                                C -- "5. Solicita execução" --> E
+                                E -- "6. Chama API" --> H
+                                H -- "7. Resposta da API" --> E
+                                E -- "8. Retorna resultado" --> C
+                                C -- "9. Envia para LLM com resultado" --> F
+                                F -- "10. Gera resposta final" --> C
+                                C -- "11. Devolve para UI" --> A
+                            
+                                %% Fluxo de Setup
+                                G -- "Lê na inicialização" --> D
+                                D -- "Gera e registra Ferramentas" --> E
+                            
+                                %% Conexão com LLM
+                                F-.->I
+                            
+                                %% Estilos
+                                classDef user fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
+                                classDef backend fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
+                                classDef config fill:#e8f5e8,stroke:#388e3c,stroke-width:2px
+                                classDef external fill:#ffebee,stroke:#d32f2f,stroke-width:2px
+                            
+                                class A user
+                                class B,C,D,E,F backend
+                                class G config
+                                class H,I external
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Seção Spring AI -->
+                <div class="feature-card scroll-animate" style="margin-bottom: 3rem;">
+                    <h3 class="feature-title">🚀 Spring AI - Base Tecnológica</h3>
+                    <p class="feature-description" style="text-align: left; margin-bottom: 2rem;">
+                        O Swagger Agent utiliza o Spring AI como base para toda a comunicação com modelos de linguagem. Esta escolha proporciona uma abstração robusta e flexível, permitindo a integração com diversos provedores de IA de forma transparente.
+                    </p>
+                    
+                    <div class="features-grid scroll-animate">
+                        <div class="feature-card" style="text-align: center;">
+                            <h3 class="feature-title">🚀 Spring AI - Framework de IA</h3>
+                            <img src="src/main/resources/static/img/springai.png" alt="Spring AI Framework" style="max-width: 100%; height: auto; border-radius: 0.5rem; margin-top: 1rem;">
+                        </div>
+                        
+                        <div class="feature-card" style="text-align: center;">
+                            <h3 class="feature-title">🔄 Fluxo de Execução</h3>
+                            <img src="src/main/resources/static/img/toolSpring.png" alt="Fluxo de Tools no Spring AI" style="max-width: 100%; height: auto; border-radius: 0.5rem; margin-top: 1rem;">
+                        </div>
                     </div>
                 </div>
 
@@ -1274,13 +1367,13 @@ Content-Type: application/json
                 </div>
 
                 <div class="feature-card scroll-animate" style="margin-top: 2rem;">
-                    <h3 class="feature-title">📋 Sequência de Execução de Ferramentas</h3>
+                    <h3 class="feature-title">📋 Implementação Técnica com Spring AI</h3>
                     <div style="text-align: left; margin-top: 1rem;">
                         <p style="margin-bottom: 1rem; line-height: 1.6;">
-                            O Spring AI suporta chamadas de ferramentas através de abstrações flexíveis que permitem definir, resolver e executar ferramentas de forma consistente.
+                            O Spring AI suporta chamadas de ferramentas através de abstrações flexíveis que permitem definir, resolver e executar ferramentas de forma consistente. No Swagger Agent, implementamos este fluxo da seguinte forma:
                         </p>
                         
-                        <h4 style="color: var(--primary-color); margin: 1.5rem 0 1rem 0; font-weight: 600;">📝 Fluxo no Swagger Agent:</h4>
+                        <h4 style="color: var(--primary-color); margin: 1.5rem 0 1rem 0; font-weight: 600;">🔧 Fluxo Detalhado de Execução:</h4>
                         
                         <ol style="list-style: none; padding: 0; counter-reset: step-counter;">
                             <li style="counter-increment: step-counter; margin-bottom: 1rem; padding-left: 2rem; position: relative;">
@@ -1308,6 +1401,13 @@ Content-Type: application/json
                                 <strong>Resposta Final:</strong> O modelo gera a resposta final usando o resultado da ferramenta como contexto.
                             </li>
                         </ol>
+                        
+                        <div style="background-color: #f8fafc; padding: 1.5rem; border-radius: 0.5rem; margin-top: 2rem; border-left: 4px solid var(--primary-color);">
+                            <h5 style="color: var(--primary-color); margin-bottom: 1rem; font-weight: 600;">💡 Diferencial do Spring AI</h5>
+                            <p style="margin-bottom: 0; line-height: 1.6;">
+                                A principal vantagem do Spring AI neste contexto é a <strong>abstração unificada</strong>. Independentemente do provedor de IA escolhido (OpenAI, Ollama, etc.), o código de execução de ferramentas permanece o mesmo, facilitando a manutenção e permitindo trocar provedores sem alterar a lógica de negócio.
+                            </p>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -1346,6 +1446,13 @@ Content-Type: application/json
     </footer>
 
     <!-- JavaScript -->
+    <script type="module">
+        // Import Mermaid
+        import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+
+        // Initialize Mermaid
+        mermaid.initialize({ startOnLoad: true });
+    </script>
     <script>
         // Mobile menu toggle
         const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
