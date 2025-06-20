@@ -417,8 +417,14 @@ public class OpenApiParserService {
             return null;
         }
         Schema<?> resolvedSchema = resolveSchema(mediaType.getSchema(), openAPI);
-        // Extrai o exemplo do mediaType. Se não houver, o campo será nulo.
+
         Object example = mediaType.getExample();
+
+        if (example == null && mediaType.getExamples() != null && !mediaType.getExamples().isEmpty()) {
+            // Tenta pegar o primeiro exemplo da lista de exemplos se o campo 'example' estiver vazio.
+            example = mediaType.getExamples().values().iterator().next().getValue();
+        }
+
         return new OpenApiMediaType(resolvedSchema, example, mediaType.getExamples());
     }
 
