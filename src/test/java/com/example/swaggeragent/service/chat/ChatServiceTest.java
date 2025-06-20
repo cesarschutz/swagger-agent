@@ -9,7 +9,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.ai.openai.OpenAiChatModel;
+import org.springframework.ai.chat.model.ChatModel;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 class ChatServiceTest {
     
-    @Mock private OpenAiChatModel chatModel;
+    @Mock private ChatModel chatModel;
     @Mock private OpenApiParserService openApiParserService;
     @Mock private DynamicToolGeneratorService dynamicToolGeneratorService;
     @Mock private SystemPromptService systemPromptService;

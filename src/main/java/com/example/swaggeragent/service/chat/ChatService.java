@@ -6,8 +6,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
 import org.springframework.ai.chat.memory.InMemoryChatMemory;
+import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.ai.model.function.FunctionCallback;
-import org.springframework.ai.openai.OpenAiChatModel;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 
@@ -52,7 +52,7 @@ public class ChatService {
     private static final Logger log = LoggerFactory.getLogger(ChatService.class);
 
     // Dependências injetadas para o funcionamento do serviço.
-    private final OpenAiChatModel chatModel;
+    private final ChatModel chatModel;
     private final OpenApiParserService openApiParserService;
     private final DynamicToolGeneratorService dynamicToolGeneratorService;
     private final SystemPromptService systemPromptService;
@@ -72,7 +72,7 @@ public class ChatService {
     /**
      * Construtor para injeção de todas as dependências necessárias.
      *
-     * @param chatModel                  o modelo de chat da OpenAI.
+     * @param chatModel                  o modelo de chat (OpenAI ou Ollama).
      * @param openApiParserService       o serviço para analisar arquivos OpenAPI.
      * @param dynamicToolGeneratorService o serviço para criar ferramentas dinâmicas.
      * @param systemPromptService        o serviço para gerar o prompt de sistema.
@@ -81,7 +81,7 @@ public class ChatService {
      * @param auditService               o serviço de auditoria.
      */
     public ChatService(
-            OpenAiChatModel chatModel,
+            ChatModel chatModel,
             OpenApiParserService openApiParserService,
             DynamicToolGeneratorService dynamicToolGeneratorService,
             SystemPromptService systemPromptService,

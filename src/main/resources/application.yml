@@ -1,6 +1,9 @@
 spring:
   config:
     import: "optional:classpath:api.properties"
+  main:
+    # Permite sobrescrever beans do Spring caso haja conflito de nomes (ex: customização de IA)
+    allow-bean-definition-overriding: true
   ai:
     openai:
       api-key: ${OPENAI_API_KEY}
@@ -16,12 +19,14 @@ spring:
           model: ${SPRING_AI_OLLAMA_CHAT_OPTIONS_MODEL:qwen2.5:0.5b}
           temperature: 0.7
 
+app:
+  ai:
+    provider: ${AI_PROVIDER:openai}  # Valores possíveis: "openai" ou "ollama"
+  tool:
+    logging:
+      enabled: true
+
 # Logging configuration
 logging:
   level:
     root: INFO
-
-app:
-  tool:
-    logging:
-      enabled: true

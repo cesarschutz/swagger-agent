@@ -862,6 +862,7 @@
             <ul class="nav-links">
                 <li><a href="#features">✨ Funcionalidades</a></li>
                 <li><a href="#quick-start">🚀 Quick Start</a></li>
+                <li><a href="#ai-providers">🤖 Provedores IA</a></li>
                 <li><a href="#interface">🖥️ Interface</a></li>
                 <li><a href="#ollama">🧑‍💻 Modelos Locais</a></li>
                 <li><a href="#api">📚 API</a></li>
@@ -1008,6 +1009,75 @@ export OPENAI_API_KEY="sua_chave_openai_aqui"
             </div>
         </section>
 
+        <!-- AI Providers Section -->
+        <section id="ai-providers" class="section">
+            <div class="container">
+                <h2 class="section-title scroll-animate">🤖 Configuração de Provedores de IA</h2>
+                <p class="section-subtitle scroll-animate">
+                    Escolha entre OpenAI ou Ollama com configuração simples
+                </p>
+
+                <div class="features-grid">
+                    <div class="feature-card scroll-animate">
+                        <div class="feature-icon">
+                            <i class="fas fa-cloud"></i>
+                        </div>
+                        <h3 class="feature-title">🚀 OpenAI (Padrão)</h3>
+                        <p class="feature-description">
+                            Use modelos da OpenAI como GPT-4. Requer chave de API e conexão com internet.
+                        </p>
+                        <div class="code-section" style="margin-top: 1rem;">
+                            <pre><span class="highlight"># Configuração OpenAI</span>
+export AI_PROVIDER=openai
+export OPENAI_API_KEY="sua_chave_openai_aqui"
+
+# Ou no application.yml
+app:
+  ai:
+    provider: openai</pre>
+                        </div>
+                    </div>
+
+                    <div class="feature-card scroll-animate">
+                        <div class="feature-icon">
+                            <i class="fas fa-server"></i>
+                        </div>
+                        <h3 class="feature-title">🏠 Ollama (Local)</h3>
+                        <p class="feature-description">
+                            Use modelos locais via Ollama. Funciona offline e com maior privacidade.
+                        </p>
+                        <div class="code-section" style="margin-top: 1rem;">
+                            <pre><span class="highlight"># Configuração Ollama</span>
+export AI_PROVIDER=ollama
+export SPRING_AI_OLLAMA_BASE_URL=http://localhost:11434
+export SPRING_AI_OLLAMA_CHAT_OPTIONS_MODEL="qwen2.5:0.5b"
+
+# Ou no application.yml
+app:
+  ai:
+    provider: ollama</pre>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="feature-card scroll-animate" style="margin-top: 2rem;">
+                    <h3 class="feature-title">🔄 Troca de Provedores</h3>
+                    <p class="feature-description">
+                        Para trocar entre provedores, simplesmente altere a propriedade <code>AI_PROVIDER</code>:
+                    </p>
+                    <div class="code-section" style="margin-top: 1rem;">
+                        <pre><span class="highlight"># Usar OpenAI</span>
+export AI_PROVIDER=openai
+
+<span class="highlight"># Usar Ollama</span>
+export AI_PROVIDER=ollama
+
+<span class="highlight"># Importante: Reinicie a aplicação após alterar o provedor</span></pre>
+                    </div>
+                </div>
+            </div>
+        </section>
+
         <!-- Interface Section -->
         <section id="interface" class="section">
             <div class="container">
@@ -1081,18 +1151,28 @@ export OPENAI_API_KEY="sua_chave_openai_aqui"
 <pre><span class="highlight"># 1. Suba o Ollama com Docker</span>
 docker run -d --name ollama -p 11434:11434 ollama/ollama:latest
 
-<span class="highlight"># 2. Baixe um modelo (exemplo: Qwen 0.5b)</span>
-docker exec -it ollama ollama pull qwen:0.5b
+<span class="highlight"># 2. Baixe um modelo (exemplo: Qwen 2.5 0.5b)</span>
+docker exec -it ollama ollama pull qwen2.5:0.5b
 
 <span class="highlight"># 3. Configure o projeto para usar o Ollama</span>
+export AI_PROVIDER=ollama
 export SPRING_AI_OLLAMA_BASE_URL=http://localhost:11434
-export SPRING_AI_OLLAMA_CHAT_OPTIONS_MODEL="qwen:0.5b"
-export OPENAI_API_KEY=""  # Pode ficar vazio</pre>
+export SPRING_AI_OLLAMA_CHAT_OPTIONS_MODEL="qwen2.5:0.5b"
+
+<span class="highlight"># 4. Execute a aplicação</span>
+./mvnw spring-boot:run</pre>
                 </div>
                 <div class="feature-card scroll-animate" style="margin-top:2rem;">
-                    <h3 class="feature-title">ℹ️ Dica</h3>
+                    <h3 class="feature-title">ℹ️ Configuração de Provedores</h3>
                     <p class="feature-description">
-                        Você pode substituir <code>qwen:0.5b</code> por outro modelo suportado pelo Ollama (ex: <code>llama2</code>, <code>mistral</code>, etc).
+                        O Swagger Agent suporta múltiplos provedores de IA. Use a propriedade <code>AI_PROVIDER</code> para escolher entre:
+                    </p>
+                    <ul style="margin-top: 1rem; padding-left: 2rem;">
+                        <li><strong>openai</strong> - Usa a API da OpenAI (padrão)</li>
+                        <li><strong>ollama</strong> - Usa modelos locais via Ollama</li>
+                    </ul>
+                    <p style="margin-top: 1rem;">
+                        Você pode substituir <code>qwen2.5:0.5b</code> por outro modelo suportado pelo Ollama (ex: <code>llama2</code>, <code>mistral</code>, etc).
                     </p>
                 </div>
             </div>

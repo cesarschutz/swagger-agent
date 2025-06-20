@@ -27,6 +27,7 @@
 - [✨ Funcionalidades](#-funcionalidades)
 - [🚀 Quick Start](#-quick-start)
 - [🏗️ Arquitetura](#️-arquitetura)
+- [🤖 Configuração de Provedores de IA](#-configuração-de-provedores-de-ia)
 - [🧑‍💻 Usando com Modelo Local](#-usando-com-modelo-local-ollama)
 - [📚 API Reference](#-api-reference)
 - [🔧 Configuração](#-configuração)
@@ -38,6 +39,7 @@
 ### 🚀 Chat Inteligente
 - Comunicação natural com modelos da OpenAI ou LLMs locais via `/api/chat`
 - Memória de sessão para manter contexto entre conversas
+- **Suporte a múltiplos provedores de IA**: OpenAI e Ollama com troca fácil via configuração
 
 ### 🖥️ Interface Web Moderna
 
@@ -70,7 +72,7 @@
 
 - Java 21 ou superior
 - Maven 3.6+
-- OpenAI API Key (opcional se usar modelo local)
+- OpenAI API Key (se usar OpenAI) ou Ollama (se usar modelo local)
 
 ### ⚡ Instalação
 
@@ -84,10 +86,7 @@ cd swagger-agent
 - Coloque seus arquivos `.json` ou `.yaml` na pasta `openapi-specs/`
 - Exemplo incluído: `openapi-specs/petstore/petstore.yaml`
 
-3. Configure a chave da OpenAI (se necessário):
-```bash
-export OPENAI_API_KEY="sua_chave_openai_aqui"
-```
+3. Configure o provedor de IA (veja seção [Configuração de Provedores de IA](#-configuração-de-provedores-de-ia))
 
 4. Execute a aplicação:
 ```bash
@@ -126,6 +125,69 @@ src/
 └── openapi-specs/          # Especificações OpenAPI
 ```
 
+## 🤖 Configuração de Provedores de IA
+
+O Swagger Agent suporta múltiplos provedores de IA com configuração simples. Apenas **um provedor será carregado por vez**, definido pela propriedade `app.ai.provider`.
+
+### 🔧 Propriedade de Configuração
+
+```yaml
+app:
+  ai:
+    provider: ${AI_PROVIDER:openai}  # Valores: "openai" ou "ollama"
+```
+
+### 🚀 OpenAI (Padrão)
+
+**Configuração:**
+```bash
+# Via variável de ambiente
+export AI_PROVIDER=openai
+export OPENAI_API_KEY="sua_chave_openai_aqui"
+
+# Ou no application.yml
+app:
+  ai:
+    provider: openai
+```
+
+**Requisitos:**
+- Chave da API OpenAI configurada
+- Conexão com internet
+
+### 🏠 Ollama (Modelo Local)
+
+**Configuração:**
+```bash
+# Via variável de ambiente
+export AI_PROVIDER=ollama
+export SPRING_AI_OLLAMA_BASE_URL=http://localhost:11434
+export SPRING_AI_OLLAMA_CHAT_OPTIONS_MODEL="qwen2.5:0.5b"
+
+# Ou no application.yml
+app:
+  ai:
+    provider: ollama
+```
+
+**Requisitos:**
+- Servidor Ollama rodando
+- Modelo baixado no Ollama
+
+### 🔄 Troca de Provedores
+
+Para trocar entre provedores, simplesmente altere a propriedade `app.ai.provider`:
+
+```bash
+# Usar OpenAI
+export AI_PROVIDER=openai
+
+# Usar Ollama
+export AI_PROVIDER=ollama
+```
+
+**Importante:** A aplicação deve ser reiniciada após alterar o provedor.
+
 ## 🧑‍💻 Usando com Modelo Local (Ollama)
 
 ### 1. Inicie o Ollama
@@ -135,13 +197,19 @@ docker run -d --name ollama -p 11434:11434 ollama/ollama:latest
 
 ### 2. Baixe um modelo
 ```bash
-docker exec -it ollama ollama pull qwen:0.5b
+docker exec -it ollama ollama pull qwen2.5:0.5b
 ```
 
 ### 3. Configure o ambiente
 ```bash
+export AI_PROVIDER=ollama
 export SPRING_AI_OLLAMA_BASE_URL=http://localhost:11434
-export SPRING_AI_OLLAMA_CHAT_OPTIONS_MODEL="qwen:0.5b"
+export SPRING_AI_OLLAMA_CHAT_OPTIONS_MODEL="qwen2.5:0.5b"
+```
+
+### 4. Execute a aplicação
+```bash
+./mvnw spring-boot:run
 ```
 
 ## 📚 API Reference
@@ -172,19 +240,38 @@ curl -X POST http://localhost:8080/api/chat \
 
 | Variável | Descrição | Padrão |
 |----------|-----------|--------|
+| `AI_PROVIDER` | Provedor de IA a ser utilizado | `openai` |
 | `OPENAI_API_KEY` | Chave da API OpenAI | - |
 | `SPRING_AI_OLLAMA_BASE_URL` | URL base do Ollama | `http://localhost:11434` |
-| `SPRING_AI_OLLAMA_CHAT_OPTIONS_MODEL` | Modelo do Ollama | `qwen:0.5b` |
+| `SPRING_AI_OLLAMA_CHAT_OPTIONS_MODEL` | Modelo do Ollama | `qwen2.5:0.5b` |
 
 ### application.yml
 ```yaml
+# Configuração do provedor de IA
+app:
+  ai:
+    provider: ${AI_PROVIDER:openai}  # "openai" ou "ollama"
+
+# Configurações OpenAI
+spring:
+  ai:
+    openai:
+      api-key: ${OPENAI_API_KEY}
+      chat:
+        options:
+          model: gpt-4o-mini
+          temperature: 0.7
+          max-tokens: 2048
+
+# Configurações Ollama
 spring:
   ai:
     ollama:
       base-url: ${SPRING_AI_OLLAMA_BASE_URL:http://localhost:11434}
       chat:
         options:
-          model: ${SPRING_AI_OLLAMA_CHAT_OPTIONS_MODEL:qwen:0.5b}
+          model: ${SPRING_AI_OLLAMA_CHAT_OPTIONS_MODEL:qwen2.5:0.5b}
+          temperature: 0.7
 ```
 
 ## 🤝 Contribuindo
