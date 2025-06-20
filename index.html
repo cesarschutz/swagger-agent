@@ -853,20 +853,19 @@
     <header class="header">
         <nav class="nav container">
             <a href="#" class="logo">
-                <img src="src/main/resources/static/img/icone.png" alt="Swagger Agent Icon" style="height: 60px; width: auto; vertical-align: middle;">
-                Swagger Agent
+                <img src="src/main/resources/static/img/icone.png" alt="Logo Icone" style="height: 40px;">
+                <span>Swagger Agent</span>
             </a>
-            <button class="mobile-menu-btn">
+            <button class="mobile-menu-btn" aria-label="Abrir menu">
                 <i class="fas fa-bars"></i>
             </button>
             <ul class="nav-links">
                 <li><a href="#features">✨ Funcionalidades</a></li>
                 <li><a href="#quick-start">🚀 Quick Start</a></li>
-                <li><a href="#ai-providers">🤖 Provedores IA</a></li>
+                <li><a href="#ai-providers">🤖 Provedores de IA</a></li>
                 <li><a href="#interface">🖥️ Interface</a></li>
-                <li><a href="#ollama">🧑‍💻 Modelos Locais</a></li>
                 <li><a href="#api">📚 API</a></li>
-                <li><a href="#spring-ai-tools">🔧 Spring AI Tools</a></li>
+                <li><a href="#spring-ai-tools">🔧 Arquitetura</a></li>
             </ul>
         </nav>
     </header>
@@ -974,7 +973,7 @@
             <div class="container">
                 <h2 class="section-title scroll-animate">🚀 Quick Start</h2>
                 <p class="section-subtitle scroll-animate">
-                    Comece a usar o Swagger Agent em poucos passos
+                    Inicie o Swagger Agent em 3 passos com a configuração padrão (OpenAI).
                 </p>
 
                 <div class="code-section scroll-animate">
@@ -982,29 +981,19 @@
 git clone https://github.com/cesarschutz/swagger-agent.git
 cd swagger-agent
 
-<span class="highlight"># 2. Coloque seus arquivos OpenAPI na pasta openapi-specs/</span>
-# Adicione seus arquivos .json ou .yaml em openapi-specs/
+<span class="highlight"># 2. Adicione seus arquivos OpenAPI na pasta `openapi-specs/`</span>
 # Exemplo: openapi-specs/petstore/petstore.yaml
 
-<span class="highlight"># 3. Configure a chave da OpenAI (se for usar OpenAI)</span>
+<span class="highlight"># 3. Exporte sua chave da OpenAI e execute</span>
 export OPENAI_API_KEY="sua_chave_openai_aqui"
-
-<span class="highlight"># 4. Execute a aplicação</span>
-./mvnw spring-boot:run
-
-<span class="highlight"># 5. Acesse a interface web</span>
-# 🌐 http://localhost:8080/chat.html</pre>
+./mvnw spring-boot:run</pre>
                 </div>
 
-                <div class="features-grid">
-                    <div class="feature-card scroll-animate">
-                        <h3 class="feature-title">📋 Pré-requisitos</h3>
-                        <ul style="list-style: none; padding: 0;">
-                            <li>✅ <strong>Java 21</strong> ou superior</li>
-                            <li>✅ <strong>Maven 3.6</strong> ou superior</li>
-                            <li>✅ <strong>OpenAI API Key</strong> (opcional se usar modelo local)</li>
-                        </ul>
-                    </div>
+                <div class="feature-card scroll-animate" style="margin-top: 2rem; background-color: #eef2ff; border-color: #c7d2fe;">
+                    <h3 class="feature-title">💡 Quer usar um modelo local?</h3>
+                    <p class="feature-description">
+                        Pule para a seção <a href="#ai-providers" style="color: var(--primary-color); text-decoration: none; font-weight: 600;">Configurando o Provedor de IA</a> para aprender a usar o Swagger Agent com o Ollama.
+                    </p>
                 </div>
             </div>
         </section>
@@ -1012,74 +1001,100 @@ export OPENAI_API_KEY="sua_chave_openai_aqui"
         <!-- AI Providers Section -->
         <section id="ai-providers" class="section">
             <div class="container">
-                <h2 class="section-title scroll-animate">🤖 Configuração de Provedores de IA</h2>
+                <h2 class="section-title scroll-animate">🤖 Configurando o Provedor de IA</h2>
                 <p class="section-subtitle scroll-animate">
-                    Escolha entre OpenAI ou Ollama com configuração simples
+                    A seleção do provedor de IA (OpenAI ou Ollama) é feita pela propriedade <code>app.ai.provider</code>. <br>Você pode configurá-la de duas formas:
+                    <br><strong>1. Variável de Ambiente:</strong> export AI_PROVIDER=ollama
+                    <br><strong>2. Arquivo <code>application.yml</code>:</strong> app.ai.provider: ollama
                 </p>
 
+                <div style="text-align: center; margin-top: 4rem; margin-bottom: 2rem;">
+                    <h3 style="font-size: 1.5rem; font-weight: 600; color: var(--text-primary);">Passo a Passo para Configuração</h3>
+                </div>
+
                 <div class="features-grid">
+                    <!-- OpenAI -->
                     <div class="feature-card scroll-animate">
                         <div class="feature-icon">
                             <i class="fas fa-cloud"></i>
                         </div>
-                        <h3 class="feature-title">🚀 OpenAI (Padrão)</h3>
+                        <h3 class="feature-title">Opção 1: Usar OpenAI (Padrão)</h3>
                         <p class="feature-description">
-                            Use modelos da OpenAI como GPT-4. Requer chave de API e conexão com internet.
+                            Ideal para começar rapidamente. Requer uma chave de API e conexão com a internet.
                         </p>
                         <div class="code-section" style="margin-top: 1rem;">
-                            <pre><span class="highlight"># Configuração OpenAI</span>
-export AI_PROVIDER=openai
+                            <pre><span class="highlight"># Método 1: Via Variáveis de Ambiente</span>
 export OPENAI_API_KEY="sua_chave_openai_aqui"
+export AI_PROVIDER=openai # Opcional (padrão)
 
-# Ou no application.yml
+<span class="highlight"># Método 2: Via application.yml</span>
 app:
   ai:
-    provider: openai</pre>
+    provider: openai
+spring:
+  ai:
+    openai:
+      api-key: "sua_chave_openai_aqui"
+
+<span class="highlight"># Após configurar, execute:</span>
+./mvnw spring-boot:run</pre>
                         </div>
                     </div>
 
+                    <!-- Ollama -->
                     <div class="feature-card scroll-animate">
                         <div class="feature-icon">
                             <i class="fas fa-server"></i>
                         </div>
-                        <h3 class="feature-title">🏠 Ollama (Local)</h3>
+                        <h3 class="feature-title">Opção 2: Usar Modelo Local (Ollama)</h3>
                         <p class="feature-description">
-                            Use modelos locais via Ollama. Funciona offline e com maior privacidade.
+                            Perfeito para uso offline, maior privacidade e experimentação com modelos abertos.
                         </p>
                         <div class="code-section" style="margin-top: 1rem;">
-                            <pre><span class="highlight"># Configuração Ollama</span>
+                            <pre><span class="highlight"># 1. Inicie o Ollama (se ainda não estiver rodando)</span>
+docker run -d --name ollama -p 11434:11434 ollama/ollama:latest
+docker exec -it ollama ollama pull qwen2.5:0.5b
+
+<span class="highlight"># 2. Configure a aplicação</span>
+<span class="highlight"># Método 1: Via Variáveis de Ambiente</span>
 export AI_PROVIDER=ollama
-export SPRING_AI_OLLAMA_BASE_URL=http://localhost:11434
 export SPRING_AI_OLLAMA_CHAT_OPTIONS_MODEL="qwen2.5:0.5b"
 
-# Ou no application.yml
+<span class="highlight"># Método 2: Via application.yml</span>
 app:
   ai:
-    provider: ollama</pre>
+    provider: ollama
+spring:
+  ai:
+    ollama:
+      chat:
+        options:
+          model: "qwen2.5:0.5b"
+
+<span class="highlight"># 3. Execute a aplicação</span>
+./mvnw spring-boot:run</pre>
                         </div>
                     </div>
                 </div>
 
                 <div class="feature-card scroll-animate" style="margin-top: 2rem;">
-                    <h3 class="feature-title">🔄 Troca de Provedores</h3>
-                    <p class="feature-description">
-                        Para trocar entre provedores, simplesmente altere a propriedade <code>AI_PROVIDER</code>:
+                    <h3 class="feature-title">📖 Entendendo a Propriedade `AI_PROVIDER`</h3>
+                    <p class="feature-description" style="text-align: left;">
+                        A propriedade <code>app.ai.provider</code> (configurada via variável de ambiente <code>AI_PROVIDER</code> ou diretamente no <code>application.yml</code>) controla qual bean de IA será carregado pelo Spring Boot. Apenas um provedor é ativado por vez, garantindo que a aplicação seja leve e sem conflitos.
                     </p>
-                    <div class="code-section" style="margin-top: 1rem;">
-                        <pre><span class="highlight"># Usar OpenAI</span>
-export AI_PROVIDER=openai
-
-<span class="highlight"># Usar Ollama</span>
-export AI_PROVIDER=ollama
-
-<span class="highlight"># Importante: Reinicie a aplicação após alterar o provedor</span></pre>
-                    </div>
+                    <ul style="margin-top: 1rem; padding-left: 2rem; text-align: left;">
+                        <li><code>openai</code>: Carrega a configuração para a API da OpenAI (padrão).</li>
+                        <li><code>ollama</code>: Carrega a configuração para o provedor Ollama.</li>
+                    </ul>
+                    <p class="feature-description" style="text-align: left; margin-top: 1rem;">
+                        <strong>Importante:</strong> É necessário reiniciar a aplicação após alterar o valor desta propriedade.
+                    </p>
                 </div>
             </div>
         </section>
 
         <!-- Interface Section -->
-        <section id="interface" class="section">
+        <section id="interface" class="section" style="background: var(--light-color);">
             <div class="container">
                 <h2 class="section-title scroll-animate">🖥️ Interface Gráfica Moderna</h2>
                 <p class="section-subtitle scroll-animate">
@@ -1136,44 +1151,6 @@ export AI_PROVIDER=ollama
                         <i class="fas fa-external-link-alt"></i>
                         Experimentar Interface Demo
                     </a>
-                </div>
-            </div>
-        </section>
-
-        <!-- Ollama Section -->
-        <section id="ollama" class="section" style="background: var(--light-color);">
-            <div class="container">
-                <h2 class="section-title scroll-animate">🧑‍💻 Usando com Modelo Local (Ollama)</h2>
-                <p class="section-subtitle scroll-animate">
-                    Execute o Swagger Agent com modelos locais usando Ollama
-                </p>
-                <div class="code-section scroll-animate">
-<pre><span class="highlight"># 1. Suba o Ollama com Docker</span>
-docker run -d --name ollama -p 11434:11434 ollama/ollama:latest
-
-<span class="highlight"># 2. Baixe um modelo (exemplo: Qwen 2.5 0.5b)</span>
-docker exec -it ollama ollama pull qwen2.5:0.5b
-
-<span class="highlight"># 3. Configure o projeto para usar o Ollama</span>
-export AI_PROVIDER=ollama
-export SPRING_AI_OLLAMA_BASE_URL=http://localhost:11434
-export SPRING_AI_OLLAMA_CHAT_OPTIONS_MODEL="qwen2.5:0.5b"
-
-<span class="highlight"># 4. Execute a aplicação</span>
-./mvnw spring-boot:run</pre>
-                </div>
-                <div class="feature-card scroll-animate" style="margin-top:2rem;">
-                    <h3 class="feature-title">ℹ️ Configuração de Provedores</h3>
-                    <p class="feature-description">
-                        O Swagger Agent suporta múltiplos provedores de IA. Use a propriedade <code>AI_PROVIDER</code> para escolher entre:
-                    </p>
-                    <ul style="margin-top: 1rem; padding-left: 2rem;">
-                        <li><strong>openai</strong> - Usa a API da OpenAI (padrão)</li>
-                        <li><strong>ollama</strong> - Usa modelos locais via Ollama</li>
-                    </ul>
-                    <p style="margin-top: 1rem;">
-                        Você pode substituir <code>qwen2.5:0.5b</code> por outro modelo suportado pelo Ollama (ex: <code>llama2</code>, <code>mistral</code>, etc).
-                    </p>
                 </div>
             </div>
         </section>
