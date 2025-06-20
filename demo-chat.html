@@ -1,0 +1,1590 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assistente de Chat</title>
+    <meta name="description" content="Assistente de chat profissional para a equipe de Cartões Visa da Unicred">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+    <style>
+        :root {
+            /* Paleta de cores alinhada à identidade Unicred + destaque Visa */
+            --bg-color: #eef4f1;
+            --surface-color: #ffffff;
+            --surface-alpha: rgba(255, 255, 255, 0.85); /* para efeito glass */
+            --primary-color: #006848;   /* Verde Unicred */
+            --primary-hover: #00523a;
+            --accent-color: #1a1f71;   /* Azul Visa */
+            --highlight-color: #ffb511; /* Dourado Visa */
+            --text-color: #243230;
+            --text-muted: #6b7f7b;
+            --border-color: #cfd8d4;
+            --border-radius: 0.75rem;
+            --shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+            --transition: all 0.2s ease-in-out;
+            --success-color: #198754;
+            --warning-color: #fd7e14;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background: radial-gradient(circle at top left, #ffffff 0%, #e8f4ef 40%, #d5e9e2 100%);
+            color: var(--text-color);
+            padding: 1.5rem;
+            height: 100vh;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        
+        .main-container {
+            display: flex;
+            gap: 1.5rem;
+            width: 100%;
+            height: 100%;
+            flex: 1;
+            min-height: 0; /* Importante para o scroll funcionar corretamente */
+        }
+
+        .left-column {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            width: 350px;
+            flex-shrink: 0;
+            height: 100%;
+        }
+
+        .logo-container {
+            flex-shrink: 0;
+            text-align: center;
+            background: var(--surface-color);
+            padding: 10px;
+            border-radius: var(--border-radius);
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow);
+            height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logo-container img {
+            max-width: 100%;
+            max-height: 100%;
+            width: auto;
+            height: auto;
+            object-fit: contain;
+        }
+
+        .tools-panel {
+            flex: 1;
+            background: var(--surface-alpha);
+            backdrop-filter: blur(10px);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            min-height: 0; /* Importante para o scroll funcionar */
+        }
+
+        .tools-header {
+            padding: 1rem 1.5rem;
+            background: linear-gradient(135deg, var(--accent-color) 0%, var(--primary-color) 60%, var(--highlight-color) 100%);
+            color: #fff;
+            border-bottom: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .tools-header h3 {
+            font-weight: 600;
+            color: #ffffff;
+            font-size: 1rem;
+        }
+
+        .tools-count {
+            background-color: var(--highlight-color);
+            color: var(--accent-color);
+            padding: 0.25rem 0.5rem;
+            border-radius: 1rem;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .tools-content {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding: 1rem;
+        }
+
+        .project-section {
+            margin-bottom: 1.5rem;
+        }
+
+        .project-header {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 0.75rem;
+            background-color: var(--surface-color);
+            border-radius: 0.5rem;
+            border: 1px solid var(--border-color);
+            cursor: pointer;
+            transition: var(--transition);
+            margin-bottom: 0.5rem;
+        }
+
+        .project-header:hover {
+            background-color: color-mix(in srgb, var(--primary-color) 5%, white);
+            border-left: 3px solid var(--primary-color);
+            padding-left: calc(0.75rem - 3px); /* Mantém o alinhamento do texto */
+            color: var(--primary-color);
+        }
+
+        .project-header.collapsed .project-icon {
+            transform: rotate(-90deg);
+        }
+
+        .project-icon {
+            transition: transform 0.2s ease;
+            color: var(--text-muted);
+        }
+
+        .project-name {
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: var(--text-color);
+        }
+
+        .project-tools {
+            display: block;
+            margin-left: 1rem;
+        }
+
+        .project-tools.collapsed {
+            display: none;
+        }
+
+        .tool-item {
+            padding: 0.75rem;
+            background-color: var(--surface-color);
+            border-radius: 0.5rem;
+            border: 1px solid var(--border-color);
+            margin-bottom: 0.5rem;
+            transition: var(--transition);
+            cursor: pointer;
+        }
+
+        .tool-item:hover {
+            border-color: var(--primary-color);
+            box-shadow: 0 2px 8px rgba(13, 110, 253, 0.1);
+        }
+
+        .tool-name {
+            font-weight: 600;
+            font-size: 0.85rem;
+            color: var(--text-color);
+            margin-bottom: 0.25rem;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .tool-method {
+            display: inline-block;
+            padding: 0.125rem 0.5rem;
+            border-radius: 0.25rem;
+            font-size: 0.7rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .method-get { background-color: #e6f7ff; color: #0050b3; } /* Azul */
+        .method-post { background-color: #f6ffed; color: #389e0d; } /* Verde */
+        .method-put { background-color: #fffbe6; color: #d46b08; } /* Laranja */
+        .method-delete { background-color: #fff1f0; color: #cf1322; } /* Vermelho */
+        .method-patch { background-color: #f9f0ff; color: #531dab; } /* Roxo */
+
+        .tool-path {
+            font-family: 'Courier New', monospace;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+            word-wrap: break-word;
+        }
+
+        .tool-description {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            line-height: 1.4;
+            word-break: break-all;
+        }
+
+        .chat-wrapper {
+            flex: 1;
+            background: var(--surface-alpha);
+            backdrop-filter: blur(10px);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+            min-height: 0; /* Importante para o scroll funcionar */
+        }
+
+        .header {
+            padding: 1rem 1.5rem;
+            background: linear-gradient(135deg, var(--accent-color) 0%, var(--primary-color) 60%, var(--highlight-color) 100%);
+            border-bottom: none;
+            color: #fff;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+        }
+
+        .header h3 {
+            font-weight: 600;
+            color: #ffffff;
+        }
+
+        .header .session-info {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.8rem;
+            background-color: rgba(255, 255, 255, 0.1);
+            padding: 0.25rem 0.75rem;
+            border-radius: 1rem;
+            color: rgba(255, 255, 255, 0.9);
+        }
+        
+        .header .session-info .session-id {
+            font-family: 'Courier New', monospace;
+            font-weight: 600;
+            background-color: rgba(255, 255, 255, 0.2);
+            padding: 0.1rem 0.4rem;
+            border-radius: 0.25rem;
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            min-height: 0; /* Importante para o scroll funcionar */
+        }
+
+        .message {
+            display: flex;
+            max-width: 85%;
+            animation: fadeIn 0.3s ease;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .message.user {
+            align-self: flex-end;
+            flex-direction: row-reverse;
+        }
+        .message.bot {
+            align-self: flex-start;
+        }
+        
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            overflow: hidden;
+            margin: 0 0.75rem;
+            flex-shrink: 0;
+            align-self: flex-start;
+        }
+        .avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .message-content {
+            padding: 0.75rem 1.25rem;
+            border-radius: var(--border-radius);
+            position: relative;
+            max-width: 100%;
+        }
+        
+        .message.user .message-content {
+            background-color: var(--primary-color);
+            color: white;
+            border-bottom-right-radius: 0.25rem;
+        }
+
+        .message.bot .message-content {
+            background-color: #e9ecef;
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            border-bottom-left-radius: 0.25rem;
+        }
+
+        .message.bot .message-content strong {
+            font-weight: 600;
+        }
+
+        .message.bot .message-content ul {
+            margin-left: 1.5rem;
+            margin-top: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .message.bot .message-content ul li {
+            margin-bottom: 0.25rem;
+        }
+
+        .message.bot .message-content em {
+            color: var(--primary-color);
+            font-style: italic;
+        }
+        
+        .message-time {
+            font-size: 0.7rem;
+            margin-top: 0.5rem;
+            text-align: right;
+            opacity: 0.8;
+        }
+        
+        .message.user .message-content .message-time {
+             color: rgba(255,255,255,0.8);
+        }
+        
+        .message.bot .message-content .message-time {
+            color: var(--text-muted);
+        }
+        
+        .message-content p, .message-content ul, .message-content ol, .message-content h1, .message-content h2, .message-content h3 {
+            margin-bottom: 0.5rem;
+        }
+        .message-content ul, .message-content ol {
+            padding-left: 1.2rem;
+        }
+        .message-content pre {
+            background-color: rgba(0,0,0,0.05);
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        /* Estilo específico para a mensagem de boas-vindas */
+        .welcome-container {
+            display: flex;
+            align-items: flex-start;
+            gap: 2rem;
+            margin: 1rem 0;
+            max-width: 100%;
+        }
+
+        .welcome-text {
+            flex: 1;
+            min-width: 0; /* Importante para evitar overflow em flex containers */
+        }
+
+        .welcome-text ul {
+            margin-left: 1.5rem;
+            margin-top: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .welcome-text ul li {
+            margin-bottom: 0.25rem;
+        }
+
+        .welcome-image {
+            flex-shrink: 0;
+            width: 180px;
+            height: auto;
+            transform: scaleX(-1);
+            margin-top: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        /* Responsividade refinada */
+        @media (max-width: 1024px) {
+            .welcome-image {
+                width: 150px;
+            }
+        }
+
+        @media (max-width: 900px) {
+            .welcome-image {
+                width: 130px;
+            }
+            .welcome-container {
+                gap: 1.5rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 0.5rem;
+            }
+
+            .left-column {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            .logo-container {
+                width: 100%;
+                height: 50px;
+            }
+
+            .tools-panel {
+                height: 400px;
+            }
+
+            .welcome-container {
+                flex-direction: column-reverse; /* Imagem vai para cima */
+                align-items: center;
+                gap: 1rem;
+                padding: 0.5rem;
+            }
+
+            .welcome-image {
+                width: 120px;
+                margin-top: 0;
+                margin-bottom: 1rem;
+            }
+
+            .welcome-text {
+                text-align: center;
+            }
+
+            .welcome-text ul {
+                text-align: left;
+                margin-left: 0;
+                padding-left: 1.5rem;
+            }
+        }
+
+        /* Ajustes para mobile */
+        @media (max-width: 480px) {
+            body {
+                padding: 0.5rem;
+            }
+
+            .main-container {
+                gap: 0.5rem;
+            }
+
+            .left-column {
+                gap: 0.5rem;
+            }
+        }
+
+        @media (max-width: 1200px) {
+            body {
+                padding: 0.75rem;
+            }
+
+            .main-container {
+                flex-direction: column;
+                height: 100%;
+                gap: 0.5rem;
+            }
+            
+            .left-column {
+                width: 100%;
+                flex-direction: column;
+                height: auto;
+                gap: 0.5rem;
+            }
+
+            .logo-container {
+                width: 100%;
+                height: 40px;
+                padding: 5px;
+                flex-shrink: 0;
+            }
+            
+            .tools-panel {
+                height: 250px; /* Altura fixa mais adequada */
+                min-height: 250px;
+                max-height: 250px;
+            }
+            
+            .chat-wrapper {
+                flex: 1;
+                min-height: calc(100vh - 310px); /* Viewport height menos altura do logo e tools-panel + gaps */
+            }
+
+            .tools-content {
+                padding: 0.75rem;
+                overflow-y: auto;
+            }
+
+            .tool-item {
+                padding: 0.75rem;
+                margin-bottom: 0.5rem;
+            }
+
+            /* Ajustes para garantir que o conteúdo seja scrollável */
+            .chat-messages {
+                max-height: calc(100vh - 450px); /* Ajuste para garantir que o chat não fique muito grande */
+                overflow-y: auto;
+            }
+        }
+
+        /* Ajustes específicos para tablets */
+        @media (max-width: 768px) {
+            body {
+                padding: 0.5rem;
+            }
+
+            .tools-panel {
+                height: 300px;
+                min-height: 300px;
+                max-height: 300px;
+            }
+
+            .chat-wrapper {
+                min-height: calc(100vh - 360px);
+            }
+
+            .chat-messages {
+                max-height: calc(100vh - 500px);
+            }
+        }
+
+        /* Ajustes para celulares */
+        @media (max-width: 480px) {
+            .tools-panel {
+                height: 250px;
+                min-height: 250px;
+                max-height: 250px;
+            }
+
+            .chat-wrapper {
+                min-height: calc(100vh - 310px);
+            }
+
+            .chat-messages {
+                max-height: calc(100vh - 450px);
+            }
+
+            .tools-content {
+                padding: 0.5rem;
+            }
+
+            .tool-item {
+                padding: 0.5rem;
+                margin-bottom: 0.35rem;
+            }
+        }
+
+        /* Ajustes para telas muito pequenas */
+        @media (max-width: 360px) {
+            .tools-panel {
+                height: 200px;
+                min-height: 200px;
+                max-height: 200px;
+            }
+
+            .chat-wrapper {
+                min-height: calc(100vh - 260px);
+            }
+
+            .chat-messages {
+                max-height: calc(100vh - 400px);
+            }
+        }
+
+        /* Ajustes específicos para iPhone e dispositivos similares */
+        @media (max-width: 414px) {
+            body {
+                padding: 0.35rem;
+            }
+
+            .main-container {
+                gap: 0.35rem;
+            }
+
+            .left-column {
+                gap: 0.35rem;
+            }
+
+            .logo-container {
+                height: 70px;
+            }
+
+            .tools-panel {
+                max-height:250px;
+            }
+
+            .message-content {
+                font-size: 0.8rem;
+            }
+
+            .welcome-text {
+                font-size: 0.8rem;
+            }
+
+            .welcome-image {
+                width: 70px;
+            }
+
+            #message-input {
+                font-size: 0.85rem;
+            }
+        }
+
+        /* Ajustes para telas muito pequenas */
+        @media (max-width: 320px) {
+            .logo-container {
+                height: 60px;
+            }
+
+            .tools-panel {
+                max-height: 100px;
+            }
+
+            .message-content {
+                font-size: 0.75rem;
+            }
+
+            .welcome-text {
+                font-size: 0.75rem;
+            }
+
+            .welcome-image {
+                width: 60px;
+            }
+        }
+
+        /* Ajustes para mobile */
+        @media (max-width: 768px) {
+            .main-container {
+                flex-direction: column;
+            }
+
+            .left-column {
+                width: 100%;
+                height: auto;
+            }
+
+            .chat-wrapper {
+                height: 0;
+                flex: 1;
+            }
+
+            .input-wrapper {
+                padding: 0.25rem;
+            }
+
+            #send-button {
+                width: 2rem;
+                height: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <div class="left-column">
+            <div class="logo-container">
+                <img src="src/main/resources/static/img/logo.png" alt="Logo">
+            </div>
+            <div class="tools-panel">
+                <div class="tools-header">
+                    <h3>🛠️ Ferramentas Disponíveis</h3>
+                    <span class="tools-count">8</span>
+                </div>
+                <div class="tools-content">
+                    <div class="project-section">
+                        <div class="project-header">
+                            <i class="fas fa-chevron-down project-icon"></i>
+                            <span class="project-name">🐾 Pet Store API</span>
+                        </div>
+                        <div class="project-tools">
+                            <div class="tool-item" onclick="insertToolExample('Listar todos os pets disponíveis')">
+                                <div class="tool-name">Listar Pets</div>
+                                <span class="tool-method method-get">GET</span>
+                                <div class="tool-path">/pet/findByStatus</div>
+                                <div class="tool-description">Encontra pets por status (disponível, pendente, vendido)</div>
+                            </div>
+                            <div class="tool-item" onclick="insertToolExample('Adicionar um novo pet')">
+                                <div class="tool-name">Adicionar Pet</div>
+                                <span class="tool-method method-post">POST</span>
+                                <div class="tool-path">/pet</div>
+                                <div class="tool-description">Adiciona um novo pet à loja</div>
+                            </div>
+                            <div class="tool-item" onclick="insertToolExample('Atualizar informações do pet')">
+                                <div class="tool-name">Atualizar Pet</div>
+                                <span class="tool-method method-put">PUT</span>
+                                <div class="tool-path">/pet</div>
+                                <div class="tool-description">Atualiza um pet existente</div>
+                            </div>
+                            <div class="tool-item" onclick="insertToolExample('Deletar um pet')">
+                                <div class="tool-name">Deletar Pet</div>
+                                <span class="tool-method method-delete">DELETE</span>
+                                <div class="tool-path">/pet/{petId}</div>
+                                <div class="tool-description">Remove um pet da loja</div>
+                            </div>
+                            <div class="tool-item" onclick="insertToolExample('Fazer upload de imagem do pet')">
+                                <div class="tool-name">Upload de Imagem</div>
+                                <span class="tool-method method-post">POST</span>
+                                <div class="tool-path">/pet/{petId}/uploadImage</div>
+                                <div class="tool-description">Faz upload de uma imagem para um pet</div>
+                            </div>
+                            <div class="tool-item" onclick="insertToolExample('Encontrar pet por ID')">
+                                <div class="tool-name">Buscar Pet por ID</div>
+                                <span class="tool-method method-get">GET</span>
+                                <div class="tool-path">/pet/{petId}</div>
+                                <div class="tool-description">Encontra um pet pelo ID</div>
+                            </div>
+                            <div class="tool-item" onclick="insertToolExample('Atualizar pet com form data')">
+                                <div class="tool-name">Atualizar com Form</div>
+                                <span class="tool-method method-post">POST</span>
+                                <div class="tool-path">/pet/{petId}</div>
+                                <div class="tool-description">Atualiza um pet no store com form data</div>
+                            </div>
+                            <div class="tool-item" onclick="insertToolExample('Encontrar pets por tags')">
+                                <div class="tool-name">Buscar por Tags</div>
+                                <span class="tool-method method-get">GET</span>
+                                <div class="tool-path">/pet/findByTags</div>
+                                <div class="tool-description">Encontra pets por tags</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="chat-wrapper">
+            <div class="header">
+                <h3>💬 Chat</h3>
+                <div class="session-info">
+                    <i class="fas fa-key"></i>
+                    <span class="session-id">DEMO-MODE</span>
+                </div>
+            </div>
+            <div class="chat-messages" id="chat-messages">
+                <!-- Mensagem de boas-vindas -->
+                <div class="message bot">
+                    <div class="avatar">
+                        <img src="src/main/resources/static/img/icone.png" alt="Bot Avatar">
+                    </div>
+                    <div class="message-content">
+                        <div class="welcome-container">
+                            <div class="welcome-text">
+                                <p>👋 Olá! Eu sou o assistente da Pet Store API.</p>
+                                <p>Esta é uma <strong>versão demo</strong> que simula as interações com a API. Você pode:</p>
+                                <ul>
+                                    <li>Perguntar sobre pets disponíveis</li>
+                                    <li>Simular adição de novos pets</li>
+                                    <li>Testar buscas e atualizações</li>
+                                    <li>Explorar a documentação da API</li>
+                                </ul>
+                                <p><em>Dica: Clique nas ferramentas ao lado para ver exemplos de uso!</em></p>
+                            </div>
+                            <img src="src/main/resources/static/img/logotransparente.png" alt="Welcome Image" class="welcome-image">
+                        </div>
+                        <div class="message-time">Agora</div>
+                    </div>
+                </div>
+            </div>
+            <div class="chat-input-container">
+                <div class="input-wrapper">
+                    <textarea id="message-input" placeholder="Digite sua mensagem..." rows="1"></textarea>
+                    <button id="send-button" onclick="sendMessage()">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Função para gerar um ID de sessão aleatório
+        function generateSessionId() {
+            return 'demo-' + Math.random().toString(36).substring(2, 15);
+        }
+
+        // Função para formatar a data atual
+        function formatTime() {
+            return new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+        }
+
+        // Função para adicionar uma mensagem ao chat
+        function addMessage(content, isUser = false) {
+            const messagesContainer = document.getElementById('chat-messages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${isUser ? 'user' : 'bot'}`;
+            
+            const messageContent = document.createElement('div');
+            messageContent.className = 'message-content';
+            
+            // Se for uma mensagem do bot, processar markdown
+            if (!isUser) {
+                messageContent.innerHTML = marked.parse(content);
+            } else {
+                messageContent.textContent = content;
+            }
+            
+            const timeDiv = document.createElement('div');
+            timeDiv.className = 'message-time';
+            timeDiv.textContent = formatTime();
+            messageContent.appendChild(timeDiv);
+            
+            // Adiciona avatar apenas para mensagens do bot
+            if (!isUser) {
+                const avatar = document.createElement('div');
+                avatar.className = 'avatar';
+                const avatarImg = document.createElement('img');
+                avatarImg.src = 'src/main/resources/static/img/icone.png';
+                avatarImg.alt = 'Bot Avatar';
+                avatar.appendChild(avatarImg);
+                messageDiv.appendChild(avatar);
+            }
+            
+            messageDiv.appendChild(messageContent);
+            
+            messagesContainer.appendChild(messageDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        // Função para inserir exemplo de ferramenta
+        function insertToolExample(toolName) {
+            const exampleText = `Como usar a ferramenta "${toolName}"?`;
+            const input = document.getElementById('message-input');
+            input.value = exampleText;
+            sendMessage(); // Envia a pergunta diretamente
+        }
+
+        // Função para gerar respostas demo baseadas na entrada do usuário
+        function generateDemoResponse(userMessage) {
+            const lowerMessage = userMessage.toLowerCase();
+            
+            // Respostas para perguntas sobre ferramentas
+            if (lowerMessage.includes('como usar a ferramenta') && lowerMessage.includes('listar pets')) {
+                return `📖 **Detalhes da Ferramenta: Listar Pets**
+
+🔑 **Parâmetros:**
+- \`status\` (string, OPCIONAL): Status dos pets para filtrar
+  - Valores possíveis: \`available\`, \`pending\`, \`sold\`
+  - Padrão: \`available\`
+
+📦 **Corpo da Requisição:**
+Não há corpo de requisição para esta operação GET.
+
+✨ **Exemplo de Uso:**
+\`\`\`json
+{
+  "status": "available"
+}
+\`\`\`
+
+✅ **Resultado Esperado:**
+\`\`\`json
+{
+  "httpStatusCode": 200,
+  "body": [
+    {
+      "id": 1,
+      "name": "Max",
+      "category": {
+        "id": 1,
+        "name": "Cachorro"
+      },
+      "photoUrls": ["http://exemplo.com/foto1.jpg"],
+      "tags": [
+        {
+          "id": 1,
+          "name": "amigável"
+        }
+      ],
+      "status": "available"
+    }
+  ]
+}
+\`\`\`
+
+⚠️ **Códigos de Erro Possíveis:**
+- \`400\`: Parâmetros inválidos
+- \`500\`: Erro interno do servidor
+
+*Nota: Esta é uma resposta demo. Em um ambiente real, os dados seriam obtidos da API.*`;
+            }
+            
+            if (lowerMessage.includes('como usar a ferramenta') && lowerMessage.includes('adicionar pet')) {
+                return `📖 **Detalhes da Ferramenta: Adicionar Pet**
+
+🔑 **Parâmetros:**
+Todos os parâmetros são enviados no corpo da requisição (POST).
+
+📦 **Corpo da Requisição (OBRIGATÓRIO):**
+\`\`\`json
+{
+  "name": "string (OBRIGATÓRIO)",
+  "category": {
+    "id": "integer (OPCIONAL)",
+    "name": "string (OPCIONAL)"
+  },
+  "photoUrls": ["string (OPCIONAL)"],
+  "tags": [
+    {
+      "id": "integer (OPCIONAL)",
+      "name": "string (OPCIONAL)"
+    }
+  ],
+  "status": "string (OPCIONAL) - available, pending, sold"
+}
+\`\`\`
+
+✨ **Exemplo de Uso:**
+\`\`\`json
+{
+  "name": "Rex",
+  "category": {
+    "id": 1,
+    "name": "Cachorro"
+  },
+  "photoUrls": ["http://exemplo.com/rex.jpg"],
+  "tags": [
+    {
+      "id": 1,
+      "name": "brincalhão"
+    }
+  ],
+  "status": "available"
+}
+\`\`\`
+
+✅ **Resultado Esperado:**
+\`\`\`json
+{
+  "httpStatusCode": 200,
+  "body": {
+    "id": 4,
+    "name": "Rex",
+    "category": {
+      "id": 1,
+      "name": "Cachorro"
+    },
+    "photoUrls": ["http://exemplo.com/rex.jpg"],
+    "tags": [
+      {
+        "id": 1,
+        "name": "brincalhão"
+      }
+    ],
+    "status": "available"
+  }
+}
+\`\`\`
+
+⚠️ **Códigos de Erro Possíveis:**
+- \`400\`: Dados inválidos (nome obrigatório, status inválido)
+- \`405\`: Método não permitido
+- \`500\`: Erro interno do servidor
+
+*Nota: Esta é uma resposta demo. Em um ambiente real, o pet seria adicionado ao banco de dados.*`;
+            }
+
+            if (lowerMessage.includes('como usar a ferramenta') && lowerMessage.includes('atualizar pet')) {
+                return `📖 **Detalhes da Ferramenta: Atualizar Pet**
+
+🔑 **Parâmetros:**
+Todos os parâmetros são enviados no corpo da requisição (PUT).
+
+📦 **Corpo da Requisição (OBRIGATÓRIO):**
+\`\`\`json
+{
+  "id": "integer (OBRIGATÓRIO)",
+  "name": "string (OBRIGATÓRIO)",
+  "category": {
+    "id": "integer (OPCIONAL)",
+    "name": "string (OPCIONAL)"
+  },
+  "photoUrls": ["string (OPCIONAL)"],
+  "tags": [
+    {
+      "id": "integer (OPCIONAL)",
+      "name": "string (OPCIONAL)"
+    }
+  ],
+  "status": "string (OPCIONAL) - available, pending, sold"
+}
+\`\`\`
+
+✨ **Exemplo de Uso:**
+\`\`\`json
+{
+  "id": 1,
+  "name": "Max Atualizado",
+  "category": {
+    "id": 1,
+    "name": "Cachorro"
+  },
+  "photoUrls": ["http://exemplo.com/max_novo.jpg"],
+  "tags": [
+    {
+      "id": 1,
+      "name": "treinado"
+    }
+  ],
+  "status": "available"
+}
+\`\`\`
+
+✅ **Resultado Esperado:**
+\`\`\`json
+{
+  "httpStatusCode": 200,
+  "body": {
+    "id": 1,
+    "name": "Max Atualizado",
+    "category": {
+      "id": 1,
+      "name": "Cachorro"
+    },
+    "photoUrls": ["http://exemplo.com/max_novo.jpg"],
+    "tags": [
+      {
+        "id": 1,
+        "name": "treinado"
+      }
+    ],
+    "status": "available"
+  }
+}
+\`\`\`
+
+⚠️ **Códigos de Erro Possíveis:**
+- \`400\`: Dados inválidos (ID obrigatório, nome obrigatório)
+- \`404\`: Pet não encontrado
+- \`405\`: Método não permitido
+- \`500\`: Erro interno do servidor
+
+*Nota: Esta é uma resposta demo. Em um ambiente real, as alterações seriam persistidas na API.*`;
+            }
+
+            if (lowerMessage.includes('como usar a ferramenta') && lowerMessage.includes('deletar pet')) {
+                return `📖 **Detalhes da Ferramenta: Deletar Pet**
+
+🔑 **Parâmetros:**
+- \`petId\` (integer, OBRIGATÓRIO): ID do pet a ser removido
+- \`api_key\` (string, OPCIONAL): Chave de API para autenticação
+
+📦 **Corpo da Requisição:**
+Não há corpo de requisição para esta operação DELETE.
+
+✨ **Exemplo de Uso:**
+\`\`\`json
+{
+  "petId": 123,
+  "api_key": "sua_chave_api"
+}
+\`\`\`
+
+✅ **Resultado Esperado:**
+\`\`\`json
+{
+  "httpStatusCode": 200,
+  "body": "Pet removido com sucesso"
+}
+\`\`\`
+
+⚠️ **Códigos de Erro Possíveis:**
+- \`400\`: ID inválido
+- \`404\`: Pet não encontrado
+- \`405\`: Método não permitido
+- \`500\`: Erro interno do servidor
+
+*Nota: Esta é uma resposta demo. Em um ambiente real, o pet seria removido do banco de dados.*`;
+            }
+
+            if (lowerMessage.includes('como usar a ferramenta') && lowerMessage.includes('upload de imagem')) {
+                return `📖 **Detalhes da Ferramenta: Upload de Imagem**
+
+🔑 **Parâmetros:**
+- \`petId\` (integer, OBRIGATÓRIO): ID do pet
+- \`additionalMetadata\` (string, OPCIONAL): Metadados adicionais
+- \`file\` (file, OPCIONAL): Arquivo de imagem
+
+📦 **Corpo da Requisição:**
+Esta operação usa \`multipart/form-data\` para upload de arquivo.
+
+✨ **Exemplo de Uso:**
+\`\`\`json
+{
+  "petId": 123,
+  "additionalMetadata": "Foto de perfil do pet",
+  "file": "(arquivo de imagem)"
+}
+\`\`\`
+
+✅ **Resultado Esperado:**
+\`\`\`json
+{
+  "httpStatusCode": 200,
+  "body": {
+    "code": 200,
+    "type": "unknown",
+    "message": "Imagem enviada com sucesso"
+  }
+}
+\`\`\`
+
+⚠️ **Códigos de Erro Possíveis:**
+- \`400\`: Dados inválidos
+- \`404\`: Pet não encontrado
+- \`500\`: Erro interno do servidor
+
+*Nota: Esta é uma resposta demo. Em um ambiente real, a imagem seria salva no servidor.*`;
+            }
+
+            if (lowerMessage.includes('como usar a ferramenta') && lowerMessage.includes('buscar pet por id')) {
+                return `📖 **Detalhes da Ferramenta: Buscar Pet por ID**
+
+🔑 **Parâmetros:**
+- \`petId\` (integer, OBRIGATÓRIO): ID do pet a ser buscado
+
+📦 **Corpo da Requisição:**
+Não há corpo de requisição para esta operação GET.
+
+✨ **Exemplo de Uso:**
+\`\`\`json
+{
+  "petId": 123
+}
+\`\`\`
+
+✅ **Resultado Esperado:**
+\`\`\`json
+{
+  "httpStatusCode": 200,
+  "body": {
+    "id": 123,
+    "name": "Max",
+    "category": {
+      "id": 1,
+      "name": "Cachorro"
+    },
+    "photoUrls": ["http://exemplo.com/foto.jpg"],
+    "tags": [
+      {
+        "id": 1,
+        "name": "amigável"
+      }
+    ],
+    "status": "available"
+  }
+}
+\`\`\`
+
+⚠️ **Códigos de Erro Possíveis:**
+- \`400\`: ID inválido
+- \`404\`: Pet não encontrado
+- \`500\`: Erro interno do servidor
+
+*Nota: Esta é uma resposta demo. Em um ambiente real, os dados seriam obtidos da API.*`;
+            }
+
+            if (lowerMessage.includes('como usar a ferramenta') && lowerMessage.includes('atualizar com form')) {
+                return `📖 **Detalhes da Ferramenta: Atualizar com Form Data**
+
+🔑 **Parâmetros:**
+- \`petId\` (integer, OBRIGATÓRIO): ID do pet
+- \`name\` (string, OPCIONAL): Novo nome do pet
+- \`status\` (string, OPCIONAL): Novo status do pet
+
+📦 **Corpo da Requisição:**
+Esta operação usa \`application/x-www-form-urlencoded\`.
+
+✨ **Exemplo de Uso:**
+\`\`\`json
+{
+  "petId": 123,
+  "name": "Max Atualizado",
+  "status": "sold"
+}
+\`\`\`
+
+✅ **Resultado Esperado:**
+\`\`\`json
+{
+  "httpStatusCode": 200,
+  "body": "Pet atualizado com sucesso"
+}
+\`\`\`
+
+⚠️ **Códigos de Erro Possíveis:**
+- \`400\`: Dados inválidos
+- \`404\`: Pet não encontrado
+- \`405\`: Método não permitido
+- \`500\`: Erro interno do servidor
+
+*Nota: Esta é uma resposta demo. Em um ambiente real, as alterações seriam persistidas na API.*`;
+            }
+
+            if (lowerMessage.includes('como usar a ferramenta') && lowerMessage.includes('buscar por tags')) {
+                return `📖 **Detalhes da Ferramenta: Buscar por Tags**
+
+🔑 **Parâmetros:**
+- \`tags\` (array[string], OBRIGATÓRIO): Lista de tags para filtrar
+
+📦 **Corpo da Requisição:**
+Não há corpo de requisição para esta operação GET.
+
+✨ **Exemplo de Uso:**
+\`\`\`json
+{
+  "tags": ["amigável", "treinado"]
+}
+\`\`\`
+
+✅ **Resultado Esperado:**
+\`\`\`json
+{
+  "httpStatusCode": 200,
+  "body": [
+    {
+      "id": 1,
+      "name": "Max",
+      "category": {
+        "id": 1,
+        "name": "Cachorro"
+      },
+      "photoUrls": ["http://exemplo.com/foto.jpg"],
+      "tags": [
+        {
+          "id": 1,
+          "name": "amigável"
+        },
+        {
+          "id": 2,
+          "name": "treinado"
+        }
+      ],
+      "status": "available"
+    }
+  ]
+}
+\`\`\`
+
+⚠️ **Códigos de Erro Possíveis:**
+- \`400\`: Tags inválidas
+- \`500\`: Erro interno do servidor
+
+*Nota: Esta é uma resposta demo. Em um ambiente real, os dados seriam obtidos da API.*`;
+            }
+
+            // Respostas para outras perguntas sobre ferramentas
+            if (lowerMessage.includes('como usar a ferramenta')) {
+                return `📖 **Detalhes da Ferramenta**
+
+🔍 **Ferramenta Solicitada:** ${userMessage.replace('Como usar a ferramenta "', '').replace('"?', '')}
+
+📋 **Informações Gerais:**
+Esta ferramenta faz parte da API Pet Store e permite interagir com o sistema de gerenciamento de pets.
+
+🔑 **Parâmetros Comuns:**
+- Todos os endpoints requerem parâmetros específicos
+- Alguns parâmetros são obrigatórios, outros opcionais
+- O formato de resposta é sempre JSON
+
+📦 **Tipos de Operação:**
+- **GET**: Para buscar e listar dados
+- **POST**: Para criar novos registros
+- **PUT**: Para atualizar registros existentes
+- **DELETE**: Para remover registros
+
+⚠️ **Códigos de Status HTTP:**
+- \`200\`: Sucesso
+- \`400\`: Erro de validação
+- \`404\`: Recurso não encontrado
+- \`500\`: Erro interno do servidor
+
+*Nota: Esta é uma resposta demo. Para detalhes específicos, clique na ferramenta desejada no painel esquerdo.*`;
+            }
+
+            // Respostas pré-definidas para diferentes cenários
+            if (lowerMessage.includes('listar') && lowerMessage.includes('pet')) {
+                return `**Pets Disponíveis:**
+
+1. 🐕 Max (ID: 1)
+   - Raça: Labrador
+   - Status: disponível
+   - Tags: #amigável #treinado
+
+2. 🐱 Luna (ID: 2)
+   - Raça: Siamês
+   - Status: disponível
+   - Tags: #independente #indoor
+
+3. 🐕 Thor (ID: 3)
+   - Raça: Golden Retriever
+   - Status: disponível
+   - Tags: #brincalhão #família
+
+*Nota: Esta é uma resposta demo. Em um ambiente real, os dados seriam obtidos da API.*`;
+            }
+            
+            if (lowerMessage.includes('adicionar') || lowerMessage.includes('novo pet')) {
+                return `✅ **Simulação: Pet Adicionado com Sucesso!**
+
+\`\`\`json
+{
+  "id": 4,
+  "name": "Novo Pet",
+  "status": "disponível",
+  "category": {
+    "id": 1,
+    "name": "Cachorro"
+  },
+  "tags": [
+    {
+      "id": 1,
+      "name": "amigável"
+    }
+  ]
+}
+\`\`\`
+
+*Nota: Esta é uma resposta demo. Em um ambiente real, o pet seria adicionado ao banco de dados.*`;
+            }
+
+            if (lowerMessage.includes('atualizar')) {
+                return `✅ **Simulação: Pet Atualizado com Sucesso!**
+
+As informações do pet foram atualizadas:
+- Status: atualizado
+- Última modificação: ${new Date().toLocaleString()}
+
+*Nota: Esta é uma resposta demo. Em um ambiente real, as alterações seriam persistidas na API.*`;
+            }
+
+            if (lowerMessage.includes('deletar') || lowerMessage.includes('remover')) {
+                return `🗑️ **Simulação: Pet Removido com Sucesso!**
+
+O pet foi removido do sistema.
+- ID: 123
+- Timestamp: ${new Date().toLocaleString()}
+
+*Nota: Esta é uma resposta demo. Em um ambiente real, o pet seria removido do banco de dados.*`;
+            }
+
+            if (lowerMessage.includes('buscar') || lowerMessage.includes('encontrar')) {
+                return `🔍 **Resultado da Busca (Demo):**
+
+\`\`\`json
+{
+  "id": 123,
+  "name": "Max",
+  "category": {
+    "id": 1,
+    "name": "Cachorro"
+  },
+  "photoUrls": ["http://exemplo.com/foto.jpg"],
+  "tags": [
+    {
+      "id": 1,
+      "name": "amigável"
+    }
+  ],
+  "status": "disponível"
+}
+\`\`\`
+
+*Nota: Esta é uma resposta demo. Em um ambiente real, os dados seriam obtidos da API.*`;
+            }
+
+            // Resposta padrão para outras mensagens
+            return `Entendi sua mensagem sobre "${userMessage}". 
+
+Como isto é uma **versão demo**, estou fornecendo uma resposta simulada. Em um ambiente real, eu interagiria com a API da Pet Store para fornecer dados reais.
+
+Você pode testar diferentes cenários como:
+- Listar pets disponíveis
+- Adicionar um novo pet
+- Atualizar informações de um pet
+- Buscar pets por ID ou tags
+- Deletar um pet
+
+*Dica: Clique nas ferramentas no painel esquerdo para ver exemplos de uso!*`;
+        }
+
+        // Função para enviar mensagem
+        function sendMessage() {
+            const input = document.getElementById('message-input');
+            const message = input.value.trim();
+            
+            if (message) {
+                // Adiciona a mensagem do usuário
+                addMessage(message, true);
+                
+                // Limpa o input
+                input.value = '';
+                
+                // Simula o "digitando..."
+                setTimeout(() => {
+                    // Gera e adiciona a resposta demo
+                    const response = generateDemoResponse(message);
+                    addMessage(response, false);
+                }, 1000);
+            }
+        }
+
+        // Event listener para enviar com Enter
+        document.getElementById('message-input').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+            }
+        });
+
+        // Auto-resize do textarea
+        const textarea = document.getElementById('message-input');
+        textarea.addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = (this.scrollHeight) + 'px';
+        });
+
+        // Toggle para os projetos no painel de ferramentas
+        document.querySelectorAll('.project-header').forEach(header => {
+            header.addEventListener('click', function() {
+                this.classList.toggle('collapsed');
+                const tools = this.nextElementSibling;
+                tools.classList.toggle('collapsed');
+            });
+        });
+    </script>
+
+    <style>
+        .chat-input-container {
+            padding: 1rem;
+            background: var(--surface-color);
+            border-top: 1px solid var(--border-color);
+        }
+
+        .input-wrapper {
+            display: flex;
+            gap: 0.5rem;
+            background: white;
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            padding: 0.5rem;
+            transition: var(--transition);
+        }
+
+        .input-wrapper:focus-within {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(0, 104, 72, 0.1);
+        }
+
+        #message-input {
+            flex: 1;
+            border: none;
+            outline: none;
+            background: none;
+            resize: none;
+            padding: 0.25rem;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            max-height: 150px;
+            color: var(--text-color);
+        }
+
+        #message-input::placeholder {
+            color: var(--text-muted);
+        }
+
+        #send-button {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 0.5rem;
+            width: 2.5rem;
+            height: 2.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+            flex-shrink: 0;
+        }
+
+        #send-button:hover {
+            background: var(--primary-hover);
+            transform: scale(1.05);
+        }
+
+        #send-button:active {
+            transform: scale(0.95);
+        }
+
+        /* Estilização do scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--text-muted);
+        }
+
+        /* Ajustes para mobile */
+        @media (max-width: 768px) {
+            .main-container {
+                flex-direction: column;
+            }
+
+            .left-column {
+                width: 100%;
+                height: auto;
+            }
+
+            .chat-wrapper {
+                height: 0;
+                flex: 1;
+            }
+
+            .input-wrapper {
+                padding: 0.25rem;
+            }
+
+            #send-button {
+                width: 2rem;
+                height: 2rem;
+            }
+        }
+    </style>
+</body>
+</html> 

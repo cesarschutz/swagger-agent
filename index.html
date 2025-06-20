@@ -1,0 +1,1259 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🤖 Swagger Agent - IA + OpenAPI Integration</title>
+    <meta name="description" content="Transforme qualquer especificação OpenAPI em ferramentas dinâmicas que podem ser invocadas por modelos de linguagem (LLMs). Construído com Spring Boot 3 e Spring AI.">
+    <meta name="keywords" content="Spring Boot, OpenAPI, Swagger, IA, Inteligência Artificial, Java, REST API, Spring AI, OpenAI, Ollama">
+    <meta name="author" content="Swagger Agent Team">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://cesarschutz.github.io/swagger-agent/">
+    <meta property="og:title" content="🤖 Swagger Agent - IA + OpenAPI Integration">
+    <meta property="og:description" content="Transforme qualquer especificação OpenAPI em ferramentas dinâmicas que podem ser invocadas por modelos de linguagem (LLMs)">
+    <meta property="og:image" content="https://cesarschutz.github.io/swagger-agent/logo.png">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://cesarschutz.github.io/swagger-agent/">
+    <meta property="twitter:title" content="🤖 Swagger Agent - IA + OpenAPI Integration">
+    <meta property="twitter:description" content="Transforme qualquer especificação OpenAPI em ferramentas dinâmicas que podem ser invocadas por modelos de linguagem (LLMs)">
+    <meta property="twitter:image" content="https://cesarschutz.github.io/swagger-agent/logo.png">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🤖</text></svg>">
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    
+    <!-- Styles -->
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --secondary-color: #1e40af;
+            --accent-color: #3b82f6;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+            --dark-color: #1f2937;
+            --light-color: #f8fafc;
+            --text-primary: #1f2937;
+            --text-secondary: #6b7280;
+            --border-color: #e5e7eb;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+            --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --gradient-secondary: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            line-height: 1.6;
+            color: var(--text-primary);
+            background: var(--gradient-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header */
+        .header {
+            background: white !important;
+            backdrop-filter: blur(10px);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            box-shadow: var(--shadow);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0px 10px 0px 10px;
+            position: relative;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--primary-color);
+            text-decoration: none;
+            transition: transform 0.3s ease;
+            white-space: nowrap;
+            min-width: fit-content;
+        }
+
+        .logo:hover {
+            transform: scale(1.05);
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 1.5rem;
+            margin: 0;
+            padding: 0;
+            align-items: center;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-primary);
+            font-weight: 500;
+            transition: all 0.3s ease;
+            position: relative;
+            white-space: nowrap;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary-color);
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -5px;
+            left: 0;
+            background-color: var(--primary-color);
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--primary-color);
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            margin-left: 1rem;
+            transition: all 0.3s ease;
+            border-radius: 8px;
+        }
+
+        .mobile-menu-btn:hover {
+            background: rgba(37, 99, 235, 0.1);
+        }
+
+        .mobile-menu-btn:active {
+            transform: scale(0.95);
+        }
+
+        /* Ajuste do container para o menu mobile */
+        .nav.container {
+            max-width: none;
+            width: 100%;
+            justify-content: space-between;
+            padding: 0.5rem 1rem;
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 8rem 0 4rem;
+            text-align: center;
+            color: white;
+            position: relative;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="50" cy="50" r="1" fill="white" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+            opacity: 0.3;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .hero-text {
+            flex: 1;
+            max-width: 600px;
+            text-align: left;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .hero-title-container {
+            margin-bottom: 1.5rem;
+        }
+
+        .hero h1 {
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 800;
+            margin: 0;
+            background: linear-gradient(45deg, #fff, #e0e7ff, #c7d2fe);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: gradientShift 3s ease-in-out infinite;
+            line-height: 1.1;
+            padding-bottom: 5px;
+        }
+
+        .hero-image {
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .hero-image img {
+            height: 325px;
+            width: auto;
+            transform: scaleX(-1);
+            object-fit: contain;
+        }
+
+        @media (max-width: 1024px) {
+            .hero-content {
+                gap: 1rem;
+            }
+            
+            .hero-image img {
+                height: 200px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .hero-content {
+                flex-direction: column;
+                text-align: center;
+                gap: 20px;
+                padding: 0 20px;
+            }
+
+            .hero-text {
+                max-width: 100%;
+                text-align: center;
+                display: flex;
+                flex-direction: column;
+                gap: 20px;
+                align-items: center;
+            }
+
+            .hero-image {
+                order: 1;
+            }
+
+            .hero-title-container {
+                order: 0;
+            }
+
+            .hero-buttons {
+                order: 2;
+            }
+
+            .hero-image img {
+                height: 180px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero-image img {
+                height: 150px;
+            }
+        }
+
+        @keyframes gradientShift {
+            0%, 100% { filter: hue-rotate(0deg); }
+            50% { filter: hue-rotate(10deg); }
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+            line-height: 1.8;
+        }
+
+        .hero-buttons {
+            flex: 0 0 100%;
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.875rem 1.75rem;
+            border-radius: 0.75rem;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn-primary {
+            background: var(--primary-color);
+            color: white;
+            box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
+        }
+
+        .btn-primary:hover {
+            background: var(--secondary-color);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(37, 99, 235, 0.4);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.15);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(10px);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.25);
+            transform: translateY(-3px);
+            border-color: rgba(255, 255, 255, 0.5);
+        }
+
+        /* Main Content */
+        .main {
+            background: white;
+            margin-top: -2rem;
+            border-radius: 2rem 2rem 0 0;
+            position: relative;
+            z-index: 10;
+            box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .section {
+            padding: 5rem 0;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+
+        .section-subtitle {
+            text-align: center;
+            font-size: 1.25rem;
+            color: var(--text-secondary);
+            margin-bottom: 3rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Features Grid */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 4rem;
+        }
+
+        .feature-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--gradient-primary);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .feature-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .feature-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .feature-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+
+        .feature-description {
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* Code Blocks */
+        .code-section {
+            background: var(--dark-color);
+            border-radius: 1rem;
+            padding: 2rem;
+            margin: 2rem 0;
+            overflow-x: auto;
+        }
+
+        .code-section pre {
+            color: #e5e7eb;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        .code-section .highlight {
+            color: #10b981;
+        }
+
+        /* Stats */
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 2rem;
+            background: var(--light-color);
+            border-radius: 1rem;
+            border: 1px solid var(--border-color);
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--dark-color);
+            color: white;
+            padding: 3rem 0 2rem;
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            gap: 2.5rem;
+            flex-wrap: wrap;
+            margin-bottom: 2rem;
+            max-width: 1000px;
+            margin-left: auto;
+            margin-right: auto;
+            padding-top: 2.5rem;
+        }
+        .footer-section {
+            min-width: 200px;
+            max-width: 260px;
+            flex: 1 1 200px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            text-align: left;
+        }
+        .footer-section h3 {
+            margin-bottom: 1.1rem;
+            color: var(--accent-color);
+            text-align: center;
+            font-size: 1.15rem;
+            font-weight: 700;
+            letter-spacing: 0.01em;
+        }
+        .footer-section ul {
+            list-style: none;
+            padding-left: 0;
+            margin-bottom: 0;
+        }
+        .footer-section ul li {
+            margin-bottom: 0.5rem;
+        }
+        .footer-section ul li a {
+            color: #d1d5db;
+            text-decoration: none;
+            transition: color 0.3s ease;
+            font-size: 1rem;
+        }
+        .footer-section ul li a:hover {
+            color: var(--accent-color);
+        }
+        .footer-section p {
+            margin-top: 0;
+            margin-bottom: 0;
+            font-size: 1rem;
+            color: #e5e7eb;
+            line-height: 1.5;
+        }
+        @media (max-width: 900px) {
+            .footer-content {
+                flex-direction: column;
+                align-items: center;
+                gap: 2rem;
+                text-align: center;
+                max-width: 100%;
+                padding-top: 1.5rem;
+            }
+            .footer-section {
+                max-width: 100%;
+                align-items: center;
+                text-align: center;
+            }
+            .footer-section ul {
+                text-align: center;
+            }
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 2rem;
+            border-top: 1px solid #374151;
+            color: #9ca3af;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .mobile-menu-btn {
+                display: block;
+            }
+
+            .nav-links {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                flex-direction: column;
+                background: white;
+                padding: 1rem;
+                gap: 1rem;
+                box-shadow: var(--shadow);
+                text-align: center;
+                z-index: 1000;
+                border-top: 1px solid var(--border-color);
+            }
+
+            .nav-links.show {
+                display: flex;
+                animation: slideDown 0.3s ease-out forwards;
+            }
+
+            .nav-links li {
+                width: 100%;
+                border-bottom: 1px solid var(--border-color);
+            }
+
+            .nav-links li:last-child {
+                border-bottom: none;
+            }
+
+            .nav-links a {
+                display: block;
+                padding: 0.8rem;
+                font-size: 1.1rem;
+            }
+
+            @keyframes slideDown {
+                from {
+                    opacity: 0;
+                    transform: translateY(-10px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+
+            /* Ajustes adicionais para mobile */
+            .logo img {
+                height: 50px;
+            }
+
+            .container {
+                padding: 0;
+            }
+
+            .nav.container {
+                padding: 0.5rem 1rem;
+            }
+
+            .hero {
+                padding: 8rem 0 3rem;
+            }
+            
+            .hero-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .btn {
+                width: 100%;
+                max-width: 300px;
+                justify-content: center;
+            }
+            
+            .features-grid {
+                grid-template-columns: 1fr;
+                padding: 0 1rem;
+            }
+            
+            .stats {
+                grid-template-columns: 1fr;
+                padding: 0 1rem;
+            }
+
+            .section {
+                padding: 3rem 1rem;
+            }
+
+            .code-section {
+                margin: 1rem -1rem;
+                border-radius: 0;
+            }
+        }
+
+        @media (min-width: 1025px) {
+            .mobile-menu-btn {
+                display: none;
+            }
+
+            .nav-links {
+                display: flex !important;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 0 1rem;
+            }
+
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .hero p {
+                font-size: 1rem;
+            }
+
+            .section-title {
+                font-size: 1.75rem;
+            }
+
+            .section-subtitle {
+                font-size: 1rem;
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in-up {
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        /* Scroll animations */
+        .scroll-animate {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.6s ease;
+        }
+
+        .scroll-animate.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Interface Showcase */
+        .interface-showcase {
+            display: grid;
+            grid-template-columns: 62fr 30fr;
+            gap: 3rem;
+            margin: 3rem 0;
+            max-width: 2400px;
+            margin-left: auto;
+            margin-right: auto;
+            position: relative;
+        }
+
+        .interface-item {
+            text-align: center;
+            background: white;
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-color);
+            transition: all 0.5s ease;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Efeito de hover nas interfaces */
+        .interface-showcase:hover .interface-item {
+            opacity: 0.5;
+            transform: scale(0.95);
+        }
+
+        .interface-showcase .interface-item:hover {
+            transform: scale(1.05);
+            opacity: 1;
+            box-shadow: var(--shadow-lg);
+            z-index: 2;
+        }
+
+        .interface-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 2rem;
+            color: var(--text-primary);
+            transition: all 0.5s ease;
+        }
+
+        .interface-item img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 0.5rem;
+            box-shadow: var(--shadow);
+            transition: all 0.5s ease;
+        }
+
+        @media (max-width: 1200px) {
+            .interface-showcase {
+                grid-template-columns: 1fr;
+                max-width: 1000px;
+            }
+            
+            .interface-item {
+                padding: 1.5rem;
+            }
+
+            /* Ajuste do efeito para telas menores */
+            .interface-showcase:hover .interface-item {
+                opacity: 1;
+                transform: none;
+            }
+
+            .interface-showcase .interface-item:hover {
+                transform: translateY(-10px);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .interface-item {
+                padding: 1rem;
+            }
+            
+            .interface-title {
+                font-size: 1.25rem;
+                margin-bottom: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <nav class="nav container">
+            <a href="#" class="logo">
+                <img src="src/main/resources/static/img/icone.png" alt="Swagger Agent Icon" style="height: 60px; width: auto; vertical-align: middle;">
+                Swagger Agent
+            </a>
+            <button class="mobile-menu-btn">
+                <i class="fas fa-bars"></i>
+            </button>
+            <ul class="nav-links">
+                <li><a href="#features">✨ Funcionalidades</a></li>
+                <li><a href="#quick-start">🚀 Quick Start</a></li>
+                <li><a href="#interface">🖥️ Interface</a></li>
+                <li><a href="#ollama">🧑‍💻 Modelos Locais</a></li>
+                <li><a href="#api">📚 API</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content container">
+            <div class="hero-text">
+                <div class="hero-title-container fade-in-up">
+                    <h1>Swagger Agent</h1>
+                </div>
+                <p class="fade-in-up">
+                    Transforme qualquer especificação OpenAPI em ferramentas dinâmicas que podem ser invocadas por modelos de linguagem (LLMs). 
+                    Construído com <strong>Spring Boot 3</strong>, <strong>Spring AI</strong> e preparado para rodar com <strong>OpenAI</strong> ou <strong>modelos locais via Ollama</strong>.
+                </p>
+                <div class="hero-buttons fade-in-up">
+                    <a href="#quick-start" class="btn btn-primary">
+                        <i class="fas fa-rocket"></i>
+                        Começar Agora
+                    </a>
+                    <a href="https://github.com/cesarschutz/swagger-agent" class="btn btn-secondary" target="_blank">
+                        <i class="fab fa-github"></i>
+                        Ver no GitHub
+                    </a>
+                </div>
+            </div>
+            <div class="hero-image fade-in-up">
+                <img src="src/main/resources/static/img/logotransparente.png" alt="Swagger Agent Logo">
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <main class="main">
+        <!-- Features Section -->
+        <section id="features" class="section">
+            <div class="container">
+                <h2 class="section-title scroll-animate">✨ Funcionalidades Principais</h2>
+                <p class="section-subtitle scroll-animate">
+                    Uma solução completa para integração de IA com APIs através de especificações OpenAPI
+                </p>
+                
+                <div class="features-grid">
+                    <div class="feature-card scroll-animate">
+                        <div class="feature-icon">
+                            <i class="fas fa-comments"></i>
+                        </div>
+                        <h3 class="feature-title">🚀 Chat Inteligente</h3>
+                        <p class="feature-description">
+                            Comunicação natural com modelos da OpenAI ou LLMs locais via <code>/api/chat</code>. 
+                            Streaming em tempo-real via Server-Sent Events e memória de sessão para manter contexto.
+                        </p>
+                    </div>
+
+                    <div class="feature-card scroll-animate">
+                        <div class="feature-icon">
+                            <i class="fas fa-desktop"></i>
+                        </div>
+                        <h3 class="feature-title">🖥️ Interface Gráfica</h3>
+                        <p class="feature-description">
+                            Interface web moderna e intuitiva com painel de ferramentas, chat em tempo real, 
+                            suporte a markdown e design responsivo para uma experiência completa.
+                        </p>
+                    </div>
+
+                    <div class="feature-card scroll-animate">
+                        <div class="feature-icon">
+                            <i class="fas fa-tools"></i>
+                        </div>
+                        <h3 class="feature-title">🛠️ Ferramentas Dinâmicas</h3>
+                        <p class="feature-description">
+                            Geração automática de functions a partir de arquivos OpenAPI.
+                            Execução assíncrona para melhor performance e responsividade.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="stats">
+                    <div class="stat-item scroll-animate">
+                        <div class="stat-number">33</div>
+                        <div class="stat-label">Classes Java</div>
+                    </div>
+                    <div class="stat-item scroll-animate">
+                        <div class="stat-number">100%</div>
+                        <div class="stat-label">JavaDocs</div>
+                    </div>
+                    <div class="stat-item scroll-animate">
+                        <div class="stat-number">3</div>
+                        <div class="stat-label">Endpoints REST</div>
+                    </div>
+                    <div class="stat-item scroll-animate">
+                        <div class="stat-number">∞</div>
+                        <div class="stat-label">Ferramentas Dinâmicas</div>
+                    </div>
+                </div>
+
+                <div style="text-align:center;">
+                    <img src="src/main/resources/static/img/fluxo.png" alt="Fluxo Swagger Agent" style="max-width: 100%; width: 400px; height: auto; border-radius: 1rem;">
+                </div>
+            </div>
+        </section>
+
+        <!-- Quick Start Section -->
+        <section id="quick-start" class="section" style="background: var(--light-color);">
+            <div class="container">
+                <h2 class="section-title scroll-animate">🚀 Quick Start</h2>
+                <p class="section-subtitle scroll-animate">
+                    Comece a usar o Swagger Agent em poucos passos
+                </p>
+
+                <div class="code-section scroll-animate">
+                    <pre><span class="highlight"># 1. Clone o repositório</span>
+git clone https://github.com/cesarschutz/swagger-agent.git
+cd swagger-agent
+
+<span class="highlight"># 2. Coloque seus arquivos OpenAPI na pasta openapi-specs/</span>
+# Adicione seus arquivos .json ou .yaml em openapi-specs/
+# Exemplo: openapi-specs/petstore/petstore.yaml
+
+<span class="highlight"># 3. Configure a chave da OpenAI (se for usar OpenAI)</span>
+export OPENAI_API_KEY="sua_chave_openai_aqui"
+
+<span class="highlight"># 4. Execute a aplicação</span>
+./mvnw spring-boot:run
+
+<span class="highlight"># 5. Acesse a interface web</span>
+# 🌐 http://localhost:8080/chat.html</pre>
+                </div>
+
+                <div class="features-grid">
+                    <div class="feature-card scroll-animate">
+                        <h3 class="feature-title">📋 Pré-requisitos</h3>
+                        <ul style="list-style: none; padding: 0;">
+                            <li>✅ <strong>Java 21</strong> ou superior</li>
+                            <li>✅ <strong>Maven 3.6</strong> ou superior</li>
+                            <li>✅ <strong>OpenAI API Key</strong> (opcional se usar modelo local)</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Interface Section -->
+        <section id="interface" class="section">
+            <div class="container">
+                <h2 class="section-title scroll-animate">🖥️ Interface Gráfica Moderna</h2>
+                <p class="section-subtitle scroll-animate">
+                    Experimente o chat através de uma interface web intuitiva e responsiva
+                </p>
+                
+                <div class="interface-showcase scroll-animate">
+                    <div class="interface-item">
+                        <h3 class="interface-title">🖥️ Interface Web Desktop</h3>
+                        <img src="src/main/resources/static/img/interfaceweb.png" alt="Interface Web do Swagger Agent" style="max-width: 100%; height: auto; border-radius: 1rem; box-shadow: var(--shadow-lg);">
+                    </div>
+                    
+                    <div class="interface-item">
+                        <h3 class="interface-title">📱 Interface Mobile</h3>
+                        <img src="src/main/resources/static/img/interfacewebmobile.png" alt="Interface Mobile do Swagger Agent" style="max-width: 100%; height: auto; border-radius: 1rem; box-shadow: var(--shadow-lg);">
+                    </div>
+                </div>
+
+                <div class="features-grid">
+                    <div class="feature-card scroll-animate">
+                        <div class="feature-icon">
+                            <i class="fas fa-palette"></i>
+                        </div>
+                        <h3 class="feature-title">🎨 Design Moderno</h3>
+                        <p class="feature-description">
+                            Interface com gradientes, efeitos glass, animações suaves e design responsivo 
+                            que funciona perfeitamente em desktop, tablet e mobile.
+                        </p>
+                    </div>
+                    <div class="feature-card scroll-animate">
+                        <div class="feature-icon">
+                            <i class="fas fa-list"></i>
+                        </div>
+                        <h3 class="feature-title">🛠️ Painel de Ferramentas</h3>
+                        <p class="feature-description">
+                            Visualize todas as APIs disponíveis organizadas por projeto. Clique em qualquer 
+                            ferramenta para ver exemplos de como usá-la.
+                        </p>
+                    </div>
+                    <div class="feature-card scroll-animate">
+                        <div class="feature-icon">
+                            <i class="fas fa-comment-dots"></i>
+                        </div>
+                        <h3 class="feature-title">💬 Chat Inteligente</h3>
+                        <p class="feature-description">
+                            Conversa natural com suporte a markdown, emojis e indicadores de digitação. 
+                            Sessões únicas para cada usuário com histórico completo.
+                        </p>
+                    </div>
+                </div>
+
+                <div style="text-align: center; margin-top: 3rem;">
+                    <a href="demo-chat.html" class="btn btn-primary">
+                        <i class="fas fa-external-link-alt"></i>
+                        Experimentar Interface Demo
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Ollama Section -->
+        <section id="ollama" class="section" style="background: var(--light-color);">
+            <div class="container">
+                <h2 class="section-title scroll-animate">🧑‍💻 Usando com Modelo Local (Ollama)</h2>
+                <p class="section-subtitle scroll-animate">
+                    Execute o Swagger Agent com modelos locais usando Ollama
+                </p>
+                <div class="code-section scroll-animate">
+<pre><span class="highlight"># 1. Suba o Ollama com Docker</span>
+docker run -d --name ollama -p 11434:11434 ollama/ollama:latest
+
+<span class="highlight"># 2. Baixe um modelo (exemplo: Qwen 0.5b)</span>
+docker exec -it ollama ollama pull qwen:0.5b
+
+<span class="highlight"># 3. Configure o projeto para usar o Ollama</span>
+export SPRING_AI_OLLAMA_BASE_URL=http://localhost:11434
+export SPRING_AI_OLLAMA_CHAT_OPTIONS_MODEL="qwen:0.5b"
+export OPENAI_API_KEY=""  # Pode ficar vazio</pre>
+                </div>
+                <div class="feature-card scroll-animate" style="margin-top:2rem;">
+                    <h3 class="feature-title">ℹ️ Dica</h3>
+                    <p class="feature-description">
+                        Você pode substituir <code>qwen:0.5b</code> por outro modelo suportado pelo Ollama (ex: <code>llama2</code>, <code>mistral</code>, etc).
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- API Section -->
+        <section id="api" class="section">
+            <div class="container">
+                <h2 class="section-title scroll-animate">📚 API Reference</h2>
+                <p class="section-subtitle scroll-animate">
+                    Endpoints principais e exemplos de uso
+                </p>
+
+                <div class="features-grid">
+                    <div class="feature-card scroll-animate">
+                        <h3 class="feature-title">💬 Chat Síncrono</h3>
+                        <div class="code-section" style="margin: 1rem 0; padding: 1rem;">
+                            <pre><span class="highlight">POST /api/chat</span>
+Content-Type: application/json
+
+{
+  "message": "Quais pets estão disponíveis?",
+  "sessionId": "sessao-123"
+}</pre>
+                        </div>
+                    </div>
+
+                    <div class="feature-card scroll-animate">
+                        <h3 class="feature-title">🛠️ Listar Ferramentas</h3>
+                        <div class="code-section" style="margin: 1rem 0; padding: 1rem;">
+                            <pre><span class="highlight">GET /api/tools</span>
+
+# Retorna todas as ferramentas dinâmicas
+# geradas a partir das especificações OpenAPI</pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>🤖 Swagger Agent</h3>
+                    <p>Conectando IA a APIs de forma inteligente, segura e auditável.</p>
+                </div>
+                <div class="footer-section">
+                    <h3>🔗 Links Úteis</h3>
+                    <ul>
+                        <li><a href="https://github.com/cesarschutz/swagger-agent" target="_blank">GitHub</a></li>
+                        <li><a href="demo-chat.html">Interface Web Demo</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>🛠️ Tecnologias</h3>
+                    <ul>
+                        <li><a href="https://spring.io/projects/spring-boot" target="_blank">Spring Boot 3</a></li>
+                        <li><a href="https://spring.io/projects/spring-ai" target="_blank">Spring AI</a></li>
+                        <li><a href="https://openai.com/" target="_blank">OpenAI</a></li>
+                        <li><a href="https://ollama.com/" target="_blank">Ollama</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 Swagger Agent. Licenciado sob MIT License.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script>
+        // Mobile menu toggle
+        const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
+        const navLinks = document.querySelector('.nav-links');
+        
+        mobileMenuBtn.addEventListener('click', () => {
+            navLinks.classList.toggle('show');
+        });
+
+        // Close mobile menu when clicking a link
+        document.querySelectorAll('.nav-links a').forEach(link => {
+            link.addEventListener('click', () => {
+                navLinks.classList.remove('show');
+            });
+        });
+
+        // Close mobile menu when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.nav') && navLinks.classList.contains('show')) {
+                navLinks.classList.remove('show');
+            }
+        });
+
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Scroll animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.scroll-animate').forEach(el => {
+            observer.observe(el);
+        });
+
+        // Header background on scroll
+        window.addEventListener('scroll', () => {
+            const header = document.querySelector('.header');
+            if (window.scrollY > 100) {
+                header.style.background = 'white';
+            } else {
+                header.style.background = 'white';
+            }
+        });
+
+        // Add some interactive elements
+        document.querySelectorAll('.feature-card').forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-10px) scale(1.02)';
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0) scale(1)';
+            });
+        });
+
+        // Console welcome message
+        console.log(`
+🤖 Swagger Agent - IA + OpenAPI Integration
+
+Transforme qualquer especificação OpenAPI em ferramentas dinâmicas!
+
+🔗 Links úteis:
+- Interface Web: http://localhost:8080/chat.html
+- GitHub: https://github.com/cesarschutz/swagger-agent
+
+Construído com ❤️ usando Spring Boot 3 e Spring AI
+        `);
+    </script>
+</body>
+</html>
+
