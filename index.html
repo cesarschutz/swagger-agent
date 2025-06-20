@@ -865,6 +865,7 @@
                 <li><a href="#interface">🖥️ Interface</a></li>
                 <li><a href="#ollama">🧑‍💻 Modelos Locais</a></li>
                 <li><a href="#api">📚 API</a></li>
+                <li><a href="#spring-ai-tools">🔧 Spring AI Tools</a></li>
             </ul>
         </nav>
     </header>
@@ -1016,14 +1017,14 @@ export OPENAI_API_KEY="sua_chave_openai_aqui"
                 </p>
                 
                 <div class="interface-showcase scroll-animate">
-                    <div class="interface-item">
-                        <h3 class="interface-title">🖥️ Interface Web Desktop</h3>
-                        <img src="src/main/resources/static/img/interfaceweb.png" alt="Interface Web do Swagger Agent" style="max-width: 100%; height: auto; border-radius: 1rem; box-shadow: var(--shadow-lg);">
+                    <div class="feature-card">
+                        <h3 class="feature-title">🖥️ Interface Web Desktop</h3>
+                        <img src="src/main/resources/static/img/interfaceweb.png" alt="Interface Web do Swagger Agent" style="max-width: 100%; height: auto; border-radius: 0.5rem; margin-top: 1rem;">
                     </div>
                     
-                    <div class="interface-item">
-                        <h3 class="interface-title">📱 Interface Mobile</h3>
-                        <img src="src/main/resources/static/img/interfacewebmobile.png" alt="Interface Mobile do Swagger Agent" style="max-width: 100%; height: auto; border-radius: 1rem; box-shadow: var(--shadow-lg);">
+                    <div class="feature-card">
+                        <h3 class="feature-title">📱 Interface Mobile</h3>
+                        <img src="src/main/resources/static/img/interfacewebmobile.png" alt="Interface Mobile do Swagger Agent" style="max-width: 100%; height: auto; border-radius: 0.5rem; margin-top: 1rem;">
                     </div>
                 </div>
 
@@ -1127,6 +1128,129 @@ Content-Type: application/json
 # Retorna todas as ferramentas dinâmicas
 # geradas a partir das especificações OpenAPI</pre>
                         </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Spring AI Tools Section -->
+        <section id="spring-ai-tools" class="section" style="background: var(--light-color);">
+            <div class="container">
+                <h2 class="section-title scroll-animate">🔧 Spring AI & Ferramentas Dinâmicas</h2>
+                <p class="section-subtitle scroll-animate">
+                    Como o Swagger Agent utiliza o Spring AI para conectar IA com APIs de forma inteligente
+                </p>
+
+                <div class="features-grid scroll-animate">
+                    <div class="feature-card" style="text-align: center;">
+                        <h3 class="feature-title">🚀 Spring AI - Fundação Inteligente</h3>
+                        <img src="src/main/resources/static/img/springai.png" alt="Spring AI Framework" style="max-width: 100%; height: auto; border-radius: 0.5rem; margin-top: 1rem;">
+                    </div>
+                    
+                    <div class="feature-card" style="text-align: center;">
+                        <h3 class="feature-title">🔄 Fluxo de Execução</h3>
+                        <img src="src/main/resources/static/img/toolSpring.png" alt="Fluxo de Tools no Spring AI" style="max-width: 100%; height: auto; border-radius: 0.5rem; margin-top: 1rem;">
+                    </div>
+                </div>
+
+                <div class="features-grid">
+                    <div class="feature-card scroll-animate">
+                        <div class="feature-icon">
+                            <i class="fas fa-comments"></i>
+                        </div>
+                        <h3 class="feature-title">💬 ChatClient API</h3>
+                        <p class="feature-description">
+                            Utilizamos a API fluente do Spring AI para comunicação com modelos de IA, similar ao WebClient. 
+                            Suporte a OpenAI, Ollama e outros provedores com troca fácil de componentes.
+                        </p>
+                    </div>
+                    <div class="feature-card scroll-animate">
+                        <div class="feature-icon">
+                            <i class="fas fa-tools"></i>
+                        </div>
+                        <h3 class="feature-title">🛠️ Function Calling</h3>
+                        <p class="feature-description">
+                            Implementamos o sistema de Tools/Function Calling do Spring AI, permitindo que o modelo 
+                            execute ferramentas dinâmicas geradas a partir de especificações OpenAPI.
+                        </p>
+                    </div>
+                    <div class="feature-card scroll-animate">
+                        <div class="feature-icon">
+                            <i class="fas fa-brain"></i>
+                        </div>
+                        <h3 class="feature-title">🧠 Memória de Conversa</h3>
+                        <p class="feature-description">
+                            Aproveitamos o sistema de Chat Conversation Memory do Spring AI para manter contexto 
+                            entre mensagens e sessões únicas para cada usuário.
+                        </p>
+                    </div>
+                    <div class="feature-card scroll-animate">
+                        <div class="feature-icon">
+                            <i class="fas fa-eye"></i>
+                        </div>
+                        <h3 class="feature-title">👁️ Observabilidade</h3>
+                        <p class="feature-description">
+                            Utilizamos os recursos de observabilidade do Spring AI para monitorar operações de IA, 
+                            incluindo logs detalhados e auditoria de execução de ferramentas.
+                        </p>
+                    </div>
+                    <div class="feature-card scroll-animate">
+                        <div class="feature-icon">
+                            <i class="fas fa-cogs"></i>
+                        </div>
+                        <h3 class="feature-title">⚙️ Auto Configuration</h3>
+                        <p class="feature-description">
+                            Aproveitamos o Spring Boot Auto Configuration do Spring AI para configuração automática 
+                            de modelos e provedores, simplificando a configuração do projeto.
+                        </p>
+                    </div>
+                    <div class="feature-card scroll-animate">
+                        <div class="feature-icon">
+                            <i class="fas fa-stream"></i>
+                        </div>
+                        <h3 class="feature-title">🌊 Streaming API</h3>
+                        <p class="feature-description">
+                            Implementamos suporte a streaming síncrono e assíncrono para respostas em tempo real, 
+                            proporcionando uma experiência de chat fluida e responsiva.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="feature-card scroll-animate" style="margin-top: 2rem;">
+                    <h3 class="feature-title">📋 Sequência de Execução de Ferramentas</h3>
+                    <div style="text-align: left; margin-top: 1rem;">
+                        <p style="margin-bottom: 1rem; line-height: 1.6;">
+                            O Spring AI suporta chamadas de ferramentas através de abstrações flexíveis que permitem definir, resolver e executar ferramentas de forma consistente.
+                        </p>
+                        
+                        <h4 style="color: var(--primary-color); margin: 1.5rem 0 1rem 0; font-weight: 600;">📝 Fluxo no Swagger Agent:</h4>
+                        
+                        <ol style="list-style: none; padding: 0; counter-reset: step-counter;">
+                            <li style="counter-increment: step-counter; margin-bottom: 1rem; padding-left: 2rem; position: relative;">
+                                <span style="position: absolute; left: 0; color: var(--primary-color); font-weight: 600;">1.</span>
+                                <strong>Definição da Ferramenta:</strong> Incluímos a definição da ferramenta na requisição de chat, com nome, descrição e schema dos parâmetros de entrada.
+                            </li>
+                            <li style="counter-increment: step-counter; margin-bottom: 1rem; padding-left: 2rem; position: relative;">
+                                <span style="position: absolute; left: 0; color: var(--primary-color); font-weight: 600;">2.</span>
+                                <strong>Chamada do Modelo:</strong> O modelo decide chamar a ferramenta e envia uma resposta com o nome da ferramenta e parâmetros de entrada.
+                            </li>
+                            <li style="counter-increment: step-counter; margin-bottom: 1rem; padding-left: 2rem; position: relative;">
+                                <span style="position: absolute; left: 0; color: var(--primary-color); font-weight: 600;">3.</span>
+                                <strong>Execução:</strong> A aplicação identifica e executa a ferramenta usando o nome e parâmetros fornecidos.
+                            </li>
+                            <li style="counter-increment: step-counter; margin-bottom: 1rem; padding-left: 2rem; position: relative;">
+                                <span style="position: absolute; left: 0; color: var(--primary-color); font-weight: 600;">4.</span>
+                                <strong>Processamento:</strong> O resultado da chamada da ferramenta é processado pela aplicação.
+                            </li>
+                            <li style="counter-increment: step-counter; margin-bottom: 1rem; padding-left: 2rem; position: relative;">
+                                <span style="position: absolute; left: 0; color: var(--primary-color); font-weight: 600;">5.</span>
+                                <strong>Retorno:</strong> O resultado é enviado de volta ao modelo como contexto adicional.
+                            </li>
+                            <li style="counter-increment: step-counter; margin-bottom: 1rem; padding-left: 2rem; position: relative;">
+                                <span style="position: absolute; left: 0; color: var(--primary-color); font-weight: 600;">6.</span>
+                                <strong>Resposta Final:</strong> O modelo gera a resposta final usando o resultado da ferramenta como contexto.
+                            </li>
+                        </ol>
                     </div>
                 </div>
             </div>
