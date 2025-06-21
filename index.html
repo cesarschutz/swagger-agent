@@ -4,49 +4,111 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>🤖 Swagger Agent - IA + OpenAPI Integration</title>
-    <meta name="description" content="Transforme qualquer especificação OpenAPI em ferramentas dinâmicas que podem ser invocadas por modelos de linguagem (LLMs). Construído com Spring Boot 3 e Spring AI.">
-    <meta name="keywords" content="Spring Boot, OpenAPI, Swagger, IA, Inteligência Artificial, Java, REST API, Spring AI, OpenAI, Ollama">
+    <meta name="description" content="Transforme especificações OpenAPI em ferramentas dinâmicas para modelos de linguagem. Aprenda Spring AI, function calling e integração de IA com APIs.">
+    <meta name="keywords" content="Spring Boot, OpenAPI, Swagger, IA, Inteligência Artificial, Java, REST API, Spring AI, OpenAI, Ollama, Function Calling">
     <meta name="author" content="Swagger Agent Team">
     
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://cesarschutz.github.io/swagger-agent/">
     <meta property="og:title" content="🤖 Swagger Agent - IA + OpenAPI Integration">
-    <meta property="og:description" content="Transforme qualquer especificação OpenAPI em ferramentas dinâmicas que podem ser invocadas por modelos de linguagem (LLMs)">
-    <meta property="og:image" content="https://cesarschutz.github.io/swagger-agent/logo.png">
+    <meta property="og:description" content="Transforme especificações OpenAPI em ferramentas dinâmicas para modelos de linguagem">
+    <meta property="og:image" content="https://cesarschutz.github.io/swagger-agent/src/main/resources/static/img/logo-transparente-ferramenta.png">
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="https://cesarschutz.github.io/swagger-agent/">
     <meta property="twitter:title" content="🤖 Swagger Agent - IA + OpenAPI Integration">
-    <meta property="twitter:description" content="Transforme qualquer especificação OpenAPI em ferramentas dinâmicas que podem ser invocadas por modelos de linguagem (LLMs)">
-    <meta property="twitter:image" content="https://cesarschutz.github.io/swagger-agent/logo.png">
+    <meta property="twitter:description" content="Transforme especificações OpenAPI em ferramentas dinâmicas para modelos de linguagem">
+    <meta property="twitter:image" content="https://cesarschutz.github.io/swagger-agent/src/main/resources/static/img/logo-transparente-ferramenta.png">
 
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🤖</text></svg>">
     
     <!-- Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
     
-    <!-- Styles -->
     <style>
         :root {
-            --primary-color: #2563eb;
-            --secondary-color: #1e40af;
-            --accent-color: #3b82f6;
-            --success-color: #10b981;
-            --warning-color: #f59e0b;
-            --danger-color: #ef4444;
-            --dark-color: #1f2937;
-            --light-color: #f8fafc;
-            --text-primary: #1f2937;
-            --text-secondary: #6b7280;
-            --border-color: #e5e7eb;
-            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-            --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
-            --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            --gradient-secondary: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            /* Paleta de Cores Azuis Profissionais */
+            --primary-50: #eff6ff;
+            --primary-100: #dbeafe;
+            --primary-200: #bfdbfe;
+            --primary-300: #93c5fd;
+            --primary-400: #60a5fa;
+            --primary-500: #3b82f6;
+            --primary-600: #2563eb;
+            --primary-700: #1d4ed8;
+            --primary-800: #1e40af;
+            --primary-900: #1e3a8a;
+            
+            --secondary-50: #f0f9ff;
+            --secondary-100: #e0f2fe;
+            --secondary-200: #bae6fd;
+            --secondary-300: #7dd3fc;
+            --secondary-400: #38bdf8;
+            --secondary-500: #0ea5e9;
+            --secondary-600: #0284c7;
+            --secondary-700: #0369a1;
+            --secondary-800: #075985;
+            --secondary-900: #0c4a6e;
+            
+            /* Neutros */
+            --neutral-50: #e0f2fe;
+            --neutral-100: #f5f5f5;
+            --neutral-200: #e5e5e5;
+            --neutral-300: #d4d4d4;
+            --neutral-400: #a3a3a3;
+            --neutral-500: #737373;
+            --neutral-600: #525252;
+            --neutral-700: #404040;
+            --neutral-800: #262626;
+            --neutral-900: #171717;
+            
+            /* Cores de Apoio */
+            --success: #10b981;
+            --warning: #f59e0b;
+            --error: #ef4444;
+            --info: #06b6d4;
+            
+            /* Gradientes */
+            --gradient-primary: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            --gradient-secondary: linear-gradient(135deg, #0ea5e9 0%, #0369a1 100%);
+            --gradient-hero: linear-gradient(135deg, #1e40af 0%, #3b82f6 50%, #0ea5e9 100%);
+            
+            /* Sombras */
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+            --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+            
+            /* Tipografia */
+            --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            --font-mono: 'JetBrains Mono', 'Fira Code', Consolas, monospace;
+            
+            /* Espaçamento */
+            --space-1: 0.25rem;
+            --space-2: 0.5rem;
+            --space-3: 0.75rem;
+            --space-4: 1rem;
+            --space-5: 1.25rem;
+            --space-6: 1.5rem;
+            --space-8: 1rem;
+            --space-10: 2.5rem;
+            --space-12: 3rem;
+            --space-16: 4rem;
+            --space-20: 5rem;
+            
+            /* Border Radius */
+            --radius-sm: 0.375rem;
+            --radius-md: 0.5rem;
+            --radius-lg: 0.75rem;
+            --radius-xl: 1rem;
+            --radius-2xl: 1.5rem;
+            --radius-full: 9999px;
         }
 
         * {
@@ -55,93 +117,125 @@
             box-sizing: border-box;
         }
 
+        html {
+            scroll-behavior: smooth;
+        }
+
         body {
-            font-family: 'Inter', sans-serif;
+            font-family: var(--font-sans);
             line-height: 1.6;
-            color: var(--text-primary);
-            background: var(--gradient-primary);
-            min-height: 100vh;
+            color: var(--neutral-800);
+            background: var(--neutral-50);
             overflow-x: hidden;
         }
 
+        /* Utility Classes */
         .container {
-            max-width: 1200px;
+            max-width: 1280px;
             margin: 0 auto;
-            padding: 0 20px;
+            padding: 0 var(--space-6);
         }
 
-        /* Header */
-        .header {
-            background: white !important;
-            backdrop-filter: blur(10px);
+        .section {
+            padding: var(--space-20) 0;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .text-gradient {
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Progress Bar */
+        .progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 0%;
+            height: 3px;
+            background: var(--gradient-primary);
+            z-index: 9999;
+            transition: width 0.1s ease;
+        }
+
+        /* Navigation */
+        .navbar {
             position: fixed;
             top: 0;
             left: 0;
             right: 0;
             z-index: 1000;
-            box-shadow: var(--shadow);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            background: white;
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--neutral-200);
+            transition: all 0.3s ease;
         }
 
-        .nav {
+        .navbar.scrolled {
+            background: rgba(255, 255, 255, 0.98);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .nav-container {
             display: flex;
+            align-items: center;
             justify-content: space-between;
-            align-items: center;
-            padding: 0px 10px 0px 10px;
-            position: relative;
+            padding: var(--space-4) 0;
         }
 
-        .logo {
+        .nav-logo {
             display: flex;
             align-items: center;
-            gap: 0.8rem;
-            font-size: 1.5rem;
-            font-weight: 800;
-            color: var(--primary-color);
+            gap: var(--space-3);
+            font-weight: 700;
+            font-size: 1.25rem;
+            color: var(--neutral-800);
             text-decoration: none;
-            transition: transform 0.3s ease;
             white-space: nowrap;
-            min-width: fit-content;
         }
 
-        .logo:hover {
-            transform: scale(1.05);
+        .nav-logo img {
+            width: 32px;
+            height: 32px;
         }
 
-        .nav-links {
+        .nav-menu {
             display: flex;
             list-style: none;
-            gap: 1.5rem;
-            margin: 0;
-            padding: 0;
-            align-items: center;
+            gap: var(--space-8);
         }
 
-        .nav-links a {
+        .nav-link {
+            color: var(--neutral-600);
             text-decoration: none;
-            color: var(--text-primary);
             font-weight: 500;
             transition: all 0.3s ease;
             position: relative;
+            padding: var(--space-2) 0;
             white-space: nowrap;
         }
 
-        .nav-links a:hover {
-            color: var(--primary-color);
+        .nav-link:hover {
+            color: var(--primary-600);
         }
 
-        .nav-links a::after {
+        .nav-link::after {
             content: '';
             position: absolute;
+            bottom: 0;
+            left: 0;
             width: 0;
             height: 2px;
-            bottom: -5px;
-            left: 0;
-            background-color: var(--primary-color);
+            background: var(--primary-600);
             transition: width 0.3s ease;
         }
 
-        .nav-links a:hover::after {
+        .nav-link:hover::after {
             width: 100%;
         }
 
@@ -149,37 +243,27 @@
             display: none;
             background: none;
             border: none;
-            color: var(--primary-color);
+            color: var(--primary-600);
             font-size: 1.5rem;
             cursor: pointer;
-            padding: 0.5rem;
-            margin-left: 1rem;
+            padding: var(--space-2);
+            border-radius: var(--radius-md);
             transition: all 0.3s ease;
-            border-radius: 8px;
         }
 
         .mobile-menu-btn:hover {
-            background: rgba(37, 99, 235, 0.1);
-        }
-
-        .mobile-menu-btn:active {
-            transform: scale(0.95);
-        }
-
-        /* Ajuste do container para o menu mobile */
-        .nav.container {
-            max-width: none;
-            width: 100%;
-            justify-content: space-between;
-            padding: 0.5rem 1rem;
+            background: var(--primary-50);
         }
 
         /* Hero Section */
         .hero {
-            padding: 8rem 0 4rem;
-            text-align: center;
-            color: white;
             position: relative;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            background: var(--gradient-hero);
+            color: white;
+            overflow: hidden;
         }
 
         .hero::before {
@@ -189,8 +273,7 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="50" cy="50" r="1" fill="white" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
-            opacity: 0.3;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="1"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
         }
 
         .hero-content {
@@ -198,229 +281,165 @@
             z-index: 2;
             display: flex;
             align-items: center;
-            justify-content: center;
-            gap: 2rem;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
+            gap: var(--space-16);
+            width: 100%;
         }
 
         .hero-text {
             flex: 1;
             max-width: 600px;
-            text-align: left;
+        }
+
+        .hero-visual {
+            flex: 0 0 auto;
             display: flex;
-            flex-direction: column;
             justify-content: center;
-        }
-
-        .hero-title-container {
-            margin-bottom: 1.5rem;
-        }
-
-        .hero h1 {
-            font-size: clamp(2.5rem, 5vw, 4rem);
-            font-weight: 800;
-            margin: 0;
-            background: linear-gradient(45deg, #fff, #e0e7ff, #c7d2fe);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            animation: gradientShift 3s ease-in-out infinite;
-            line-height: 1.1;
-            padding-bottom: 5px;
-        }
-
-        .hero-image {
-            flex-shrink: 0;
-            display: flex;
             align-items: center;
-            justify-content: center;
         }
 
-        .hero-image img {
-            height: 325px;
-            width: auto;
-            transform: scaleX(-1);
-            object-fit: contain;
+        .hero-robot {
+            width: 300px;
+            height: 400px;
+            background: url('src/main/resources/static/img/logotransparente.png') center/contain no-repeat;
+            animation: float 3s ease-in-out infinite;
         }
 
-        @media (max-width: 1024px) {
-            .hero-content {
-                gap: 1rem;
-            }
-            
-            .hero-image img {
-                height: 200px;
-            }
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) scaleX(-1); }
+            50% { transform: translateY(-20px) scaleX(-1); }
         }
 
-        @media (max-width: 768px) {
-            .hero-content {
-                flex-direction: column;
-                text-align: center;
-                gap: 20px;
-                padding: 0 20px;
-            }
-
-            .hero-text {
-                max-width: 100%;
-                text-align: center;
-                display: flex;
-                flex-direction: column;
-                gap: 20px;
-                align-items: center;
-            }
-
-            .hero-image {
-                order: 1;
-            }
-
-            .hero-title-container {
-                order: 0;
-            }
-
-            .hero-buttons {
-                order: 2;
-            }
-
-            .hero-image img {
-                height: 180px;
-            }
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-2);
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: var(--space-2) var(--space-4);
+            border-radius: var(--radius-full);
+            font-size: 0.875rem;
+            font-weight: 500;
+            margin-bottom: var(--space-6);
+            animation: fadeInUp 0.8s ease-out;
         }
 
-        @media (max-width: 480px) {
-            .hero-image img {
-                height: 150px;
-            }
+        .hero-title {
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 900;
+            line-height: 1.1;
+            margin-bottom: var(--space-6);
+            animation: fadeInUp 0.8s ease-out 0.2s both;
         }
 
-        @keyframes gradientShift {
-            0%, 100% { filter: hue-rotate(0deg); }
-            50% { filter: hue-rotate(10deg); }
-        }
-
-        .hero p {
-            font-size: 1.25rem;
-            margin-bottom: 2rem;
+        .hero-subtitle {
+            font-size: clamp(1.125rem, 2vw, 1.5rem);
+            font-weight: 400;
             opacity: 0.9;
-            max-width: 700px;
-            margin-left: auto;
-            margin-right: auto;
-            line-height: 1.8;
+            margin-bottom: var(--space-8);
+            line-height: 1.7;
+            animation: fadeInUp 0.8s ease-out 0.4s both;
         }
 
-        .hero-buttons {
-            flex: 0 0 100%;
+        .hero-cta {
             display: flex;
-            gap: 1rem;
-            justify-content: center;
+            gap: var(--space-4);
             flex-wrap: wrap;
+            animation: fadeInUp 0.8s ease-out 0.6s both;
         }
 
+        /* Buttons */
         .btn {
             display: inline-flex;
             align-items: center;
-            gap: 0.5rem;
-            padding: 0.875rem 1.75rem;
-            border-radius: 0.75rem;
-            text-decoration: none;
+            gap: var(--space-2);
+            padding: var(--space-4) var(--space-6);
+            border-radius: var(--radius-lg);
             font-weight: 600;
-            font-size: 1rem;
-            transition: all 0.3s ease;
-            border: none;
-            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
             overflow: hidden;
-        }
-
-        .btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-            transition: left 0.5s;
-        }
-
-        .btn:hover::before {
-            left: 100%;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
         }
 
         .btn-primary {
-            background: var(--primary-color);
-            color: white;
-            box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
+            background: white;
+            color: var(--primary-600);
+            box-shadow: var(--shadow-lg);
         }
 
         .btn-primary:hover {
-            background: var(--secondary-color);
-            transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(37, 99, 235, 0.4);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-xl);
         }
 
         .btn-secondary {
-            background: rgba(255, 255, 255, 0.15);
+            background: rgba(255, 255, 255, 0.1);
             color: white;
-            border: 2px solid rgba(255, 255, 255, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.3);
             backdrop-filter: blur(10px);
         }
 
         .btn-secondary:hover {
-            background: rgba(255, 255, 255, 0.25);
-            transform: translateY(-3px);
-            border-color: rgba(255, 255, 255, 0.5);
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
         }
 
-        /* Main Content */
-        .main {
-            background: white;
-            margin-top: -2rem;
-            border-radius: 2rem 2rem 0 0;
-            position: relative;
-            z-index: 10;
-            box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.1);
+        /* Content Sections */
+        .content-section {
+            padding: var(--space-20) 0;
         }
 
-        .section {
-            padding: 5rem 0;
+        .section-header {
+            text-align: center;
+            margin-bottom: var(--space-16);
+        }
+
+        .section-badge {
+            display: inline-block;
+            background: var(--primary-50);
+            color: var(--primary-600);
+            padding: var(--space-2) var(--space-4);
+            border-radius: var(--radius-full);
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-bottom: var(--space-4);
         }
 
         .section-title {
-            text-align: center;
             font-size: clamp(2rem, 4vw, 3rem);
-            font-weight: 700;
-            margin-bottom: 1rem;
-            color: var(--text-primary);
+            font-weight: 800;
+            line-height: 1.2;
+            margin-bottom: var(--space-4);
+            color: var(--neutral-900);
         }
 
-        .section-subtitle {
-            text-align: center;
+        .section-description {
             font-size: 1.25rem;
-            color: var(--text-secondary);
-            margin-bottom: 3rem;
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
+            color: var(--neutral-600);
+            max-width: 700px;
+            margin: 0 auto;
+            line-height: 1.7;
         }
 
-        /* Features Grid */
+        /* Feature Cards */
         .features-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-            margin-bottom: 4rem;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: var(--space-8);
+            margin-top: var(--space-12);
         }
 
         .feature-card {
             background: white;
-            padding: 2rem;
-            border-radius: 1rem;
-            box-shadow: var(--shadow);
-            border: 1px solid var(--border-color);
-            transition: all 0.3s ease;
+            border-radius: var(--radius-2xl);
+            padding: var(--space-8);
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--neutral-200);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
             overflow: hidden;
         }
@@ -433,304 +452,520 @@
             right: 0;
             height: 4px;
             background: var(--gradient-primary);
-            transform: scaleX(0);
-            transition: transform 0.3s ease;
         }
 
         .feature-card:hover {
-            transform: translateY(-5px);
-            box-shadow: var(--shadow-lg);
-        }
-
-        .feature-card:hover::before {
-            transform: scaleX(1);
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-xl);
         }
 
         .feature-icon {
-            font-size: 2.5rem;
-            margin-bottom: 1rem;
+            width: 64px;
+            height: 64px;
             background: var(--gradient-primary);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+            border-radius: var(--radius-xl);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: var(--space-6);
+            color: white;
+            font-size: 1.5rem;
+        }
+
+        .feature-icon img {
+            width: 48px;
+            height: 48px;
+            object-fit: contain;
         }
 
         .feature-title {
-            font-size: 1.25rem;
-            font-weight: 600;
-            margin-bottom: 1rem;
-            color: var(--text-primary);
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: var(--space-4);
+            color: var(--neutral-900);
         }
 
         .feature-description {
-            color: var(--text-secondary);
-            line-height: 1.6;
+            color: var(--neutral-600);
+            line-height: 1.7;
+            margin-bottom: var(--space-6);
+        }
+
+        .feature-list {
+            list-style: none;
+        }
+
+        .feature-list li {
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+            margin-bottom: var(--space-3);
+            color: var(--neutral-600);
+        }
+
+        .feature-list li::before {
+            content: '✓';
+            color: var(--success);
+            font-weight: 600;
+            font-size: 1.1rem;
         }
 
         /* Code Blocks */
+        .code-block {
+            background: var(--neutral-900);
+            border-radius: var(--radius-xl);
+            padding: var(--space-6);
+            margin: var(--space-6) 0;
+            position: relative;
+            overflow-x: auto;
+        }
+
+        .code-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: var(--space-4);
+            padding-bottom: var(--space-3);
+            border-bottom: 1px solid var(--neutral-700);
+        }
+
+        .code-title {
+            color: var(--neutral-300);
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .code-lang {
+            background: var(--primary-600);
+            color: white;
+            padding: var(--space-1) var(--space-2);
+            border-radius: var(--radius-sm);
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .code-content {
+            font-family: var(--font-mono);
+            color: var(--neutral-100);
+            font-size: 0.875rem;
+            line-height: 1.8;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
         .code-section {
-            background: var(--dark-color);
-            border-radius: 1rem;
-            padding: 2rem;
-            margin: 2rem 0;
+            background: var(--neutral-900);
+            border-radius: var(--radius-lg);
+            padding: var(--space-4);
+            margin: var(--space-4) 0;
             overflow-x: auto;
         }
 
         .code-section pre {
-            color: #e5e7eb;
-            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
-            font-size: 0.9rem;
-            line-height: 1.5;
+            font-family: var(--font-mono);
+            color: var(--neutral-100);
+            font-size: 0.875rem;
+            line-height: 1.6;
+            margin: 0;
+            white-space: pre-wrap;
+            word-wrap: break-word;
         }
 
         .code-section .highlight {
-            color: #10b981;
+            color: var(--primary-300);
+            font-weight: 600;
         }
 
-        /* Stats */
-        .stats {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 2rem;
-            margin: 3rem 0;
+        /* Highlight Box */
+        .highlight-box {
+            background: var(--primary-50);
+            border: 1px solid var(--primary-200);
+            border-radius: var(--radius-lg);
+            padding: var(--space-6);
+            margin: var(--space-6) 0;
         }
 
-        .stat-item {
+        .highlight-box h4 {
+            color: var(--primary-700);
+            font-weight: 600;
+            margin-bottom: var(--space-2);
+        }
+
+        .highlight-box p {
+            color: var(--primary-600);
+            margin: 0;
+        }
+
+        /* Architecture Flow */
+        .architecture {
+            background: var(--neutral-50);
+            border-radius: var(--radius-2xl);
+            padding: var(--space-12);
+            margin: var(--space-12) 0;
+            border: 1px solid var(--neutral-200);
+        }
+
+        .arch-title {
             text-align: center;
-            padding: 2rem;
-            background: var(--light-color);
-            border-radius: 1rem;
-            border: 1px solid var(--border-color);
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: var(--space-8);
+            color: var(--neutral-900);
         }
 
-        .stat-number {
-            font-size: 2.5rem;
-            font-weight: 800;
-            color: var(--primary-color);
-            margin-bottom: 0.5rem;
+        .arch-flow {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: var(--space-4);
+            margin: var(--space-6) 0;
         }
 
-        .stat-label {
-            color: var(--text-secondary);
-            font-weight: 500;
+        .arch-step {
+            background: white;
+            border-radius: var(--radius-xl);
+            padding: var(--space-6);
+            text-align: center;
+            min-width: 160px;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--neutral-200);
+            transition: all 0.3s ease;
+        }
+
+        .arch-step:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .arch-step-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--gradient-primary);
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto var(--space-3);
+            color: white;
+            font-size: 1.25rem;
+        }
+
+        .arch-step-title {
+            font-weight: 600;
+            margin-bottom: var(--space-1);
+            color: var(--neutral-900);
+        }
+
+        .arch-step-desc {
+            font-size: 0.875rem;
+            color: var(--neutral-600);
+        }
+
+        .arch-arrow {
+            color: var(--primary-400);
+            font-size: 1.5rem;
+        }
+
+        /* Interface Showcase */
+        .interface-showcase {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-8);
+            margin: var(--space-12) 0;
+        }
+
+        .interface-row {
+            display: grid;
+            gap: var(--space-8);
+        }
+
+        .interface-row-2 {
+            grid-template-columns: repeat(auto-fit, minmax(calc(50% - var(--space-4)), 1fr));
+        }
+
+        .interface-row-3 {
+            grid-template-columns: repeat(auto-fit, minmax(calc(33.33% - var(--space-6)), 1fr));
+        }
+
+        .interface-card {
+            background: white;
+            border-radius: var(--radius-2xl);
+            padding: var(--space-6);
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--neutral-200);
+            transition: all 0.3s ease;
+        }
+
+        .interface-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .interface-card img {
+            width: 100%;
+            height: auto;
+            border-radius: var(--radius-lg);
+            margin-bottom: var(--space-4);
+        }
+
+        .interface-card-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: var(--space-2);
+            color: var(--neutral-900);
+        }
+
+        .interface-card-description {
+            color: var(--neutral-600);
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        /* Demo Section */
+        .demo-section {
+            background: var(--gradient-hero);
+            color: white;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .demo-section .hero-cta {
+            justify-content: center;
+        }
+
+        .demo-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="demo-grid" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="1"/></pattern></defs><rect width="100" height="100" fill="url(%23demo-grid)"/></svg>');
+        }
+
+        .demo-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .demo-examples {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: var(--space-4);
+            margin: var(--space-8) 0;
+        }
+
+        .demo-example {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: var(--radius-xl);
+            padding: var(--space-4);
+            text-align: left;
+        }
+
+        .demo-example-title {
+            font-weight: 600;
+            margin-bottom: var(--space-2);
+        }
+
+        .demo-example-text {
+            font-size: 0.875rem;
+            opacity: 0.8;
+            font-style: italic;
+        }
+
+        /* Mermaid Diagram */
+        .mermaid-container {
+            background: white;
+            border-radius: var(--radius-2xl);
+            padding: var(--space-8);
+            margin: var(--space-8) 0;
+            text-align: center;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--neutral-200);
+            overflow-x: auto;
+        }
+
+        .mermaid {
+            max-width: 100%;
+            height: auto;
         }
 
         /* Footer */
         .footer {
-            background: var(--dark-color);
-            color: white;
-            padding: 3rem 0 2rem;
+            background: var(--neutral-900);
+            color: var(--neutral-300);
+            padding: var(--space-16) 0 var(--space-8);
         }
 
         .footer-content {
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
-            gap: 2.5rem;
-            flex-wrap: wrap;
-            margin-bottom: 2rem;
-            max-width: 1000px;
-            margin-left: auto;
-            margin-right: auto;
-            padding-top: 2.5rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: var(--space-8);
+            margin-bottom: var(--space-8);
         }
-        .footer-section {
-            min-width: 200px;
-            max-width: 260px;
-            flex: 1 1 200px;
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-            text-align: left;
-        }
+
         .footer-section h3 {
-            margin-bottom: 1.1rem;
-            color: var(--accent-color);
-            text-align: center;
-            font-size: 1.15rem;
-            font-weight: 700;
-            letter-spacing: 0.01em;
+            color: white;
+            font-weight: 600;
+            margin-bottom: var(--space-4);
         }
+
         .footer-section ul {
             list-style: none;
-            padding-left: 0;
-            margin-bottom: 0;
         }
+
         .footer-section ul li {
-            margin-bottom: 0.5rem;
+            margin-bottom: var(--space-2);
         }
+
         .footer-section ul li a {
-            color: #d1d5db;
+            color: var(--neutral-400);
             text-decoration: none;
             transition: color 0.3s ease;
-            font-size: 1rem;
         }
+
         .footer-section ul li a:hover {
-            color: var(--accent-color);
+            color: var(--primary-400);
         }
-        .footer-section p {
-            margin-top: 0;
-            margin-bottom: 0;
-            font-size: 1rem;
-            color: #e5e7eb;
-            line-height: 1.5;
+
+        .social-links {
+            display: flex;
+            gap: var(--space-4);
+            margin-top: var(--space-4);
         }
-        @media (max-width: 900px) {
-            .footer-content {
-                flex-direction: column;
-                align-items: center;
-                gap: 2rem;
-                text-align: center;
-                max-width: 100%;
-                padding-top: 1.5rem;
-            }
-            .footer-section {
-                max-width: 100%;
-                align-items: center;
-                text-align: center;
-            }
-            .footer-section ul {
-                text-align: center;
-            }
+
+        .social-links a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background: var(--neutral-800);
+            color: var(--neutral-400);
+            border-radius: var(--radius-full);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .social-links a:hover {
+            background: var(--primary-600);
+            color: white;
+            transform: translateY(-2px);
         }
 
         .footer-bottom {
+            border-top: 1px solid var(--neutral-700);
+            padding-top: var(--space-8);
             text-align: center;
-            padding-top: 2rem;
-            border-top: 1px solid #374151;
-            color: #9ca3af;
+            color: var(--neutral-500);
         }
 
-        /* Responsive */
-        @media (max-width: 1024px) {
+        /* External Links */
+        .external-link {
+            color: var(--primary-600);
+            text-decoration: none;
+            font-weight: 500;
+            border-bottom: 1px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .external-link:hover {
+            border-bottom-color: var(--primary-600);
+        }
+
+        .external-link::after {
+            content: ' ↗';
+            font-size: 0.875em;
+            opacity: 0.7;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1100px) {
+            .nav-menu {
+                display: none;
+            }
+            
             .mobile-menu-btn {
                 display: block;
             }
-
-            .nav-links {
-                display: none;
-                position: absolute;
-                top: 100%;
-                left: 0;
-                right: 0;
+            
+            .hero-content {
                 flex-direction: column;
-                background: white;
-                padding: 1rem;
-                gap: 1rem;
-                box-shadow: var(--shadow);
                 text-align: center;
-                z-index: 1000;
-                border-top: 1px solid var(--border-color);
-            }
-
-            .nav-links.show {
-                display: flex;
-                animation: slideDown 0.3s ease-out forwards;
-            }
-
-            .nav-links li {
-                width: 100%;
-                border-bottom: 1px solid var(--border-color);
-            }
-
-            .nav-links li:last-child {
-                border-bottom: none;
-            }
-
-            .nav-links a {
-                display: block;
-                padding: 0.8rem;
-                font-size: 1.1rem;
-            }
-
-            @keyframes slideDown {
-                from {
-                    opacity: 0;
-                    transform: translateY(-10px);
-                }
-                to {
-                    opacity: 1;
-                    transform: translateY(0);
-                }
-            }
-
-            /* Ajustes adicionais para mobile */
-            .logo img {
-                height: 50px;
-            }
-
-            .container {
-                padding: 0;
-            }
-
-            .nav.container {
-                padding: 0.5rem 1rem;
-            }
-
-            .hero {
-                padding: 8rem 0 3rem;
+                gap: var(--space-8);
             }
             
-            .hero-buttons {
+            .hero-visual {
+                order: -1;
+            }
+            
+            .hero-robot {
+                width: 200px;
+                height: 200px;
+            }
+            
+            .hero-cta {
                 flex-direction: column;
                 align-items: center;
             }
             
             .btn {
                 width: 100%;
-                max-width: 300px;
+                max-width: 280px;
                 justify-content: center;
             }
             
             .features-grid {
                 grid-template-columns: 1fr;
-                padding: 0 1rem;
             }
             
-            .stats {
+            .arch-flow {
+                flex-direction: column;
+            }
+            
+            .arch-arrow {
+                transform: rotate(90deg);
+            }
+            
+            .demo-examples {
                 grid-template-columns: 1fr;
-                padding: 0 1rem;
             }
 
-            .section {
-                padding: 3rem 1rem;
+            .interface-row-2, .interface-row-3 {
+                grid-template-columns: 1fr;
             }
 
-            .code-section {
-                margin: 1rem -1rem;
-                border-radius: 0;
-            }
-        }
-
-        @media (min-width: 1025px) {
-            .mobile-menu-btn {
-                display: none;
+            .interface-row-3 .interface-card img {
+                width: 100%;
+                object-fit: contain;
             }
 
-            .nav-links {
-                display: flex !important;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .container {
-                padding: 0 1rem;
+            .interface-showcase {
+                grid-template-columns: 1fr;
             }
 
-            .hero h1 {
-                font-size: 2rem;
+            .feature-card {
+                padding: var(--space-6);
             }
 
-            .hero p {
-                font-size: 1rem;
+            .feature-icon {
+                width: 56px;
+                height: 56px;
+                font-size: 1.25rem;
             }
 
-            .section-title {
-                font-size: 1.75rem;
+            .feature-icon img {
+                width: 40px;
+                height: 40px;
             }
 
-            .section-subtitle {
-                font-size: 1rem;
+            .feature-title {
+                font-size: 1.25rem;
             }
         }
 
@@ -746,11 +981,17 @@
             }
         }
 
-        .fade-in-up {
-            animation: fadeInUp 0.6s ease-out;
+        .animate-on-scroll {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        /* Scroll animations */
+        .animate-on-scroll.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
         .scroll-animate {
             opacity: 0;
             transform: translateY(30px);
@@ -762,274 +1003,525 @@
             transform: translateY(0);
         }
 
-        /* Interface Showcase */
-        .interface-showcase {
-            display: grid;
-            grid-template-columns: 62fr 30fr;
-            gap: 3rem;
-            margin: 3rem 0;
-            max-width: 2400px;
-            margin-left: auto;
-            margin-right: auto;
-            position: relative;
-        }
-
-        .interface-item {
-            text-align: center;
+        /* Flow Diagram */
+        .flow-diagram {
             background: white;
-            padding: 2rem;
-            border-radius: 1rem;
-            box-shadow: var(--shadow);
-            border: 1px solid var(--border-color);
-            transition: all 0.5s ease;
-            position: relative;
-            z-index: 1;
+            border-radius: var(--radius-2xl);
+            padding: var(--space-8);
+            margin: var(--space-8) 0;
+            text-align: center;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--neutral-200);
         }
 
-        /* Efeito de hover nas interfaces */
-        .interface-showcase:hover .interface-item {
-            opacity: 0.5;
-            transform: scale(0.95);
-        }
-
-        .interface-showcase .interface-item:hover {
-            transform: scale(1.05);
-            opacity: 1;
-            box-shadow: var(--shadow-lg);
-            z-index: 2;
-        }
-
-        .interface-title {
-            font-size: 1.5rem;
-            font-weight: 600;
-            margin-bottom: 2rem;
-            color: var(--text-primary);
-            transition: all 0.5s ease;
-        }
-
-        .interface-item img {
+        .flow-diagram img {
             max-width: 100%;
             height: auto;
-            border-radius: 0.5rem;
-            box-shadow: var(--shadow);
-            transition: all 0.5s ease;
+            border-radius: var(--radius-lg);
         }
 
-        @media (max-width: 1200px) {
-            .interface-showcase {
-                grid-template-columns: 1fr;
-                max-width: 1000px;
-            }
-            
-            .interface-item {
-                padding: 1.5rem;
-            }
-
-            /* Ajuste do efeito para telas menores */
-            .interface-showcase:hover .interface-item {
-                opacity: 1;
-                transform: none;
-            }
-
-            .interface-showcase .interface-item:hover {
-                transform: translateY(-10px);
-            }
+        .flow-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: var(--space-4);
+            color: var(--neutral-900);
         }
 
-        @media (max-width: 768px) {
-            .interface-item {
-                padding: 1rem;
-            }
-            
-            .interface-title {
-                font-size: 1.25rem;
-                margin-bottom: 1.5rem;
-            }
+        .flow-description {
+            color: var(--neutral-600);
+            margin-bottom: var(--space-6);
+            font-size: 1.1rem;
         }
 
         .title-icon {
-            height: 200px;
+            height: 130px;
+            margin-right: var(--space-2);
             vertical-align: middle;
-            margin-right: 0.5rem;
+        }
+
+        .nav-menu.active {
+            display: flex;
+            flex-direction: column;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            width: 100%;
+            background: white;
+            padding: var(--space-4) 0;
+            box-shadow: var(--shadow-lg);
+            border-top: 1px solid var(--neutral-200);
+            align-items: center;
         }
     </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/atom-one-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/languages/bash.min.js"></script>
 </head>
 <body>
-    <!-- Header -->
-    <header class="header">
-        <nav class="nav container">
-            <a href="#" class="logo">
-                <img src="src/main/resources/static/img/icone.png" alt="Logo Icone" style="height: 40px;">
-                <span>Swagger Agent</span>
-            </a>
-            <button class="mobile-menu-btn" aria-label="Abrir menu">
-                <i class="fas fa-bars"></i>
-            </button>
-            <ul class="nav-links">
-                <li><a href="#features">✨ Funcionalidades</a></li>
-                <li><a href="#quick-start">🚀 Quick Start</a></li>
-                <li><a href="#ai-providers">🤖 Provedores de IA</a></li>
-                <li><a href="#interface">🖥️ Interface</a></li>
-                <li><a href="#api">📚 API</a></li>
-                <li><a href="#spring-ai-tools">🔧 Arquitetura</a></li>
-            </ul>
-        </nav>
-    </header>
+    <div class="progress-bar" id="progressBar"></div>
+    
+    <!-- Navigation -->
+    <nav class="navbar" id="navbar">
+        <div class="container">
+            <div class="nav-container">
+                <a href="#" class="nav-logo">
+                    <img src="src/main/resources/static/img/icone.png" alt="Swagger Agent">
+                    <span>Swagger Agent</span>
+                </a>
+                <ul class="nav-menu">
+                    <li><a href="#quick-start" class="nav-link">🚀 Quick Start</a></li>
+                    <li><a href="#interfaces" class="nav-link">💻 Interfaces</a></li>
+                    <li><a href="#features" class="nav-link">✨ Funcionalidades</a></li>
+                    <li><a href="#concepts" class="nav-link">📚 Conceitos</a></li>
+                    <li><a href="#ai-providers" class="nav-link">🤖 Provedores</a></li>
+                    <li><a href="#api" class="nav-link">🔌 API</a></li>
+                    <li><a href="#architecture" class="nav-link">🔧 Arquitetura</a></li>
+                    <li><a href="#demo" class="nav-link">💬 Demo</a></li>
+                </ul>
+                <button class="mobile-menu-btn" id="mobileMenuBtn">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
 
     <!-- Hero Section -->
     <section class="hero">
-        <div class="hero-content container">
-            <div class="hero-text">
-                <div class="hero-title-container fade-in-up">
-                    <h1>Swagger Agent</h1>
+        <div class="container">
+            <div class="hero-content">
+                <div class="hero-text">
+                    <div class="hero-badge">
+                        <i class="fas fa-sparkles"></i>
+                        <span>Powered by Spring Boot 3 + Spring AI</span>
+                    </div>
+                    <h1 class="hero-title">
+                        Swagger Agent
+                    </h1>
+                    <p class="hero-subtitle">
+                        Transforme qualquer especificação OpenAPI em ferramentas dinâmicas que podem ser invocadas por modelos de linguagem (LLMs). Construído com <strong>Spring Boot 3</strong>, <strong>Spring AI</strong> e preparado para rodar com <strong>OpenAI</strong> ou <strong>modelos locais via Ollama</strong>.
+                    </p>
+                    <div class="hero-cta">
+                        <a href="demo-chat.html" class="btn btn-primary">
+                            <i class="fas fa-comments"></i>
+                            Testar Chat Demo
+                        </a>
+                        <a href="https://github.com/cesarschutz/swagger-agent" class="btn btn-secondary" target="_blank">
+                            <i class="fab fa-github"></i>
+                            Ver no GitHub
+                        </a>
+                    </div>
                 </div>
-                <p class="fade-in-up">
-                    Transforme qualquer especificação OpenAPI em ferramentas dinâmicas que podem ser invocadas por modelos de linguagem (LLMs). 
-                    Construído com <strong>Spring Boot 3</strong>, <strong>Spring AI</strong> e preparado para rodar com <strong>OpenAI</strong> ou <strong>modelos locais via Ollama</strong>.
-                </p>
-                <div class="hero-buttons fade-in-up">
-                    <a href="#quick-start" class="btn btn-primary">
-                        <i class="fas fa-rocket"></i>
-                        Começar Agora
-                    </a>
-                    <a href="https://github.com/cesarschutz/swagger-agent" class="btn btn-secondary" target="_blank">
-                        <i class="fab fa-github"></i>
-                        Ver no GitHub
-                    </a>
+                <div class="hero-visual">
+                    <div class="hero-robot"></div>
                 </div>
-            </div>
-            <div class="hero-image fade-in-up">
-                <img src="src/main/resources/static/img/logotransparente.png" alt="Swagger Agent Logo">
             </div>
         </div>
     </section>
 
-    <!-- Main Content -->
-    <main class="main">
-        <!-- Features Section -->
-        <section id="features" class="section">
-            <div class="container">
-                <h2 class="section-title scroll-animate">✨ Funcionalidades Principais</h2>
-                <p class="section-subtitle scroll-animate">
-                    Uma solução completa para integração de IA com APIs através de especificações OpenAPI
+    <!-- Quick Start Section -->
+    <section id="quick-start" class="content-section" style="background: white;">
+        <div class="container">
+            <div class="section-header animate-on-scroll">
+                <div class="section-badge">Quick Start</div>
+                <h2 class="section-title">🚀 Inicie em 4 Passos</h2>
+                <p class="section-description">
+                    Configure e execute o Swagger Agent rapidamente com a configuração padrão (OpenAI).
                 </p>
-                
-                <div class="features-grid">
-                    <div class="feature-card scroll-animate">
-                        <div class="feature-icon">
-                            <i class="fas fa-comments"></i>
-                        </div>
-                        <h3 class="feature-title">🚀 Chat Inteligente</h3>
-                        <p class="feature-description">
-                            Comunicação natural com modelos da OpenAI ou LLMs locais via <code>/api/chat</code>. 
-                            Streaming em tempo-real via Server-Sent Events e memória de sessão para manter contexto.
+            </div>
+
+            <div class="code-section animate-on-scroll">
+                <pre><span class="highlight"># 1. Clone o repositório</span>
+ git clone https://github.com/cesarschutz/swagger-agent.git
+ cd swagger-agent
+ 
+ <span class="highlight"># 2. Adicione seus arquivos OpenAPI na pasta `openapi-specs/`</span>
+ # Exemplo: openapi-specs/petstore/petstore.yaml
+
+ <span class="highlight"># 3. Exporte sua chave da OpenAI e execute`</span>
+ export OPENAI_API_KEY="sua_chave_openai_aqui"
+ 
+ <span class="highlight"># 4. Execute a aplicação</span>
+ ./mvnw spring-boot:run</pre>
+            </div>
+
+            <div class="feature-card animate-on-scroll" style="margin-top: var(--space-8); background-color: #eef2ff; border-color: #c7d2fe;">
+                <h3 class="feature-title">💡 Quer usar um modelo local?</h3>
+                <p class="feature-description">
+                    Pule para a seção <a href="#ai-providers" style="color: var(--primary-600); text-decoration: none; font-weight: 600;">Configurando o Provedor de IA</a> para aprender a usar o Swagger Agent com o Ollama.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Interfaces Section -->
+    <section id="interfaces" class="content-section" style="background: var(--neutral-50);">
+        <div class="container">
+            <div class="section-header animate-on-scroll">
+                <div class="section-badge">Interfaces do Sistema</div>
+                <h2 class="section-title">💻 Conheça as Telas do Swagger Agent</h2>
+                <p class="section-description">
+                    Explore as interfaces web e mobile do projeto, desde a tela inicial até 
+                    a visualização de ferramentas disponíveis.
+                </p>
+            </div>
+
+            <div class="interface-showcase">
+                <div class="interface-row interface-row-2">
+                    <div class="interface-card animate-on-scroll">
+                        <img src="src/main/resources/static/img/interfaceweb.png" alt="Interface Web Principal">
+                        <h4 class="interface-card-title">💻 Interface Web Principal</h4>
+                        <p class="interface-card-description">
+                            Tela principal do chat onde você pode conversar naturalmente com as APIs. 
+                            Interface limpa e moderna com suporte a markdown..
                         </p>
                     </div>
-
-                    <div class="feature-card scroll-animate">
-                        <div class="feature-icon">
-                            <i class="fas fa-desktop"></i>
-                        </div>
-                        <h3 class="feature-title">🖥️ Interface Gráfica</h3>
-                        <p class="feature-description">
-                            Interface web moderna e intuitiva com painel de ferramentas, chat em tempo real, 
-                            suporte a markdown e design responsivo para uma experiência completa.
-                        </p>
-                    </div>
-
-                    <div class="feature-card scroll-animate">
-                        <div class="feature-icon">
-                            <i class="fas fa-tools"></i>
-                        </div>
-                        <h3 class="feature-title">🛠️ Ferramentas Dinâmicas</h3>
-                        <p class="feature-description">
-                            Geração automática de functions a partir de arquivos OpenAPI.
-                            Execução assíncrona para melhor performance e responsividade.
+    
+                    <div class="interface-card animate-on-scroll">
+                        <img src="src/main/resources/static/img/interfacewebferramentas.png" alt="Tela de Ferramentas">
+                        <h4 class="interface-card-title">🛠️ Visualização de Ferramentas Web</h4>
+                        <p class="interface-card-description">
+                            Tela que mostra todas as ferramentas disponíveis geradas automaticamente 
+                            das especificações OpenAPI, com métodos HTTP coloridos e descrições claras.
                         </p>
                     </div>
                 </div>
 
-                <div class="stats">
-                    <div class="stat-item scroll-animate">
-                        <div class="stat-number">33</div>
-                        <div class="stat-label">Classes Java</div>
+                <div class="interface-row interface-row-3">
+                    <div class="interface-card animate-on-scroll">
+                        <img src="src/main/resources/static/img/interfacewebmobilehome.png" alt="Interface Mobile Home">
+                        <h4 class="interface-card-title">📱 Interface Mobile - Home</h4>
+                        <p class="interface-card-description">
+                            Versão mobile otimizada da interface principal. Design responsivo que 
+                            se adapta perfeitamente a smartphones e tablets.
+                        </p>
                     </div>
-                    <div class="stat-item scroll-animate">
-                        <div class="stat-number">100%</div>
-                        <div class="stat-label">JavaDocs</div>
+    
+                    <div class="interface-card animate-on-scroll">
+                        <img src="src/main/resources/static/img/interfacewebmobilemenu.png" alt="Interface Mobile Menu">
+                        <h4 class="interface-card-title">📱 Interface Mobile - Menu</h4>
+                        <p class="interface-card-description">
+                           Navegação otimizada para dispositivos móveis, garantindo acesso rápido a todas as funcionalidades e seções do agente.
+                        </p>
                     </div>
-                    <div class="stat-item scroll-animate">
-                        <div class="stat-number">3</div>
-                        <div class="stat-label">Endpoints REST</div>
-                    </div>
-                    <div class="stat-item scroll-animate">
-                        <div class="stat-number">∞</div>
-                        <div class="stat-label">Ferramentas Dinâmicas</div>
-                    </div>
-                </div>
 
-                <div style="text-align: center;">
-                    <img src="src/main/resources/static/img/fluxo.png" alt="Swagger Agent Logo">
+                    <div class="interface-card animate-on-scroll">
+                        <img src="src/main/resources/static/img/interfacewebmobileferramentas.png" alt="Interface Mobile Ferramentas">
+                        <h4 class="interface-card-title">📱 Interface Mobile - Ferramentas</h4>
+                        <p class="interface-card-description">
+                            Visualização mobile das ferramentas disponíveis, com layout otimizado 
+                            para telas menores e navegação touch-friendly.
+                        </p>
+                    </div>
                 </div>
             </div>
-        </section>
 
-        <!-- Quick Start Section -->
-        <section id="quick-start" class="section" style="background: var(--light-color);">
-            <div class="container">
-                <h2 class="section-title scroll-animate">🚀 Quick Start</h2>
-                <p class="section-subtitle scroll-animate">
-                    Inicie o Swagger Agent em 3 passos com a configuração padrão (OpenAI).
-                </p>
-
-                <div class="code-section scroll-animate">
-                    <pre><span class="highlight"># 1. Clone o repositório</span>
-git clone https://github.com/cesarschutz/swagger-agent.git
-cd swagger-agent
-
-<span class="highlight"># 2. Adicione seus arquivos OpenAPI na pasta `openapi-specs/`</span>
-# Exemplo: openapi-specs/petstore/petstore.yaml
-
-<span class="highlight"># 3. Exporte sua chave da OpenAI e execute</span>
-export OPENAI_API_KEY="sua_chave_openai_aqui"
-./mvnw spring-boot:run</pre>
-                </div>
-
-                <div class="feature-card scroll-animate" style="margin-top: 2rem; background-color: #eef2ff; border-color: #c7d2fe;">
-                    <h3 class="feature-title">💡 Quer usar um modelo local?</h3>
+            <div class="features-grid">
+                <div class="feature-card animate-on-scroll">
+                    <div class="feature-icon">
+                        <i class="fas fa-palette"></i>
+                    </div>
+                    <h3 class="feature-title">🎨 Design Moderno</h3>
                     <p class="feature-description">
-                        Pule para a seção <a href="#ai-providers" style="color: var(--primary-color); text-decoration: none; font-weight: 600;">Configurando o Provedor de IA</a> para aprender a usar o Swagger Agent com o Ollama.
+                        Interface com gradientes, efeitos glass, animações suaves e design responsivo 
+                        que funciona perfeitamente em desktop, tablet e mobile.
+                    </p>
+                </div>
+                <div class="feature-card animate-on-scroll">
+                    <div class="feature-icon">
+                        <i class="fas fa-list"></i>
+                    </div>
+                    <h3 class="feature-title">🛠️ Painel de Ferramentas</h3>
+                    <p class="feature-description">
+                        Visualize todas as APIs disponíveis organizadas por projeto. Clique em qualquer 
+                        ferramenta para ver exemplos de como usá-la.
+                    </p>
+                </div>
+                <div class="feature-card animate-on-scroll">
+                    <div class="feature-icon">
+                        <i class="fas fa-comment-dots"></i>
+                    </div>
+                    <h3 class="feature-title">💬 Chat Inteligente</h3>
+                    <p class="feature-description">
+                        Conversa natural com suporte a markdown, emojis e indicadores de digitação. 
+                        Sessões únicas para cada usuário.
                     </p>
                 </div>
             </div>
-        </section>
 
-        <!-- AI Providers Section -->
-        <section id="ai-providers" class="section">
-            <div class="container">
-                <h2 class="section-title scroll-animate">🤖 Configurando o Provedor de IA</h2>
-                <p class="section-subtitle scroll-animate">
-                    A seleção do provedor de IA (OpenAI ou Ollama) é feita pela propriedade <code>app.ai.provider</code>. <br>Você pode configurá-la de duas formas:
-                    <br><strong>1. Variável de Ambiente:</strong> export AI_PROVIDER=ollama
-                    <br><strong>2. Arquivo <code>application.yml</code>:</strong> app.ai.provider: ollama
+            <div style="text-align: center; margin-top: var(--space-12);">
+                <a href="demo-chat.html" class="btn btn-primary">
+                    <i class="fas fa-external-link-alt"></i>
+                    Experimentar Interface Demo
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="content-section" style="background: white;">
+        <div class="container">
+            <div class="section-header animate-on-scroll">
+                <div class="section-badge">Funcionalidades Principais</div>
+                <h2 class="section-title">✨ Uma solução completa para integração de IA com APIs</h2>
+                <p class="section-description">
+                    Descubra como o Swagger Agent revoluciona a forma como você interage com APIs através de conversas naturais.
                 </p>
+            </div>
 
-                <div style="text-align: center; margin-top: 4rem; margin-bottom: 2rem;">
-                    <h3 style="font-size: 1.5rem; font-weight: 600; color: var(--text-primary);">Passo a Passo para Configuração</h3>
+            <div class="features-grid">
+                <div class="feature-card animate-on-scroll">
+                    <div class="feature-icon">
+                        <i class="fas fa-comments"></i>
+                    </div>
+                    <h3 class="feature-title">🚀 Chat Inteligente</h3>
+                    <p class="feature-description">
+                        Interface conversacional que permite interagir com APIs usando linguagem natural. 
+                        Streaming em tempo real e suporte a markdown.
+                    </p>
+                    <ul class="feature-list">
+                        <li>Conversação natural com APIs</li>
+                        <li>Streaming de respostas em tempo real</li>
+                        <li>Suporte completo a Markdown</li>
+                    </ul>
                 </div>
 
-                <div class="features-grid">
-                    <!-- OpenAI -->
-                    <div class="feature-card scroll-animate">
-                        <div class="feature-icon">
-                            <i class="fas fa-cloud"></i>
-                        </div>
-                        <h3 class="feature-title">Opção 1: Usar OpenAI (Padrão)</h3>
-                        <p class="feature-description">
-                            Ideal para começar rapidamente. Requer uma chave de API e conexão com a internet.
+                <div class="feature-card animate-on-scroll">
+                    <div class="feature-icon">
+                        <i class="fas fa-desktop"></i>
+                    </div>
+                    <h3 class="feature-title">💻 Interface Gráfica</h3>
+                    <p class="feature-description">
+                        Interface web moderna e responsiva com design profissional. 
+                        Funciona perfeitamente em desktop, tablet e mobile.
+                    </p>
+                    <ul class="feature-list">
+                        <li>Design responsivo e moderno</li>
+                        <li>Visualização de ferramentas disponíveis</li>
+                        <li>Interface intuitiva e amigável</li>
+                        <li>Suporte completo a dispositivos móveis</li>
+                    </ul>
+                </div>
+
+                <div class="feature-card animate-on-scroll">
+                    <div class="feature-icon">
+                        <i class="fas fa-wrench"></i>
+                    </div>
+                    <h3 class="feature-title">🛠️ Ferramentas Dinâmicas</h3>
+                    <p class="feature-description">
+                        Geração automática de ferramentas a partir de especificações OpenAPI. 
+                        Cada endpoint se torna uma ferramenta que o LLM pode usar.
+                    </p>
+                    <ul class="feature-list">
+                        <li>Geração automática de ferramentas</li>
+                        <li>Suporte completo a OpenAPI 3.0</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Concepts Section -->
+    <section id="concepts" class="content-section" style="background: var(--neutral-50);">
+        <div class="container">
+            <div class="section-header animate-on-scroll">
+                <div class="section-badge">Conceitos Fundamentais</div>
+                <h2 class="section-title">📚 Entendendo os Pilares da Tecnologia</h2>
+                <p class="section-description">
+                    Vamos explorar cada conceito fundamental que torna possível a integração 
+                    inteligente entre IA e APIs, com explicações didáticas e exemplos práticos.
+                </p>
+            </div>
+
+            <div class="features-grid">
+                <!-- Modelos de Linguagem -->
+                <div class="feature-card animate-on-scroll">
+                    <div class="feature-icon">
+                        <i class="fas fa-brain"></i>
+                    </div>
+                    <h3 class="feature-title">🤖 Modelos de Linguagem (LLMs)</h3>
+                    <p class="feature-description">
+                        <strong>Large Language Models (LLMs)</strong> são sistemas de IA treinados em enormes volumes de texto 
+                        para compreender e gerar linguagem humana. Funcionam como um "cérebro digital" que leu milhões 
+                        de livros e conversas.
+                    </p>
+
+                    <div class="highlight-box">
+                        <h4>🎯 Como Funcionam na Prática</h4>
+                        <p>
+                            Quando você faz uma pergunta, o LLM usa padrões estatísticos para prever qual seria a 
+                            resposta mais apropriada, palavra por palavra.
                         </p>
-                        <div class="code-section" style="margin-top: 1rem;">
-                            <pre><span class="highlight"># Método 1: Via Variáveis de Ambiente</span>
+                    </div>
+
+                    <ul class="feature-list">
+                        <li><a href="https://openai.com/gpt-4" class="external-link">GPT-4 (OpenAI)</a> - online</li>
+                        <li><a href="https://ollama.ai" class="external-link">Ollama</a> - Modelos locais gratuitos</li>
+                        <li><a href="https://claude.ai" class="external-link">Claude (Anthropic)</a> - online</li>
+                        <li><a href="https://gemini.google.com" class="external-link">Gemini (Google)</a> - online</li>
+                    </ul>
+                </div>
+
+                <!-- Ferramentas -->
+                <div class="feature-card animate-on-scroll">
+                    <div class="feature-icon">
+                        <i class="fas fa-wrench"></i>
+                    </div>
+                    <h3 class="feature-title">🛠️ Ferramentas (Function Calling)</h3>
+                    <p class="feature-description">
+                        Imagine um LLM como um cérebro muito inteligente que precisa de "mãos" para interagir com o mundo real. 
+                        Essas "mãos" são as <strong>ferramentas (tools)</strong> ou <strong>function calling</strong>.
+                    </p>
+
+                    <div class="highlight-box">
+                        <h4>🔧 Analogia Prática</h4>
+                        <p>
+                            É como ter um assistente super inteligente que sabe de tudo, mas precisa de ferramentas específicas: 
+                            uma calculadora para matemática, um telefone para ligar, uma API para buscar dados.
+                        </p>
+                    </div>
+
+                    <ul class="feature-list">
+                        <li><a href="https://platform.openai.com/docs/guides/function-calling" class="external-link">OpenAI Function Calling Guide</a></li>
+                        <li>Cada endpoint OpenAPI vira uma ferramenta</li>
+                        <li>LLM decide quando e como usar cada ferramenta</li>
+                    </ul>
+                </div>
+
+                <!-- OpenAPI -->
+                <div class="feature-card animate-on-scroll">
+                    <div class="feature-icon">
+                        <i class="fas fa-file-code"></i>
+                    </div>
+                    <h3 class="feature-title">📋 OpenAPI (Swagger)</h3>
+                    <p class="feature-description">
+                        <strong>OpenAPI</strong> é um padrão para descrever APIs REST de forma estruturada. 
+                        É como um "manual de instruções" detalhado da sua API, legível por humanos e máquinas.
+                    </p>
+
+                    <div class="highlight-box">
+                        <h4>📖 Analogia Simples</h4>
+                        <p>
+                            Imagine que sua API é um restaurante. O OpenAPI seria o cardápio detalhado que lista 
+                            todos os pratos (endpoints), ingredientes (parâmetros) e como fazer o pedido (métodos HTTP).
+                        </p>
+                    </div>
+
+                    <ul class="feature-list">
+                        <li><a href="https://swagger.io/specification/" class="external-link">Especificação Oficial OpenAPI</a></li>
+                        <li><a href="https://editor.swagger.io/" class="external-link">Swagger Editor Online</a></li>
+                        <li><a href="https://petstore.swagger.io/" class="external-link">Petstore Demo</a> (usado no projeto)</li>
+                        <li>Padrão da indústria para documentar APIs</li>
+                    </ul>
+                </div>
+
+                <!-- Spring Boot -->
+                <div class="feature-card animate-on-scroll">
+                    <div class="feature-icon">
+                        <i class="fab fa-java"></i>
+                    </div>
+                    <h3 class="feature-title">🍃 Spring Boot</h3>
+                    <p class="feature-description">
+                        <strong>Spring Boot</strong> é o framework Java mais popular para criar aplicações robustas. 
+                        Elimina a complexidade de configuração, permitindo focar na lógica de negócio.
+                    </p>
+
+                    <div class="highlight-box">
+                        <h4>🚀 Por Que Spring Boot?</h4>
+                        <p>
+                            É como ter um "kit de construção" completo para aplicações Java. Você não precisa 
+                            montar cada peça do zero - o Spring Boot já vem com tudo configurado.
+                        </p>
+                    </div>
+
+                    <ul class="feature-list">
+                        <li><a href="https://spring.io/projects/spring-boot" class="external-link">Site Oficial Spring Boot</a></li>
+                        <li><a href="https://start.spring.io/" class="external-link">Spring Initializr</a> - Gerador de projetos</li>
+                        <li>Autoconfiguração inteligente</li>
+                        <li>Servidor web embutido (Tomcat)</li>
+                    </ul>
+                </div>
+
+                <!-- Spring AI -->
+                <div class="feature-card animate-on-scroll">
+                    <div class="feature-icon">
+                        <i class="fas fa-brain"></i>
+                    </div>
+                    <h3 class="feature-title">🧠 Spring AI</h3>
+                    <p class="feature-description">
+                        <strong>Spring AI</strong> é o framework oficial da Spring para integração com modelos de IA. 
+                        Fornece abstrações simples para trabalhar com LLMs, eliminando a complexidade de integração.
+                    </p>
+
+                    <div class="highlight-box">
+                        <h4>🎯 O Que o Spring AI Faz</h4>
+                        <p>
+                            É como ter um "tradutor universal" entre sua aplicação Java e qualquer modelo de IA. 
+                            Você escreve código Java simples, e ele cuida da comunicação complexa com os LLMs.
+                        </p>
+                    </div>
+
+                    <ul class="feature-list">
+                        <li><a href="https://spring.io/projects/spring-ai" class="external-link">Site Oficial Spring AI</a></li>
+                        <li><a href="https://docs.spring.io/spring-ai/reference/" class="external-link">Documentação Completa</a></li>
+                        <li>Suporte a múltiplos provedores (OpenAI, Ollama, etc.)</li>
+                        <li>Function calling nativo</li>
+                    </ul>
+                </div>
+
+                <!-- Provedores de IA -->
+                <div class="feature-card animate-on-scroll">
+                    <div class="feature-icon">
+                        <i class="fas fa-cloud"></i>
+                    </div>
+                    <h3 class="feature-title">🤖 Provedores de IA</h3>
+                    <p class="feature-description">
+                        Suporte nativo para múltiplos provedores de IA, desde soluções em nuvem até modelos locais. 
+                        Flexibilidade total para escolher o que melhor se adapta ao seu caso de uso.
+                    </p>
+
+                    <div class="highlight-box">
+                        <h4>🏠 Modelos Locais vs Nuvem</h4>
+                        <p>
+                            <strong>Nuvem:</strong> Mais poderosos, pagos por uso<br>
+                            <strong>Local:</strong> Gratuitos, privados, sem limite de uso
+                        </p>
+                    </div>
+
+                    <ul class="feature-list">
+                        <li><strong>OpenAI:</strong> GPT-4, GPT-3.5-turbo (nuvem)</li>
+                        <li><strong>Ollama:</strong> Llama, Mistral, Qwen (local)</li>
+                        <li><strong>Anthropic:</strong> Claude (nuvem)</li>
+                        <li><strong>Google:</strong> Gemini (nuvem)</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- AI Providers Section -->
+    <section id="ai-providers" class="content-section" style="background: white;">
+        <div class="container">
+            <div class="section-header animate-on-scroll">
+                <div class="section-badge">Configuração de Provedores</div>
+                <h2 class="section-title">🤖 Configurando o Provedor de IA</h2>
+                <p class="section-description">
+                    A seleção do provedor de IA (OpenAI ou Ollama) é feita pela propriedade <code>app.ai.provider</code>. 
+                    Você pode configurá-la via variável de ambiente ou arquivo <code>application.yml</code>.
+                </p>
+            </div>
+
+            <div class="features-grid">
+                <!-- OpenAI -->
+                <div class="feature-card animate-on-scroll">
+                    <div class="feature-icon">
+                        <i class="fas fa-cloud"></i>
+                    </div>
+                    <h3 class="feature-title">Opção 1: Usar OpenAI (Padrão)</h3>
+                    <p class="feature-description">
+                        Ideal para começar rapidamente. Requer uma chave de API e conexão com a internet.
+                    </p>
+                    <div class="code-section">
+                        <pre><span class="highlight"># Método 1: Via Variáveis de Ambiente</span>
 export OPENAI_API_KEY="sua_chave_openai_aqui"
 export AI_PROVIDER=openai # Opcional (padrão)
 
@@ -1044,390 +1536,339 @@ spring:
 
 <span class="highlight"># Após configurar, execute:</span>
 ./mvnw spring-boot:run</pre>
-                        </div>
                     </div>
+                </div>
 
-                    <!-- Ollama -->
-                    <div class="feature-card scroll-animate">
-                        <div class="feature-icon">
-                            <i class="fas fa-server"></i>
-                        </div>
-                        <h3 class="feature-title">Opção 2: Usar Modelo Local (Ollama)</h3>
-                        <p class="feature-description">
-                            Perfeito para uso offline, maior privacidade e experimentação com modelos abertos.
-                        </p>
-                        <div class="code-section" style="margin-top: 1rem;">
-                            <pre><span class="highlight"># 1. Inicie o Ollama (se ainda não estiver rodando)</span>
+                <!-- Ollama -->
+                <div class="feature-card animate-on-scroll">
+                    <div class="feature-icon">
+                        <i class="fas fa-server"></i>
+                    </div>
+                    <h3 class="feature-title">Opção 2: Usar Modelo Local (Ollama)</h3>
+                    <p class="feature-description">
+                        Perfeito para uso offline, maior privacidade e experimentação com modelos abertos.
+                    </p>
+                    <div class="code-section">
+                        <pre><span class="highlight"># 1. Inicie o Ollama (se ainda não estiver rodando)</span>
 docker run -d --name ollama -p 11434:11434 ollama/ollama:latest
 docker exec -it ollama ollama pull qwen2.5:0.5b
 
 <span class="highlight"># 2. Configure a aplicação</span>
-<span class="highlight"># Método 1: Via Variáveis de Ambiente</span>
 export AI_PROVIDER=ollama
 export SPRING_AI_OLLAMA_CHAT_OPTIONS_MODEL="qwen2.5:0.5b"
 
-<span class="highlight"># Método 2: Via application.yml</span>
-app:
-  ai:
-    provider: ollama
-spring:
-  ai:
-    ollama:
-      chat:
-        options:
-          model: "qwen2.5:0.5b"
-
 <span class="highlight"># 3. Execute a aplicação</span>
 ./mvnw spring-boot:run</pre>
-                        </div>
                     </div>
-                </div>
-
-                <div class="feature-card scroll-animate" style="margin-top: 2rem;">
-                    <h3 class="feature-title">📖 Entendendo a Propriedade `AI_PROVIDER`</h3>
-                    <p class="feature-description" style="text-align: left;">
-                        A propriedade <code>app.ai.provider</code> (configurada via variável de ambiente <code>AI_PROVIDER</code> ou diretamente no <code>application.yml</code>) controla qual bean de IA será carregado pelo Spring Boot. Apenas um provedor é ativado por vez, garantindo que a aplicação seja leve e sem conflitos.
-                    </p>
-                    <ul style="margin-top: 1rem; padding-left: 2rem; text-align: left;">
-                        <li><code>openai</code>: Carrega a configuração para a API da OpenAI (padrão).</li>
-                        <li><code>ollama</code>: Carrega a configuração para o provedor Ollama.</li>
-                    </ul>
-                    <p class="feature-description" style="text-align: left; margin-top: 1rem;">
-                        <strong>Importante:</strong> É necessário reiniciar a aplicação após alterar o valor desta propriedade.
-                    </p>
                 </div>
             </div>
-        </section>
 
-        <!-- Interface Section -->
-        <section id="interface" class="section" style="background: var(--light-color);">
-            <div class="container">
-                <h2 class="section-title scroll-animate">🖥️ Interface Gráfica Moderna</h2>
-                <p class="section-subtitle scroll-animate">
-                    Experimente o chat através de uma interface web intuitiva e responsiva
+            <div class="feature-card animate-on-scroll" style="margin-top: var(--space-8);">
+                <h3 class="feature-title">📖 Entendendo a Propriedade `AI_PROVIDER`</h3>
+                <p class="feature-description" style="text-align: left;">
+                    A propriedade <code>app.ai.provider</code> controla qual bean de IA será carregado pelo Spring Boot. 
+                    Apenas um provedor é ativado por vez, garantindo que a aplicação seja leve e sem conflitos.
                 </p>
-                
-                <div class="interface-showcase scroll-animate">
-                    <div class="feature-card">
-                        <h3 class="feature-title">🖥️ Interface Web Desktop</h3>
-                        <img src="src/main/resources/static/img/interfaceweb.png" alt="Interface Web do Swagger Agent" style="max-width: 100%; height: auto; border-radius: 0.5rem; margin-top: 1rem;">
-                        <img src="src/main/resources/static/img/interfacewebferramentas.png" alt="Painel de Ferramentas do Swagger Agent" style="max-width: 100%; height: auto; border-radius: 0.5rem; margin-top: 1rem;">
-                    </div>
-                    
-                    <div class="feature-card">
-                        <h3 class="feature-title">📱 Interface Mobile</h3>
-                        <div style="display: flex; flex-direction: column; gap: 1rem; justify-content: center; align-items: center; margin-top: 1rem;">
-                            <img src="src/main/resources/static/img/interfacewebmobilehome.png" alt="Interface Mobile - Home" style="max-width: 250px; height: auto; border-radius: 0.5rem;">
-                            <img src="src/main/resources/static/img/interfacewebmobilemenu.png" alt="Interface Mobile - Menu" style="max-width: 250px; height: auto; border-radius: 0.5rem;">
-                            <img src="src/main/resources/static/img/interfacewebmobileferramentas.png" alt="Interface Mobile - Ferramentas" style="max-width: 250px; height: auto; border-radius: 0.5rem;">
-                        </div>
-                    </div>
-                </div>
-
-                <div class="features-grid">
-                    <div class="feature-card scroll-animate">
-                        <div class="feature-icon">
-                            <i class="fas fa-palette"></i>
-                        </div>
-                        <h3 class="feature-title">🎨 Design Moderno</h3>
-                        <p class="feature-description">
-                            Interface com gradientes, efeitos glass, animações suaves e design responsivo 
-                            que funciona perfeitamente em desktop, tablet e mobile.
-                        </p>
-                    </div>
-                    <div class="feature-card scroll-animate">
-                        <div class="feature-icon">
-                            <i class="fas fa-list"></i>
-                        </div>
-                        <h3 class="feature-title">🛠️ Painel de Ferramentas</h3>
-                        <p class="feature-description">
-                            Visualize todas as APIs disponíveis organizadas por projeto. Clique em qualquer 
-                            ferramenta para ver exemplos de como usá-la.
-                        </p>
-                    </div>
-                    <div class="feature-card scroll-animate">
-                        <div class="feature-icon">
-                            <i class="fas fa-comment-dots"></i>
-                        </div>
-                        <h3 class="feature-title">💬 Chat Inteligente</h3>
-                        <p class="feature-description">
-                            Conversa natural com suporte a markdown, emojis e indicadores de digitação. 
-                            Sessões únicas para cada usuário com histórico completo.
-                        </p>
-                    </div>
-                </div>
-
-                <div style="text-align: center; margin-top: 3rem;">
-                    <a href="demo-chat.html" class="btn btn-primary">
-                        <i class="fas fa-external-link-alt"></i>
-                        Experimentar Interface Demo
-                    </a>
-                </div>
+                <ul style="margin-top: var(--space-4); padding-left: var(--space-8); text-align: left;">
+                    <li><code>openai</code>: Carrega a configuração para a API da OpenAI (padrão).</li>
+                    <li><code>ollama</code>: Carrega a configuração para o provedor Ollama.</li>
+                </ul>
+                <p class="feature-description" style="text-align: left; margin-top: var(--space-4);">
+                    <strong>Importante:</strong> É necessário reiniciar a aplicação após alterar o valor desta propriedade.
+                </p>
             </div>
-        </section>
+        </div>
+    </section>
 
-        <!-- API Section -->
-        <section id="api" class="section">
-            <div class="container">
-                <h2 class="section-title scroll-animate">📚 API Reference</h2>
-                <p class="section-subtitle scroll-animate">
-                    Endpoints principais e exemplos de uso
+    <!-- API Reference Section -->
+    <section id="api" class="content-section" style="background: var(--neutral-50);">
+        <div class="container">
+            <div class="section-header animate-on-scroll">
+                <div class="section-badge">API Reference</div>
+                <h2 class="section-title">🔌 Endpoints Principais</h2>
+                <p class="section-description">
+                    Documentação dos endpoints principais e exemplos de uso da API do Swagger Agent.
                 </p>
+            </div>
 
-                <div class="features-grid">
-                    <div class="feature-card scroll-animate">
-                        <h3 class="feature-title">💬 Chat Síncrono</h3>
-                        <div class="code-section" style="margin: 1rem 0; padding: 1rem;">
-                            <pre><span class="highlight">POST /api/chat</span>
+            <div class="features-grid">
+                <div class="feature-card animate-on-scroll">
+                    <h3 class="feature-title">💬 Chat Síncrono</h3>
+                    <div class="code-section">
+                        <pre><span class="highlight">POST /api/chat</span>
 Content-Type: application/json
 
 {
   "message": "Quais pets estão disponíveis?",
   "sessionId": "sessao-123"
 }</pre>
-                        </div>
                     </div>
+                    <p class="feature-description">
+                        Endpoint principal para conversas síncronas. Retorna resposta completa após processamento.
+                    </p>
+                </div>
 
-                    <div class="feature-card scroll-animate">
-                        <h3 class="feature-title">🛠️ Listar Ferramentas</h3>
-                        <div class="code-section" style="margin: 1rem 0; padding: 1rem;">
-                            <pre><span class="highlight">GET /api/tools</span>
+                <div class="feature-card animate-on-scroll">
+                    <h3 class="feature-title">🛠️ Listar Ferramentas</h3>
+                    <div class="code-section">
+                        <pre><span class="highlight">GET /api/tools</span>
 
 # Retorna todas as ferramentas dinâmicas
 # geradas a partir das especificações OpenAPI</pre>
-                        </div>
                     </div>
+                    <p class="feature-description">
+                        Lista todas as ferramentas disponíveis com suas descrições e parâmetros.
+                    </p>
+                </div>
+
+                <div class="feature-card animate-on-scroll">
+                    <h3 class="feature-title">🌊 Chat Streaming</h3>
+                    <div class="code-section">
+                        <pre><span class="highlight">POST /api/chat/stream</span>
+Content-Type: application/json
+Accept: text/event-stream
+
+{
+  "message": "Explique como funciona o Spring AI",
+  "sessionId": "sessao-456"
+}</pre>
+                    </div>
+                    <p class="feature-description">
+                        Endpoint para respostas em streaming (Server-Sent Events). Ideal para interfaces em tempo real.
+                    </p>
                 </div>
             </div>
-        </section>
+        </div>
+    </section>
 
-        <!-- Spring AI Tools Section -->
-        <section id="spring-ai-tools" class="section" style="background: var(--light-color);">
-            <div class="container">
-                <h2 class="section-title scroll-animate"><img src="src/main/resources/static/img/logo-transparente-ferramenta.png" alt="Ferramenta" class="title-icon"> Arquitetura</h2>
-                <p class="section-subtitle scroll-animate">
-                    Entenda como o Swagger Agent funciona e como utiliza o Spring AI para conectar IA com APIs de forma inteligente
+    <!-- Architecture Section -->
+    <section id="architecture" class="content-section" style="background: white;">
+        <div class="container">
+            <div class="section-header animate-on-scroll">
+                <div class="section-badge">Arquitetura</div>
+                <h2 class="section-title">
+                    <img src="src/main/resources/static/img/logo-transparente-ferramenta.png" alt="Ferramenta" class="title-icon">
+                    Como o Sistema Funciona
+                </h2>
+                <p class="section-description">
+                    Entenda o fluxo completo desde a inicialização da aplicação até a resposta 
+                    inteligente, passando por todas as camadas do sistema.
+                </p>
+            </div>
+
+            <!-- Diagrama Mermaid -->
+            <div class="mermaid-container animate-on-scroll">
+                <h3 class="flow-title">📊 Arquitetura do Sistema</h3>
+                <div class="mermaid">
+                    graph TD
+                        subgraph "Interface do Usuário"
+                            A["💻 Frontend<br>(Interface de Chat)"]
+                        end
+                    
+                        subgraph "Backend (Swagger Agent)"
+                            B["Controller<br>(/api/chat)"]
+                            C["Orquestrador<br>(ChatService)"]
+                            D["Gerador de Ferramentas<br>(OpenAPI Parser)"]
+                            E["Executor de Ferramentas"]
+                            F["Modelo de IA<br>(Spring AI)"]
+                        end
+                    
+                        subgraph "Configuração"
+                            G["📄 Specs OpenAPI<br>(.yaml)"]
+                        end
+                    
+                        subgraph "Sistemas Externos"
+                            H["🌐 API Externa<br>(Ex: Petstore)"]
+                            I["☁️ Provedor LLM<br>(OpenAI, Ollama, etc.)"]
+                        end
+                    
+                        %% Fluxo de Interação do Usuário
+                        A -- "1. Prompt do Usuário" --> B
+                        B -- "2. Repassa" --> C
+                        C -- "3. Consulta" --> F
+                        F -- "4. Decide usar ferramenta" --> C
+                        C -- "5. Solicita execução" --> E
+                        E -- "6. Chama API" --> H
+                        H -- "7. Resposta da API" --> E
+                        E -- "8. Retorna resultado" --> C
+                        C -- "9. Envia para LLM com resultado" --> F
+                        F -- "10. Gera resposta final" --> C
+                        C -- "11. Devolve para UI" --> A
+                    
+                        %% Fluxo de Setup
+                        G -- "Lê na inicialização" --> D
+                        D -- "Gera e registra Ferramentas" --> E
+                    
+                        %% Conexão com LLM
+                        F-.->I
+                    
+                        %% Estilos
+                        classDef user fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
+                        classDef backend fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
+                        classDef config fill:#e8f5e8,stroke:#388e3c,stroke-width:2px
+                        classDef external fill:#ffebee,stroke:#d32f2f,stroke-width:2px
+                    
+                        class A user
+                        class B,C,D,E,F backend
+                        class G config
+                        class H,I external
+                </div>
+            </div>
+
+            <!-- Como o Projeto Funciona -->
+            <div class="feature-card animate-on-scroll">
+                <h3 class="feature-title">🏗️ Como o Swagger Agent Funciona</h3>
+
+                <div class="flow-diagram animate-on-scroll">
+                    <img src="src/main/resources/static/img/fluxo.png" alt="Fluxo do Sistema">
+                </div>
+
+                <p class="feature-description" style="text-align: left; margin-bottom: var(--space-8);">
+                    O Swagger Agent é um intermediário inteligente que conecta modelos de linguagem (LLMs) a APIs externas 
+                    através de especificações OpenAPI. O processo funciona em duas fases principais:
+                </p>
+                
+                <div style="text-align: left; margin-bottom: var(--space-8);">
+                    <h4 style="color: var(--primary-600); margin-bottom: var(--space-4); font-weight: 600;">📋 Fase 1: Inicialização e Geração de Ferramentas</h4>
+                    <p style="margin-bottom: var(--space-4); line-height: 1.6;">
+                        Durante a inicialização da aplicação, o Swagger Agent:
+                    </p>
+                    <ul style="margin-left: var(--space-8); margin-bottom: var(--space-6);">
+                        <li>Lê as especificações OpenAPI da pasta <code>openapi-specs/</code></li>
+                        <li>Analisa cada endpoint e gera automaticamente "ferramentas" (tools) que podem ser invocadas por LLMs</li>
+                        <li>Registra essas ferramentas como beans do Spring, tornando-as disponíveis para o sistema</li>
+                    </ul>
+                    
+                    <h4 style="color: var(--primary-600); margin-bottom: var(--space-4); font-weight: 600;">🔄 Fase 2: Execução e Interação</h4>
+                    <p style="margin-bottom: var(--space-4); line-height: 1.6;">
+                        Durante uma conversa com o usuário:
+                    </p>
+                    <ul style="margin-left: var(--space-8); margin-bottom: var(--space-6);">
+                        <li>O usuário envia uma pergunta ou solicitação via interface de chat</li>
+                        <li>O LLM analisa a pergunta e decide qual ferramenta usar para responder</li>
+                        <li>O agente executa a ferramenta correspondente, fazendo a chamada para a API externa</li>
+                        <li>O resultado é processado e retornado ao LLM, que gera uma resposta final para o usuário</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Spring AI -->
+            <div class="features-grid">
+                <div class="feature-card animate-on-scroll">
+                    <div class="feature-icon">
+                        <i class="fas fa-comments"></i>
+                    </div>
+                    <h3 class="feature-title">💬 ChatClient API</h3>
+                    <p class="feature-description">
+                        Utilizamos a API fluente do Spring AI para comunicação com modelos de IA, similar ao WebClient. 
+                        Suporte a OpenAI, Ollama e outros provedores com troca fácil de componentes.
+                    </p>
+                </div>
+                <div class="feature-card animate-on-scroll">
+                    <div class="feature-icon">
+                        <i class="fas fa-tools"></i>
+                    </div>
+                    <h3 class="feature-title">🛠️ Function Calling</h3>
+                    <p class="feature-description">
+                        Implementamos o sistema de Tools/Function Calling do Spring AI, permitindo que o modelo 
+                        execute ferramentas dinâmicas geradas a partir de especificações OpenAPI.
+                    </p>
+                </div>
+                <div class="feature-card animate-on-scroll">
+                    <div class="feature-icon">
+                        <i class="fas fa-brain"></i>
+                    </div>
+                    <h3 class="feature-title">🧠 Memória de Conversa</h3>
+                    <p class="feature-description">
+                        Aproveitamos o sistema de Chat Conversation Memory do Spring AI para manter contexto 
+                        entre mensagens e sessões únicas para cada usuário.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Demo Section -->
+    <section id="demo" class="demo-section section">
+        <div class="container">
+            <div class="demo-content animate-on-scroll">
+                <h2 class="section-title">💬 Experimente o Swagger Agent</h2>
+                <p class="section-description">
+                    Agora que você entende como tudo funciona, que tal testar na prática? 
+                    Converse naturalmente com APIs e veja a magia acontecer!
                 </p>
 
-                <!-- Nova seção: Como o Projeto Funciona -->
-                <div class="feature-card scroll-animate" style="margin-bottom: 3rem;">
-                    <h3 class="feature-title">🏗️ Como o Swagger Agent Funciona</h3>
-                    <p class="feature-description" style="text-align: left; margin-bottom: 2rem;">
-                        O Swagger Agent é um intermediário inteligente que conecta modelos de linguagem (LLMs) a APIs externas através de especificações OpenAPI. O processo funciona em duas fases principais:
+                <div class="demo-examples">
+                    <div class="demo-example">
+                        <div class="demo-example-title">💬 Consulta Simples</div>
+                        <div class="demo-example-text">
+                            "Quais pets estão disponíveis na loja?"
+                        </div>
+                    </div>
+                    <div class="demo-example">
+                        <div class="demo-example-title">🔍 Busca Específica</div>
+                        <div class="demo-example-text">
+                            "Busque informações do pet com ID 123"
+                        </div>
+                    </div>
+                    <div class="demo-example">
+                        <div class="demo-example-title">➕ Criação de Dados</div>
+                        <div class="demo-example-text">
+                            "Adicione um novo pet chamado Buddy"
+                        </div>
+                    </div>
+                    <div class="demo-example">
+                        <div class="demo-example-title">🛠️ Exploração</div>
+                        <div class="demo-example-text">
+                            "Quais operações posso fazer com pets?"
+                        </div>
+                    </div>
+                </div>
+
+                <div class="hero-cta">
+                    <a href="demo-chat.html" class="btn btn-primary">
+                        <i class="fas fa-comments"></i>
+                        Testar Chat Demo
+                    </a>
+                    <a href="https://github.com/cesarschutz/swagger-agent" class="btn btn-secondary" target="_blank">
+                        <i class="fab fa-github"></i>
+                        Ver Código Fonte
+                    </a>
+                </div>
+
+                <div style="margin-top: var(--space-12); padding: var(--space-8); background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); border-radius: var(--radius-xl); border: 1px solid rgba(255, 255, 255, 0.2);">
+                    <h4 style="margin-bottom: var(--space-4); font-weight: 600;">💡 Dicas para Testar</h4>
+                    <ul style="list-style: none; padding: 0; margin: 0;">
+                        <li style="margin-bottom: var(--space-2);">
+                            <i class="fas fa-check" style="color: var(--success); margin-right: var(--space-2);"></i>
+                            <strong>Seja natural:</strong> Fale como falaria com uma pessoa
+                        </li>
+                        <li style="margin-bottom: var(--space-2);">
+                            <i class="fas fa-check" style="color: var(--success); margin-right: var(--space-2);"></i>
+                            <strong>Explore:</strong> Pergunte "o que posso fazer?" para descobrir funcionalidades
+                        </li>
+                        <li style="margin-bottom: var(--space-2);">
+                            <i class="fas fa-check" style="color: var(--success); margin-right: var(--space-2);"></i>
+                            <strong>Seja específico:</strong> Use IDs ou nomes quando souber
+                        </li>
+                        <li>
+                            <i class="fas fa-check" style="color: var(--success); margin-right: var(--space-2);"></i>
+                            <strong>Teste limites:</strong> Veja como a IA lida com perguntas complexas
+                        </li>
+                    </ul>
+                </div>
+
+                <div style="margin-top: var(--space-8); font-size: 1.1rem; opacity: 0.9;">
+                    <p>
+                        <i class="fas fa-info-circle" style="margin-right: var(--space-2);"></i>
+                        <strong>Sobre o Demo:</strong> Utiliza dados de exemplo do 
+                        <a href="https://petstore.swagger.io/" class="external-link" style="color: white;">Petstore API</a>. 
+                        É um ambiente seguro para experimentar sem afetar dados reais.
                     </p>
-                    
-                    <div style="text-align: left; margin-bottom: 2rem;">
-                        <h4 style="color: var(--primary-color); margin-bottom: 1rem; font-weight: 600;">📋 Fase 1: Inicialização e Geração de Ferramentas</h4>
-                        <p style="margin-bottom: 1rem; line-height: 1.6;">
-                            Durante a inicialização da aplicação, o Swagger Agent:
-                        </p>
-                        <ul style="margin-left: 2rem; margin-bottom: 1.5rem;">
-                            <li>Lê as especificações OpenAPI da pasta <code>openapi-specs/</code></li>
-                            <li>Analisa cada endpoint e gera automaticamente "ferramentas" (tools) que podem ser invocadas por LLMs</li>
-                            <li>Registra essas ferramentas como beans do Spring, tornando-as disponíveis para o sistema</li>
-                        </ul>
-                        
-                        <h4 style="color: var(--primary-color); margin-bottom: 1rem; font-weight: 600;">🔄 Fase 2: Execução e Interação</h4>
-                        <p style="margin-bottom: 1rem; line-height: 1.6;">
-                            Durante uma conversa com o usuário:
-                        </p>
-                        <ul style="margin-left: 2rem; margin-bottom: 1.5rem;">
-                            <li>O usuário envia uma pergunta ou solicitação via interface de chat</li>
-                            <li>O LLM analisa a pergunta e decide qual ferramenta usar para responder</li>
-                            <li>O agente executa a ferramenta correspondente, fazendo a chamada para a API externa</li>
-                            <li>O resultado é processado e retornado ao LLM, que gera uma resposta final para o usuário</li>
-                        </ul>
-                    </div>
-                    
-                    <div style="text-align: center;">
-                        <h4 style="color: var(--primary-color); margin-bottom: 1.5rem; font-weight: 600;">📊 Arquitetura do Sistema</h4>
-                        <div class="mermaid" style="background-color: var(--light-color); padding: 2rem; border-radius: 1rem; box-shadow: var(--shadow); width: 100%; margin: 0 auto;">
-                            graph TD
-                                subgraph "Interface do Usuário"
-                                    A["💻 Frontend<br>(Interface de Chat)"]
-                                end
-                            
-                                subgraph "Backend (Swagger Agent)"
-                                    B["Controller<br>(/api/chat)"]
-                                    C["Orquestrador<br>(ChatService)"]
-                                    D["Gerador de Ferramentas<br>(OpenAPI Parser)"]
-                                    E["Executor de Ferramentas"]
-                                    F["Modelo de IA<br>(Spring AI)"]
-                                end
-                            
-                                subgraph "Configuração"
-                                    G["📄 Specs OpenAPI<br>(.yaml)"]
-                                end
-                            
-                                subgraph "Sistemas Externos"
-                                    H["🌐 API Externa<br>(Ex: Petstore)"]
-                                    I["☁️ Provedor LLM<br>(OpenAI, Ollama, etc.)"]
-                                end
-                            
-                                %% Fluxo de Interação do Usuário
-                                A -- "1. Prompt do Usuário" --> B
-                                B -- "2. Repassa" --> C
-                                C -- "3. Consulta" --> F
-                                F -- "4. Decide usar ferramenta" --> C
-                                C -- "5. Solicita execução" --> E
-                                E -- "6. Chama API" --> H
-                                H -- "7. Resposta da API" --> E
-                                E -- "8. Retorna resultado" --> C
-                                C -- "9. Envia para LLM com resultado" --> F
-                                F -- "10. Gera resposta final" --> C
-                                C -- "11. Devolve para UI" --> A
-                            
-                                %% Fluxo de Setup
-                                G -- "Lê na inicialização" --> D
-                                D -- "Gera e registra Ferramentas" --> E
-                            
-                                %% Conexão com LLM
-                                F-.->I
-                            
-                                %% Estilos
-                                classDef user fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
-                                classDef backend fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
-                                classDef config fill:#e8f5e8,stroke:#388e3c,stroke-width:2px
-                                classDef external fill:#ffebee,stroke:#d32f2f,stroke-width:2px
-                            
-                                class A user
-                                class B,C,D,E,F backend
-                                class G config
-                                class H,I external
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Seção Spring AI -->
-                <div class="feature-card scroll-animate" style="margin-bottom: 3rem;">
-                    <h3 class="feature-title">🚀 Spring AI - Base Tecnológica</h3>
-                    <p class="feature-description" style="text-align: left; margin-bottom: 2rem;">
-                        O Swagger Agent utiliza o Spring AI como base para toda a comunicação com modelos de linguagem. Esta escolha proporciona uma abstração robusta e flexível, permitindo a integração com diversos provedores de IA de forma transparente.
-                    </p>
-                    
-                    <div class="features-grid scroll-animate">
-                        <div class="feature-card" style="text-align: center;">
-                            <h3 class="feature-title">🚀 Spring AI - Framework de IA</h3>
-                            <img src="src/main/resources/static/img/springai.png" alt="Spring AI Framework" style="max-width: 100%; height: auto; border-radius: 0.5rem; margin-top: 1rem;">
-                        </div>
-                        
-                        <div class="feature-card" style="text-align: center;">
-                            <h3 class="feature-title">🔄 Fluxo de Execução</h3>
-                            <img src="src/main/resources/static/img/toolSpring.png" alt="Fluxo de Tools no Spring AI" style="max-width: 100%; height: auto; border-radius: 0.5rem; margin-top: 1rem;">
-                        </div>
-                    </div>
-                </div>
-
-                <div class="features-grid">
-                    <div class="feature-card scroll-animate">
-                        <div class="feature-icon">
-                            <i class="fas fa-comments"></i>
-                        </div>
-                        <h3 class="feature-title">💬 ChatClient API</h3>
-                        <p class="feature-description">
-                            Utilizamos a API fluente do Spring AI para comunicação com modelos de IA, similar ao WebClient. 
-                            Suporte a OpenAI, Ollama e outros provedores com troca fácil de componentes.
-                        </p>
-                    </div>
-                    <div class="feature-card scroll-animate">
-                        <div class="feature-icon">
-                            <i class="fas fa-tools"></i>
-                        </div>
-                        <h3 class="feature-title">🛠️ Function Calling</h3>
-                        <p class="feature-description">
-                            Implementamos o sistema de Tools/Function Calling do Spring AI, permitindo que o modelo 
-                            execute ferramentas dinâmicas geradas a partir de especificações OpenAPI.
-                        </p>
-                    </div>
-                    <div class="feature-card scroll-animate">
-                        <div class="feature-icon">
-                            <i class="fas fa-brain"></i>
-                        </div>
-                        <h3 class="feature-title">🧠 Memória de Conversa</h3>
-                        <p class="feature-description">
-                            Aproveitamos o sistema de Chat Conversation Memory do Spring AI para manter contexto 
-                            entre mensagens e sessões únicas para cada usuário.
-                        </p>
-                    </div>
-                    <div class="feature-card scroll-animate">
-                        <div class="feature-icon">
-                            <i class="fas fa-eye"></i>
-                        </div>
-                        <h3 class="feature-title">👁️ Observabilidade</h3>
-                        <p class="feature-description">
-                            Utilizamos os recursos de observabilidade do Spring AI para monitorar operações de IA, 
-                            incluindo logs detalhados e auditoria de execução de ferramentas.
-                        </p>
-                    </div>
-                    <div class="feature-card scroll-animate">
-                        <div class="feature-icon">
-                            <i class="fas fa-cogs"></i>
-                        </div>
-                        <h3 class="feature-title">⚙️ Auto Configuration</h3>
-                        <p class="feature-description">
-                            Aproveitamos o Spring Boot Auto Configuration do Spring AI para configuração automática 
-                            de modelos e provedores, simplificando a configuração do projeto.
-                        </p>
-                    </div>
-                    <div class="feature-card scroll-animate">
-                        <div class="feature-icon">
-                            <i class="fas fa-stream"></i>
-                        </div>
-                        <h3 class="feature-title">🌊 Streaming API</h3>
-                        <p class="feature-description">
-                            Implementamos suporte a streaming síncrono e assíncrono para respostas em tempo real, 
-                            proporcionando uma experiência de chat fluida e responsiva.
-                        </p>
-                    </div>
-                </div>
-
-                <div class="feature-card scroll-animate" style="margin-top: 2rem;">
-                    <h3 class="feature-title">📋 Implementação Técnica com Spring AI</h3>
-                    <div style="text-align: left; margin-top: 1rem;">
-                        <p style="margin-bottom: 1rem; line-height: 1.6;">
-                            O Spring AI suporta chamadas de ferramentas através de abstrações flexíveis que permitem definir, resolver e executar ferramentas de forma consistente. No Swagger Agent, implementamos este fluxo da seguinte forma:
-                        </p>
-                        
-                        <h4 style="color: var(--primary-color); margin: 1.5rem 0 1rem 0; font-weight: 600;">🔧 Fluxo Detalhado de Execução:</h4>
-                        
-                        <ol style="list-style: none; padding: 0; counter-reset: step-counter;">
-                            <li style="counter-increment: step-counter; margin-bottom: 1rem; padding-left: 2rem; position: relative;">
-                                <span style="position: absolute; left: 0; color: var(--primary-color); font-weight: 600;">1.</span>
-                                <strong>Definição da Ferramenta:</strong> Incluímos a definição da ferramenta na requisição de chat, com nome, descrição e schema dos parâmetros de entrada.
-                            </li>
-                            <li style="counter-increment: step-counter; margin-bottom: 1rem; padding-left: 2rem; position: relative;">
-                                <span style="position: absolute; left: 0; color: var(--primary-color); font-weight: 600;">2.</span>
-                                <strong>Chamada do Modelo:</strong> O modelo decide chamar a ferramenta e envia uma resposta com o nome da ferramenta e parâmetros de entrada.
-                            </li>
-                            <li style="counter-increment: step-counter; margin-bottom: 1rem; padding-left: 2rem; position: relative;">
-                                <span style="position: absolute; left: 0; color: var(--primary-color); font-weight: 600;">3.</span>
-                                <strong>Execução:</strong> A aplicação identifica e executa a ferramenta usando o nome e parâmetros fornecidos.
-                            </li>
-                            <li style="counter-increment: step-counter; margin-bottom: 1rem; padding-left: 2rem; position: relative;">
-                                <span style="position: absolute; left: 0; color: var(--primary-color); font-weight: 600;">4.</span>
-                                <strong>Processamento:</strong> O resultado da chamada da ferramenta é processado pela aplicação.
-                            </li>
-                            <li style="counter-increment: step-counter; margin-bottom: 1rem; padding-left: 2rem; position: relative;">
-                                <span style="position: absolute; left: 0; color: var(--primary-color); font-weight: 600;">5.</span>
-                                <strong>Retorno:</strong> O resultado é enviado de volta ao modelo como contexto adicional.
-                            </li>
-                            <li style="counter-increment: step-counter; margin-bottom: 1rem; padding-left: 2rem; position: relative;">
-                                <span style="position: absolute; left: 0; color: var(--primary-color); font-weight: 600;">6.</span>
-                                <strong>Resposta Final:</strong> O modelo gera a resposta final usando o resultado da ferramenta como contexto.
-                            </li>
-                        </ol>
-                        
-                        <div style="background-color: #f8fafc; padding: 1.5rem; border-radius: 0.5rem; margin-top: 2rem; border-left: 4px solid var(--primary-color);">
-                            <h5 style="color: var(--primary-color); margin-bottom: 1rem; font-weight: 600;">💡 Diferencial do Spring AI</h5>
-                            <p style="margin-bottom: 0; line-height: 1.6;">
-                                A principal vantagem do Spring AI neste contexto é a <strong>abstração unificada</strong>. Independentemente do provedor de IA escolhido (OpenAI, Ollama, etc.), o código de execução de ferramentas permanece o mesmo, facilitando a manutenção e permitindo trocar provedores sem alterar a lógica de negócio.
-                            </p>
-                        </div>
-                    </div>
                 </div>
             </div>
-        </section>
-    </main>
+        </div>
+    </section>
 
     <!-- Footer -->
     <footer class="footer">
@@ -1435,114 +1876,257 @@ Content-Type: application/json
             <div class="footer-content">
                 <div class="footer-section">
                     <h3>🤖 Swagger Agent</h3>
-                    <p>Conectando IA a APIs de forma inteligente, segura e auditável.</p>
+                    <p>Transformando especificações OpenAPI em ferramentas dinâmicas para modelos de linguagem.</p>
                 </div>
+                
                 <div class="footer-section">
-                    <h3>🔗 Links Úteis</h3>
+                    <h3>🚀 Projeto</h3>
                     <ul>
-                        <li><a href="https://github.com/cesarschutz/swagger-agent" target="_blank">GitHub</a></li>
-                        <li><a href="demo-chat.html">Interface Web Demo</a></li>
+                        <li><a href="https://github.com/cesarschutz/swagger-agent" target="_blank">📦 Código Fonte</a></li>
+                        <li><a href="demo-chat.html">💬 Demo Interativo</a></li>
+                        <li><a href="https://cesarschutz.github.io/swagger-agent/" target="_blank">📚 Documentação</a></li>
                     </ul>
                 </div>
+                
                 <div class="footer-section">
-                    <h3>🛠️ Tecnologias</h3>
+                    <h3>🔧 Tecnologias</h3>
                     <ul>
-                        <li><a href="https://spring.io/projects/spring-boot" target="_blank">Spring Boot 3</a></li>
-                        <li><a href="https://spring.io/projects/spring-ai" target="_blank">Spring AI</a></li>
-                        <li><a href="https://openai.com/" target="_blank">OpenAI</a></li>
-                        <li><a href="https://ollama.com/" target="_blank">Ollama</a></li>
+                        <li><a href="https://spring.io/projects/spring-boot" target="_blank">Spring Boot 3.2.3</a></li>
+                        <li><a href="https://spring.io/projects/spring-ai" target="_blank">Spring AI 1.0.0-M4</a></li>
+                        <li><a href="https://openjdk.java.net/projects/jdk/21/" target="_blank">Java 21</a></li>
+                        <li><a href="https://swagger.io/specification/" target="_blank">OpenAPI 3.0</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h3>🤖 Provedores de IA</h3>
+                    <ul>
+                        <li><a href="https://openai.com/gpt-4" target="_blank">GPT-4 (OpenAI)</a></li>
+                        <li><a href="https://ollama.ai" target="_blank">Ollama</a></li>
                     </ul>
                 </div>
             </div>
+            
             <div class="footer-bottom">
-                <p>&copy; 2025 Swagger Agent. Licenciado sob MIT License.</p>
+                <p>&copy; 2025 Swagger Agent. Projeto open source para aprendizado e demonstração.</p>
+                <p>Desenvolvido por Cesar Schutz.</p>
             </div>
         </div>
     </footer>
 
-    <!-- JavaScript -->
+    <!-- Scripts -->
     <script type="module">
-        // Import Mermaid
         import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
-
-        // Initialize Mermaid
-        mermaid.initialize({ startOnLoad: true });
-    </script>
-    <script>
-        // Mobile menu toggle
-        const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
-        const navLinks = document.querySelector('.nav-links');
         
-        mobileMenuBtn.addEventListener('click', () => {
-            navLinks.classList.toggle('show');
-        });
-
-        // Close mobile menu when clicking a link
-        document.querySelectorAll('.nav-links a').forEach(link => {
-            link.addEventListener('click', () => {
-                navLinks.classList.remove('show');
-            });
-        });
-
-        // Close mobile menu when clicking outside
-        document.addEventListener('click', (e) => {
-            if (!e.target.closest('.nav') && navLinks.classList.contains('show')) {
-                navLinks.classList.remove('show');
+        // Initialize Mermaid
+        mermaid.initialize({ 
+            startOnLoad: true,
+            theme: 'default',
+            themeVariables: {
+                primaryColor: '#3b82f6',
+                primaryTextColor: '#1f2937',
+                primaryBorderColor: '#2563eb',
+                lineColor: '#6b7280',
+                secondaryColor: '#f3f4f6',
+                tertiaryColor: '#ffffff'
             }
         });
+    </script>
+    
+    <script>
+        // Progress Bar
+        function updateProgressBar() {
+            const scrolled = (window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100;
+            document.getElementById('progressBar').style.width = Math.min(scrolled, 100) + '%';
+        }
 
-        // Smooth scrolling for navigation links
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    target.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
-                    });
-                }
-            });
-        });
-
-        // Scroll animations
-        const observerOptions = {
-            threshold: 0.1,
-            rootMargin: '0px 0px -50px 0px'
-        };
-
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('visible');
-                }
-            });
-        }, observerOptions);
-
-        document.querySelectorAll('.scroll-animate').forEach(el => {
-            observer.observe(el);
-        });
-
-        // Header background on scroll
-        window.addEventListener('scroll', () => {
-            const header = document.querySelector('.header');
+        // Navbar Scroll Effect
+        function updateNavbar() {
+            const navbar = document.getElementById('navbar');
             if (window.scrollY > 100) {
-                header.style.background = 'white';
+                navbar.classList.add('scrolled');
             } else {
-                header.style.background = 'white';
+                navbar.classList.remove('scrolled');
             }
-        });
+        }
 
-        // Add some interactive elements
-        document.querySelectorAll('.feature-card').forEach(card => {
-            card.addEventListener('mouseenter', function() {
-                this.style.transform = 'translateY(-10px) scale(1.02)';
+        // Smooth Scrolling
+        function initSmoothScrolling() {
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const target = document.querySelector(this.getAttribute('href'));
+                    if (target) {
+                        const offsetTop = target.offsetTop - 80;
+                        window.scrollTo({
+                            top: offsetTop,
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+        }
+
+        // Scroll Animations
+        function initScrollAnimations() {
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                    }
+                });
+            }, observerOptions);
+
+            document.querySelectorAll('.animate-on-scroll, .scroll-animate').forEach(el => {
+                observer.observe(el);
+            });
+        }
+
+        // Card Interactions
+        function initCardInteractions() {
+            document.querySelectorAll('.feature-card, .interface-card').forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-8px) scale(1.02)';
+                });
+                
+                card.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0) scale(1)';
+                });
+            });
+        }
+
+        // Button Ripple Effect
+        function initRippleEffect() {
+            document.querySelectorAll('.btn').forEach(button => {
+                button.addEventListener('click', function(e) {
+                    const ripple = document.createElement('span');
+                    const rect = this.getBoundingClientRect();
+                    const size = Math.max(rect.width, rect.height);
+                    const x = e.clientX - rect.left - size / 2;
+                    const y = e.clientY - rect.top - size / 2;
+                    
+                    ripple.style.cssText = `
+                        position: absolute;
+                        width: ${size}px;
+                        height: ${size}px;
+                        left: ${x}px;
+                        top: ${y}px;
+                        border-radius: 50%;
+                        background: rgba(255, 255, 255, 0.3);
+                        transform: scale(0);
+                        animation: ripple 0.6s linear;
+                        pointer-events: none;
+                    `;
+                    
+                    this.appendChild(ripple);
+                    
+                    setTimeout(() => {
+                        ripple.remove();
+                    }, 600);
+                });
+            });
+
+            // Add ripple animation
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes ripple {
+                    to {
+                        transform: scale(4);
+                        opacity: 0;
+                    }
+                }
+            `;
+            document.head.appendChild(style);
+        }
+
+        // Mobile Menu
+        function initMobileMenu() {
+            const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+            const navMenu = document.querySelector('.nav-menu');
+            
+            if (mobileMenuBtn && navMenu) {
+                mobileMenuBtn.addEventListener('click', function() {
+                    navMenu.classList.toggle('active');
+                    const icon = this.querySelector('i');
+                    if (navMenu.classList.contains('active')) {
+                        icon.className = 'fas fa-times';
+                    } else {
+                        icon.className = 'fas fa-bars';
+                    }
+                });
+
+                const navLinks = navMenu.querySelectorAll('.nav-link');
+                navLinks.forEach(link => {
+                    link.addEventListener('click', () => {
+                        if (navMenu.classList.contains('active')) {
+                            navMenu.classList.remove('active');
+                            mobileMenuBtn.querySelector('i').className = 'fas fa-bars';
+                        }
+                    });
+                });
+            }
+        }
+
+        // Initialize all features
+        function init() {
+            initSmoothScrolling();
+            initScrollAnimations();
+            initCardInteractions();
+            initRippleEffect();
+            initMobileMenu();
+            
+            // Event listeners
+            window.addEventListener('scroll', () => {
+                updateProgressBar();
+                updateNavbar();
             });
             
-            card.addEventListener('mouseleave', function() {
-                this.style.transform = 'translateY(0) scale(1)';
-            });
+            // Initial calls
+            updateProgressBar();
+            updateNavbar();
+        }
+
+        // Console message for developers
+        function showConsoleMessage() {
+            console.log(`
+🤖 Swagger Agent - Transformando APIs em IA
+
+📚 Conceitos explicados:
+• Modelos de Linguagem (LLMs)
+• Function Calling / Ferramentas
+• OpenAPI / Swagger
+• Spring Boot & Spring AI
+• Arquitetura completa
+
+🚀 Tecnologias:
+• Spring Boot 3.2.3
+• Spring AI 1.0.0-M4
+• Java 21 + Maven
+• Swagger Parser 2.1.19
+• OpenAI + Ollama
+
+🔗 Links úteis:
+• Demo: demo-chat.html
+• Repo: https://github.com/cesarschutz/swagger-agent
+
+Feito com ❤️ para desenvolvedores!
+            `);
+        }
+
+        // Start everything
+        document.addEventListener('DOMContentLoaded', () => {
+            init();
+            showConsoleMessage();
         });
+    </script>
+    <script>
+        // Add highlight.js execution after other initializations
+        hljs.highlightAll();
     </script>
 </body>
 </html>
