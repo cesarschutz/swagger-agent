@@ -59,6 +59,21 @@
             
             --transition: all 0.18s cubic-bezier(0.4, 0, 0.2, 1);
             --transition-slow: all 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+            /* Method Colors */
+            --method-get-bg: #e0f2fe;
+            --method-get-text: #0ea5e9;
+            --method-post-bg: #dcfce7;
+            --method-post-text: #22c55e;
+            --method-put-bg: #ffedd5;
+            --method-put-text: #f97316;
+            --method-delete-bg: #fee2e2;
+            --method-delete-text: #ef4444;
+            --method-patch-bg: #f3e8ff;
+            --method-patch-text: #a855f7;
+            --method-head-bg: #e0e7ff;
+            --method-head-text: #6366f1;
+            --method-options-bg: #f0fdfa;
+            --method-options-text: #14b8a6;
         }
 
         [data-theme="dark"] {
@@ -90,6 +105,21 @@
             --shadow-md: 0 4px 12px -1px rgb(0 0 0 / 0.18), 0 2px 4px -2px rgb(0 0 0 / 0.15);
             --shadow-lg: 0 10px 24px -3px rgb(0 0 0 / 0.22), 0 4px 6px -4px rgb(0 0 0 / 0.18);
             --shadow-xl: 0 20px 32px -5px rgb(0 0 0 / 0.23), 0 8px 10px -6px rgb(0 0 0 / 0.19);
+            /* Method Colors */
+            --method-get-bg: #0c4a6e;
+            --method-get-text: #7dd3fc;
+            --method-post-bg: #166534;
+            --method-post-text: #86efac;
+            --method-put-bg: #7c2d12;
+            --method-put-text: #fdba74;
+            --method-delete-bg: #991b1b;
+            --method-delete-text: #fca5a5;
+            --method-patch-bg: #5b21b6;
+            --method-patch-text: #d8b4fe;
+            --method-head-bg: #3730a3;
+            --method-head-text: #a5b4fc;
+            --method-options-bg: #115e59;
+            --method-options-text: #5eead4;
         }
 
         * {
@@ -215,7 +245,7 @@
             flex: 1;
             display: flex;
             flex-direction: column;
-            overflow: hidden;
+            overflow-y: auto;
         }
 
         .tools-header {
@@ -279,7 +309,6 @@
         }
 
         .tools-content {
-            flex: 1;
             overflow-y: auto;
             padding: 1.15rem 1.15rem 1.15rem 1.15rem;
         }
@@ -413,17 +442,13 @@
             font-weight: 600;
             margin-bottom: 0.35rem;
         }
-        .method-get { background: #dbeafe; color: #1d4ed8; }
-        .method-post { background: #dcfce7; color: #166534; }
-        .method-put { background: #fef3c7; color: #92400e; }
-        .method-delete { background: #fee2e2; color: #dc2626; }
-        .method-patch { background: #f3e8ff; color: #7c3aed; }
-
-        [data-theme="dark"] .method-get { background: #1e3a8a; color: #93c5fd; }
-        [data-theme="dark"] .method-post { background: #14532d; color: #86efac; }
-        [data-theme="dark"] .method-put { background: #78350f; color: #fbbf24; }
-        [data-theme="dark"] .method-delete { background: #7f1d1d; color: #fca5a5; }
-        [data-theme="dark"] .method-patch { background: #581c87; color: #c4b5fd; }
+        .method-get { background-color: var(--method-get-bg); color: var(--method-get-text); }
+        .method-post { background-color: var(--method-post-bg); color: var(--method-post-text); }
+        .method-put { background-color: var(--method-put-bg); color: var(--method-put-text); }
+        .method-delete { background-color: var(--method-delete-bg); color: var(--method-delete-text); }
+        .method-patch { background-color: var(--method-patch-bg); color: var(--method-patch-text); }
+        .method-head { background-color: var(--method-head-bg); color: var(--method-head-text); }
+        .method-options { background-color: var(--method-options-bg); color: var(--method-options-text); }
 
         .tool-path {
             font-family: 'JetBrains Mono', 'Fira Code', monospace;
@@ -987,77 +1012,92 @@
             display: none;
         }
 
+        .tools-modal-body {
+            padding: 0 2rem 2rem 2rem;
+            overflow-y: auto;
+        }
+        .tools-modal-search {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            background: var(--bg-secondary);
+        }
         .tools-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
             gap: 1.5rem;
+            margin-top: 0.5rem;
         }
-
         .tool-card {
             background: var(--bg-tool-item);
-            border: 1px solid var(--border-color);
+            border: 1.5px solid var(--border-color);
             border-radius: var(--radius-xl);
-            padding: 1.5rem;
+            padding: 1.5rem 1.25rem 1.25rem 1.25rem;
             cursor: pointer;
             transition: var(--transition);
             position: relative;
             overflow: hidden;
+            box-shadow: var(--shadow-md);
+            display: flex;
+            flex-direction: column;
+            min-height: 180px;
         }
-
-        .tool-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 4px;
-            background: var(--accent-blue);
-            transform: scaleX(0);
-            transition: var(--transition);
-        }
-
         .tool-card:hover {
             background: var(--bg-tool-hover);
-            border-color: var(--border-hover);
-            transform: translateY(-4px);
+            border-color: var(--accent-blue);
+            transform: translateY(-4px) scale(1.02);
             box-shadow: var(--shadow-lg);
         }
-
-        .tool-card:hover::before {
-            transform: scaleX(1);
-        }
-
-        .tool-card-name {
-            font-weight: 600;
-            color: var(--text-primary);
-            margin-bottom: 0.75rem;
-            font-size: 1rem;
-        }
-
         .tool-card-method {
             display: inline-block;
-            padding: 0.25rem 0.75rem;
+            padding: 0.25rem 0.85rem;
             border-radius: var(--radius-sm);
-            font-size: 0.75rem;
-            font-weight: 600;
-            margin-bottom: 0.75rem;
+            font-size: 0.82rem;
+            font-weight: 700;
+            margin-bottom: 0.7rem;
+            letter-spacing: 0.04em;
+            box-shadow: 0 1px 4px 0 rgb(59 130 246 / 0.10);
         }
-
+        .method-get { background-color: var(--method-get-bg); color: var(--method-get-text); }
+        .method-post { background-color: var(--method-post-bg); color: var(--method-post-text); }
+        .method-put { background-color: var(--method-put-bg); color: var(--method-put-text); }
+        .method-delete { background-color: var(--method-delete-bg); color: var(--method-delete-text); }
+        .method-patch { background-color: var(--method-patch-bg); color: var(--method-patch-text); }
+        .method-head { background-color: var(--method-head-bg); color: var(--method-head-text); }
+        .method-options { background-color: var(--method-options-bg); color: var(--method-options-text); }
         .tool-card-path {
             font-family: 'JetBrains Mono', 'Fira Code', monospace;
-            font-size: 0.8rem;
-            color: var(--text-muted);
-            margin-bottom: 0.75rem;
+            font-size: 0.9rem;
+            color: var(--accent-blue);
+            margin-bottom: 0.7rem;
             word-break: break-all;
             background: var(--bg-tertiary);
-            padding: 0.5rem;
+            padding: 0.5rem 0.7rem;
             border-radius: var(--radius-sm);
         }
-
+        .tool-card-name {
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+            font-size: 1.08rem;
+        }
         .tool-card-description {
-            font-size: 0.875rem;
+            font-size: 0.93rem;
             color: var(--text-secondary);
+            margin-top: auto;
             line-height: 1.5;
+        }
+        @media (max-width: 600px) {
+            .tools-modal-content {
+                padding: 0.5rem;
+            }
+            .tools-modal-body {
+                padding: 0 0.5rem 1rem 0.5rem;
+            }
+            .tools-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
         }
 
         /* Loading States */
@@ -1560,11 +1600,12 @@
             <div class="chat-input">
                 <form class="input-container" id="chatForm">
                     <div class="input-wrapper">
-                        <textarea 
-                            id="messageInput" 
-                            placeholder="Digite sua mensagem..." 
-                            rows="1" 
-                            required
+                        <textarea
+                            id="messageInput"
+                            class="message-input"
+                            placeholder="Escreva sua mensagem..."
+                            rows="1"
+                            data-min-rows="1"
                         ></textarea>
                     </div>
                     <button type="submit" class="send-button" id="sendButton">
@@ -1583,6 +1624,9 @@
                 <button class="tools-modal-close" id="toolsModalClose">
                     <i class="fas fa-times"></i>
                 </button>
+            </div>
+            <div class="tools-modal-search" style="padding: 0 2rem 1rem 2rem;">
+                <input type="text" id="toolsSearchInput" placeholder="Pesquisar ferramentas..." style="width: 100%; padding: 0.7rem 1rem; border-radius: 0.5rem; border: 1.5px solid var(--border-color); font-size: 1rem; margin-top: 0.5rem;">
             </div>
             <div class="tools-modal-body">
                 <div class="tools-grid" id="toolsGrid">
@@ -1721,7 +1765,18 @@
 
         function openToolsModal() {
             elements.toolsModal.classList.add('active');
-            populateToolsModal();
+            const searchInput = document.getElementById('toolsSearchInput');
+            if (searchInput) {
+                searchInput.value = ''; // Limpa o campo de busca
+            }
+            
+            // Se as ferramentas já foram carregadas, apenas re-renderiza para limpar o filtro
+            // Senão, carrega as ferramentas
+            if (allToolsData) {
+                renderToolsGrid(allToolsData);
+            } else {
+                populateToolsModal();
+            }
         }
 
         function closeToolsModal() {
@@ -1824,18 +1879,41 @@
             });
         }
 
+        // Busca/filtro de ferramentas no modal
+        let allToolsData = null;
+        document.addEventListener('DOMContentLoaded', () => {
+            const searchInput = document.getElementById('toolsSearchInput');
+            if (searchInput) {
+                searchInput.addEventListener('input', function() {
+                    filterToolsModal(this.value);
+                });
+            }
+        });
+
+        function filterToolsModal(query) {
+            if (!allToolsData) return;
+            const lower = query.trim().toLowerCase();
+            const filtered = { totalTools: 0, toolsByProject: {} };
+            Object.entries(allToolsData.toolsByProject).forEach(([project, tools]) => {
+                const filteredTools = tools.filter(tool =>
+                    tool.name.toLowerCase().includes(lower) ||
+                    (tool.description && tool.description.toLowerCase().includes(lower)) ||
+                    tool.method.toLowerCase().includes(lower) ||
+                    tool.path.toLowerCase().includes(lower)
+                );
+                if (filteredTools.length > 0) {
+                    filtered.toolsByProject[project] = filteredTools;
+                    filtered.totalTools += filteredTools.length;
+                }
+            });
+            renderToolsGrid(filtered);
+        }
+
+        // Refatorar populateToolsModal para usar allToolsData e renderToolsGrid
         function populateToolsModal() {
             console.log('populateToolsModal iniciada');
-            
-            // Show loading state first
             elements.toolsGrid.innerHTML = `
-                <div class="loading-tools">
-                    <div class="loading-spinner"></div>
-                    <p>Carregando ferramentas...</p>
-                </div>
-            `;
-
-            // Get the same tools data that's already loaded
+                <div class=\"loading-tools\">\n                    <div class=\"loading-spinner\"></div>\n                    <p>Carregando ferramentas...</p>\n                </div>\n            `;
             fetch(toolsApiUrl)
                 .then(response => {
                     if (!response.ok) {
@@ -1844,68 +1922,45 @@
                     return response.json();
                 })
                 .then(data => {
-                    console.log('Dados recebidos para modal:', data);
-                    
-                    if (data.totalTools === 0) {
-                        elements.toolsGrid.innerHTML = `
-                            <div class="empty-state">
-                                <i class="fas fa-tools"></i>
-                                <p>Nenhuma ferramenta disponível</p>
-                                <p style="font-size: 0.75rem; margin-top: 0.5rem;">Verifique se há APIs configuradas</p>
-                            </div>
-                        `;
-                        return;
-                    }
-
-                    let html = '';
-                    Object.entries(data.toolsByProject).forEach(([projectName, tools]) => {
-                        console.log(`Processando projeto: ${projectName} com ${tools.length} ferramentas`);
-                        tools.forEach(tool => {
-                            const methodClass = `method-${tool.method.toLowerCase()}`;
-                            html += `
-                                <div class="tool-card" role="button" tabindex="0">
-                                    <div class="tool-card-name">${tool.description || tool.name}</div>
-                                    <div class="tool-card-method ${methodClass}">${tool.method}</div>
-                                    <div class="tool-card-path">${tool.baseUrl}${tool.path}</div>
-                                    <div class="tool-card-description">
-                                        <strong>Nome da ferramenta:</strong> <em>${tool.name}</em>
-                                    </div>
-                                </div>
-                            `;
-                        });
-                    });
-
-                    console.log('HTML gerado para modal:', html.substring(0, 200) + '...');
-                    elements.toolsGrid.innerHTML = html;
-                    
-                    // Adicionar event listeners após renderizar o HTML
-                    const toolCards = elements.toolsGrid.querySelectorAll('.tool-card');
-                    toolCards.forEach(card => {
-                        card.addEventListener('click', function() {
-                            const toolName = this.querySelector('.tool-card-description em').textContent;
-                            console.log('Clique detectado na ferramenta:', toolName);
-                            selectToolFromModal(toolName);
-                        });
-                        
-                        card.addEventListener('keypress', function(e) {
-                            if (e.key === 'Enter') {
-                                const toolName = this.querySelector('.tool-card-description em').textContent;
-                                console.log('Enter detectado na ferramenta:', toolName);
-                                selectToolFromModal(toolName);
-                            }
-                        });
-                    });
+                    allToolsData = data;
+                    renderToolsGrid(data);
                 })
                 .catch(error => {
                     console.error('Erro ao carregar ferramentas no modal:', error);
                     elements.toolsGrid.innerHTML = `
-                        <div class="error-state">
-                            <i class="fas fa-exclamation-triangle"></i>
-                            <p>Erro ao carregar ferramentas</p>
-                            <p style="font-size: 0.75rem; margin-top: 0.5rem;">Tente novamente mais tarde</p>
-                        </div>
-                    `;
+                        <div class=\"error-state\">\n                            <i class=\"fas fa-exclamation-triangle\"></i>\n                            <p>Erro ao carregar ferramentas</p>\n                            <p style=\"font-size: 0.75rem; margin-top: 0.5rem;\">Tente novamente mais tarde</p>\n                        </div>\n                    `;
                 });
+        }
+
+        function renderToolsGrid(data) {
+            if (data.totalTools === 0) {
+                elements.toolsGrid.innerHTML = `
+                    <div class=\"empty-state\">\n                        <i class=\"fas fa-tools\"></i>\n                        <p>Nenhuma ferramenta encontrada</p>\n                        <p style=\"font-size: 0.75rem; margin-top: 0.5rem;\">Tente outro termo de busca</p>\n                    </div>\n                `;
+                return;
+            }
+            let html = '';
+            Object.entries(data.toolsByProject).forEach(([projectName, tools]) => {
+                tools.forEach(tool => {
+                    const methodClass = `method-${tool.method.toLowerCase()}`;
+                    html += `
+                        <div class=\"tool-card\" role=\"button\" tabindex=\"0\">\n                            <div class=\"tool-card-name\">${tool.description || tool.name}</div>\n                            <div class=\"tool-card-method ${methodClass}\">${tool.method}</div>\n                            <div class=\"tool-card-path\">${tool.baseUrl}${tool.path}</div>\n                            <div class=\"tool-card-description\">\n                                <strong>Nome da ferramenta:</strong> <em>${tool.name}</em>\n                            </div>\n                        </div>\n                    `;
+                });
+            });
+            elements.toolsGrid.innerHTML = html;
+            // Adicionar event listeners após renderizar o HTML
+            const toolCards = elements.toolsGrid.querySelectorAll('.tool-card');
+            toolCards.forEach(card => {
+                card.addEventListener('click', function() {
+                    const toolName = this.querySelector('.tool-card-description em').textContent;
+                    selectToolFromModal(toolName);
+                });
+                card.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        const toolName = this.querySelector('.tool-card-description em').textContent;
+                        selectToolFromModal(toolName);
+                    }
+                });
+            });
         }
 
         window.selectToolFromModal = function(toolName) {
