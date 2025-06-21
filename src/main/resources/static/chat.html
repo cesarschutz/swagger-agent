@@ -936,38 +936,35 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(0, 0, 0, 0.5);
-            backdrop-filter: blur(10px);
+            background: var(--bg-secondary);
             z-index: 1000;
             display: none;
-            align-items: center;
-            justify-content: center;
-            padding: 2rem;
             opacity: 0;
             transition: opacity 0.3s ease;
         }
 
         .tools-modal.active {
-            display: flex;
+            display: block;
             opacity: 1;
         }
 
         .tools-modal-content {
             background: var(--bg-secondary);
-            border-radius: var(--radius-xl);
-            box-shadow: var(--shadow-xl);
+            border-radius: 0;
+            box-shadow: none;
             width: 100%;
-            max-width: 1200px;
-            max-height: 80vh;
+            height: 100%;
+            max-width: none;
+            max-height: none;
             overflow: hidden;
             display: flex;
             flex-direction: column;
-            transform: scale(0.9);
-            transition: transform 0.3s ease;
+            transform: none;
+            transition: none;
         }
 
         .tools-modal.active .tools-modal-content {
-            transform: scale(1);
+            transform: none;
         }
 
         .tools-modal-header {
@@ -987,28 +984,7 @@
         }
 
         .tools-modal-close {
-            width: 40px;
-            height: 40px;
-            background: rgba(255, 255, 255, 0.1);
-            border: none;
-            border-radius: var(--radius-lg);
-            color: var(--text-white);
-            cursor: pointer;
-            transition: var(--transition);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .tools-modal-close:hover {
-            background: rgba(255, 255, 255, 0.2);
-            transform: scale(1.05);
-        }
-
-        .tools-modal-body {
-            flex: 1;
-            overflow-y: auto;
-            padding: 2rem;
+            display: none;
         }
 
         .tools-grid {
@@ -1220,11 +1196,12 @@
             
             .sidebar {
                 position: fixed;
-                left: -220px;
+                left: -100%;
                 z-index: 200;
                 height: 100vh;
                 box-shadow: var(--shadow-xl);
-                width: 220px;
+                width: 100%;
+                border-right: none;
             }
             
             .sidebar.mobile-open {
@@ -1277,7 +1254,7 @@
             
             .chat-header {
                 padding: 0.8rem 1.2rem 0.8rem 1.2rem;
-                min-height: 56px;
+                min-height: 78px;
                 justify-content: center;
             }
 
@@ -1351,14 +1328,9 @@
         }
 
         @media (max-width: 480px) {
-            .sidebar {
-                width: 170px;
-                left: -170px;
-            }
-            
             .chat-header {
                 padding: 0.5rem 0.7rem;
-                min-height: 44px;
+                min-height: 65px;
             }
 
             .chat-title {
@@ -1427,8 +1399,8 @@
             .theme-toggle {
                 width: 32px;
                 height: 32px;
-                top: 0.3rem;
-                right: 0.3rem;
+                top: 15px;
+                right: 8px;
             }
 
             .tools-modal {
