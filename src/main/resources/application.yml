@@ -13,20 +13,24 @@ spring:
           temperature: 0.7
           max-tokens: 2048
     ollama:
-      base-url: ${SPRING_AI_OLLAMA_BASE_URL:http://localhost:11434}
+      base-url: http://3.236.121.9:11434
       chat:
         options:
-          model: ${SPRING_AI_OLLAMA_CHAT_OPTIONS_MODEL:qwen2.5:0.5b}
+          model: deepseek-r1:7b
           temperature: 0.7
+          max-tokens: 2048
 
 app:
   ai:
-    provider: ${AI_PROVIDER:openai}  # Valores possíveis: "openai" ou "ollama"
+    provider: ollama  # Valores possíveis: "openai" ou "ollama"
   tool:
     logging:
       enabled: true
 
-# Logging configuration
+# Configurações de logging para debug
 logging:
   level:
     root: INFO
+    com.example.swaggeragent: DEBUG
+    org.springframework.ai: DEBUG
+    org.springframework.boot.autoconfigure: DEBUG
