@@ -9,8 +9,6 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Configuração condicional para provedores de IA.
@@ -29,24 +27,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class AiProviderConfig {
 
     private static final Logger log = LoggerFactory.getLogger(AiProviderConfig.class);
-
-    @Autowired
-    private SwaggerAgentProperties properties;
-
-    @Value("${spring.ai.ollama.base-url:http://localhost:11434}")
-    private String ollamaBaseUrl;
-
-    @Value("${spring.ai.ollama.chat.options.model:deepseek-r1:7b}")
-    private String ollamaModel;
-
-    @Value("${spring.ai.ollama.chat.options.temperature:0.7}")
-    private Double ollamaTemperature;
-
-    @Value("${spring.ai.openai.chat.options.model:gpt-4o-mini}")
-    private String openaiModel;
-
-    @Value("${spring.ai.openai.chat.options.temperature:0.7}")
-    private Double openaiTemperature;
 
     /**
      * Configura o modelo OpenAI como provedor de IA.
@@ -68,8 +48,6 @@ public class AiProviderConfig {
     @ConditionalOnProperty(name = "app.ai.provider", havingValue = "openai", matchIfMissing = true)
     public ChatModel openAiChatModel(OpenAiChatModel openAiChatModel) {
         log.info("🔧 Configurando OpenAI como provedor de IA");
-        log.info("🔧 Provedor configurado: {}", properties.getAi().getProvider());
-        log.info("🔧 Modelo OpenAI configurado: {} com temperatura: {}", openaiModel, openaiTemperature);
         return openAiChatModel;
     }
 
@@ -80,8 +58,8 @@ public class AiProviderConfig {
      * <p>
      * <b>Requisitos:</b>
      * <ul>
-     *   <li>Servidor Ollama rodando (configurado via {@code spring.ai.ollama.base-url})</li>
-     *   <li>Modelo baixado no Ollama (configurado via {@code spring.ai.ollama.chat.options.model})</li>
+     *   <li>Servidor Ollama rodando (padrão: http://localhost:11434)</li>
+     *   <li>Modelo baixado no Ollama (configurado via {@code SPRING_AI_OLLAMA_CHAT_OPTIONS_MODEL})</li>
      *   <li>Dependência {@code spring-ai-ollama-spring-boot-starter} no classpath</li>
      * </ul>
      *
@@ -93,9 +71,6 @@ public class AiProviderConfig {
     @ConditionalOnProperty(name = "app.ai.provider", havingValue = "ollama")
     public ChatModel ollamaChatModel(OllamaChatModel ollamaChatModel) {
         log.info("🔧 Configurando Ollama como provedor de IA");
-        log.info("🔧 Provedor configurado: {}", properties.getAi().getProvider());
-        log.info("🔧 URL base do Ollama: {}", ollamaBaseUrl);
-        log.info("🔧 Modelo Ollama configurado: {} com temperatura: {}", ollamaModel, ollamaTemperature);
         return ollamaChatModel;
     }
 } 
