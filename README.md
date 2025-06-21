@@ -44,15 +44,20 @@
 ### 🖥️ Interface Web Moderna
 
 <div align="center">
-  <div style="margin-bottom: 2rem;">
-    <h4>🖥️ Desktop</h4>
-    <img src="src/main/resources/static/img/interfaceweb.png" alt="Interface Web do Swagger Agent" width="800"/>
-  </div>
-  
-  <div>
-    <h4>📱 Mobile</h4>
-    <img src="src/main/resources/static/img/interfacewebmobile.png" alt="Interface Mobile do Swagger Agent" width="300"/>
-  </div>
+  <h4>🖥️ Desktop</h4>
+  <p>Interface principal do chat e painel de ferramentas.</p>
+  <img src="src/main/resources/static/img/interfaceweb.png" alt="Interface Web do Swagger Agent" width="800"/>
+  <br>
+  <p>Painel de ferramentas disponíveis.</p>
+  <img src="src/main/resources/static/img/interfacewebferramentas.png" alt="Painel de Ferramentas do Swagger Agent" width="800"/>
+</div>
+<br>
+<div align="center">
+  <h4>📱 Mobile</h4>
+  <p>A tela inicial, o menu e o painel de ferramentas são totalmente responsivos.</p>
+  <img src="src/main/resources/static/img/interfacewebmobilehome.png" alt="Interface Mobile - Home" width="250"/>
+  <img src="src/main/resources/static/img/interfacewebmobilemenu.png" alt="Interface Mobile - Menu" width="250"/>
+  <img src="src/main/resources/static/img/interfacewebmobileferramentas.png" alt="Interface Mobile - Ferramentas" width="250"/>
 </div>
 
 - **🎨 Design Moderno**: Interface com gradientes, efeitos glass e animações suaves
