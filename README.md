@@ -7,7 +7,7 @@
 [![Documentation](https://img.shields.io/badge/docs-swagger--agent-blue.svg)](https://cesarschutz.github.io/swagger-agent/)
 
 <p align="center">
-  <img src="src/main/resources/static/img/logo.png" alt="Swagger Agent Logo" width="200"/>
+  <img src="src/main/resources/static/img/logo-transparente-ferramenta.png" alt="Swagger Agent Logo" width="200"/>
 </p>
 
 <p align="center">

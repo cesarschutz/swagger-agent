@@ -1545,7 +1545,8 @@
         <aside class="sidebar" id="sidebar">
             <div class="sidebar-header">
                 <div class="logo-container">
-                    <img src="img/logotransparente.png" alt="Swagger Agent Logo">
+                    <!-- Logo inicial -->
+                    <img id="sidebarLogo" src="img/logotransparente.png" alt="Swagger Agent Logo">
                 </div>
             </div>
 
@@ -1657,12 +1658,16 @@
             toolsModal: document.getElementById('toolsModal'),
             toolsModalClose: document.getElementById('toolsModalClose'),
             mobileMenuBtn: document.getElementById('mobileMenuBtn'),
-            sidebarOverlay: document.getElementById('sidebarOverlay')
+            sidebarOverlay: document.getElementById('sidebarOverlay'),
+            sidebarLogo: document.getElementById('sidebarLogo')
         };
         
         // API URLs
         const apiUrl = window.location.origin + '/api/chat';
         const toolsApiUrl = window.location.origin + '/api/tools';
+
+        // Flag para verificar a primeira interação do usuário
+        let firstInteraction = true;
 
         // Initialize app
         document.addEventListener('DOMContentLoaded', () => {
@@ -1684,6 +1689,9 @@
             
             // Setup event listeners
             setupEventListeners();
+
+            // Focar no campo de mensagem para permitir digitação imediata
+            elements.messageInput.focus();
         }
 
         function setupEventListeners() {
@@ -2018,6 +2026,12 @@
             const messageText = elements.messageInput.value.trim();
             if (!messageText) return;
             
+            // Altera o logo após a primeira interação do usuário
+            if (firstInteraction && elements.sidebarLogo) {
+                elements.sidebarLogo.src = 'img/logo-transparente-ferramenta.png';
+                firstInteraction = false;
+            }
+
             addMessage(messageText, 'user');
             elements.messageInput.value = '';
             elements.messageInput.style.height = 'auto';
@@ -2219,7 +2233,6 @@ No painel à esquerda, você encontra todas as APIs disponíveis. Clique em qual
                     <div class="typing-dot"></div>
                     <div class="typing-dot"></div>
                 </div>
-                <span style="margin-left: 0.5rem; color: var(--text-secondary);">Pensando...</span>
             `;
             
             indicator.appendChild(avatarDiv);

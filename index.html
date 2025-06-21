@@ -846,6 +846,12 @@
                 margin-bottom: 1.5rem;
             }
         }
+
+        .title-icon {
+            height: 200px;
+            vertical-align: middle;
+            margin-right: 0.5rem;
+        }
     </style>
 </head>
 <body>
@@ -960,6 +966,10 @@
                         <div class="stat-number">∞</div>
                         <div class="stat-label">Ferramentas Dinâmicas</div>
                     </div>
+                </div>
+
+                <div style="text-align: center;">
+                    <img src="src/main/resources/static/img/fluxo.png" alt="Swagger Agent Logo">
                 </div>
             </div>
         </section>
@@ -1194,7 +1204,7 @@ Content-Type: application/json
         <!-- Spring AI Tools Section -->
         <section id="spring-ai-tools" class="section" style="background: var(--light-color);">
             <div class="container">
-                <h2 class="section-title scroll-animate">🔧 Arquitetura</h2>
+                <h2 class="section-title scroll-animate"><img src="src/main/resources/static/img/logo-transparente-ferramenta.png" alt="Ferramenta" class="title-icon"> Arquitetura</h2>
                 <p class="section-subtitle scroll-animate">
                     Entenda como o Swagger Agent funciona e como utiliza o Spring AI para conectar IA com APIs de forma inteligente
                 </p>
@@ -1445,7 +1455,7 @@ Content-Type: application/json
                 </div>
             </div>
             <div class="footer-bottom">
-                <p>&copy; 2024 Swagger Agent. Licenciado sob MIT License.</p>
+                <p>&copy; 2025 Swagger Agent. Licenciado sob MIT License.</p>
             </div>
         </div>
     </footer>
@@ -1533,19 +1543,6 @@ Content-Type: application/json
                 this.style.transform = 'translateY(0) scale(1)';
             });
         });
-
-        // Console welcome message
-        console.log(`
-🤖 Swagger Agent - IA + OpenAPI Integration
-
-Transforme qualquer especificação OpenAPI em ferramentas dinâmicas!
-
-🔗 Links úteis:
-- Interface Web: http://localhost:8080/chat.html
-- GitHub: https://github.com/cesarschutz/swagger-agent
-
-Construído com ❤️ usando Spring Boot 3 e Spring AI
-        `);
     </script>
 </body>
 </html>

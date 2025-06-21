@@ -1549,7 +1549,8 @@
         <aside class="sidebar" id="sidebar">
             <div class="sidebar-header">
                 <div class="logo-container">
-                    <img src="src/main/resources/static/img/logotransparente.png" alt="Swagger Agent Logo">
+                    <!-- Logo inicial -->
+                    <img id="sidebarLogo" src="src/main/resources/static/img/logotransparente.png" alt="Swagger Agent Logo">
                 </div>
             </div>
 
@@ -1660,8 +1661,12 @@
             toolsModal: document.getElementById('toolsModal'),
             toolsModalClose: document.getElementById('toolsModalClose'),
             mobileMenuBtn: document.getElementById('mobileMenuBtn'),
-            sidebarOverlay: document.getElementById('sidebarOverlay')
+            sidebarOverlay: document.getElementById('sidebarOverlay'),
+            sidebarLogo: document.getElementById('sidebarLogo')
         };
+        
+        // Flag para trocar logo após a primeira interação do usuário
+        let firstInteraction = true;
         
         // API URLs
         const apiUrl = window.location.origin + '/api/chat';
@@ -2077,6 +2082,12 @@
             const messageText = elements.messageInput.value.trim();
             if (!messageText) return;
             
+            // Altera o logo após a primeira interação
+            if (firstInteraction && elements.sidebarLogo) {
+                elements.sidebarLogo.src = 'src/main/resources/static/img/logo-transparente-ferramenta.png';
+                firstInteraction = false;
+            }
+            
             addMessage(messageText, 'user');
             elements.messageInput.value = '';
             elements.messageInput.style.height = 'auto';
@@ -2475,7 +2486,6 @@ No painel à esquerda, você encontra todas as APIs disponíveis. Clique em qual
                     <div class="typing-dot"></div>
                     <div class="typing-dot"></div>
                 </div>
-                <span style="margin-left: 0.5rem; color: var(--text-secondary);">Pensando...</span>
             `;
             
             indicator.appendChild(avatarDiv);
