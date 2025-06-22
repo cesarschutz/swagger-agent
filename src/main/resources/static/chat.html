@@ -354,6 +354,11 @@
         }
 
         .project-header.collapsed .project-icon {
+            /* Mantém o ícone fa-chevron-right (para o lado) */
+        }
+
+        .project-header:not(.collapsed) .project-icon {
+            /* Mantém o ícone fa-chevron-down (para baixo) */
         }
 
         .project-name {
@@ -1943,7 +1948,7 @@
                 html += `
                     <div class="project-section">
                         <div class="project-header collapsed" onclick="toggleProject(this)" role="button" tabindex="0" onkeypress="if(event.key==='Enter')toggleProject(this)">
-                            <i class="fas fa-chevron-down project-icon"></i>
+                            <i class="fas fa-chevron-right project-icon"></i>
                             <span class="project-name">${capitalize(projectName)}</span>
                             <span class="project-count">${tools.length}</span>
                         </div>
@@ -2164,6 +2169,16 @@
             header.classList.toggle('collapsed');
             const tools = header.nextElementSibling;
             tools.classList.toggle('collapsed');
+            
+            // Atualizar o ícone baseado no estado
+            const icon = header.querySelector('.project-icon');
+            if (header.classList.contains('collapsed')) {
+                icon.className = 'fas fa-chevron-right project-icon';
+                icon.style.transform = 'rotate(0deg)'; // Posição normal para o lado
+            } else {
+                icon.className = 'fas fa-chevron-down project-icon';
+                icon.style.transform = 'rotate(0deg)'; // Posição normal para baixo
+            }
         };
 
         function sendMessage() {
