@@ -673,6 +673,8 @@
         .message-text {
             line-height: 1.6;
             word-wrap: break-word;
+            overflow-wrap: break-word;
+            word-break: break-all;
             font-size: 0.96rem;
         }
 
@@ -2278,7 +2280,7 @@
 
             if (type === 'bot') {
                 // Use marked.js for markdown rendering
-                textDiv.innerHTML = marked.parse(text);
+                textDiv.innerHTML = marked.parse(String(text || ''));
                 
                 // Add syntax highlighting for code blocks
                 const codeBlocks = textDiv.querySelectorAll('pre code');
