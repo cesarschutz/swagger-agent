@@ -71,10 +71,10 @@ public class AiProviderConfig {
                 "╔══════════════════════════════════════════════════════════════════════════════╗\n" +
                 "║                       🤖 CONFIGURAÇÃO OPENAI                                 ║\n" +
                 "╚══════════════════════════════════════════════════════════════════════════════╝");
-        log.info("║{}" + "║", String.format("%-71s", " 🔧 Provedor: " + properties.getAi().getProvider()));
-        log.info("║{}" + "║", String.format("%-71s", " 🧠 Modelo: " + openaiModel));
-        log.info("║{}" + "║", String.format("%-71s", " 🌡️  Temperatura: " + openaiTemperature));
-        log.info("║{}" + "║", String.format("%-71s", " 🔑 API Key: " + (System.getenv("OPENAI_API_KEY") != null ? "✅ Encontrada" : "❌ NÃO ENCONTRADA")));
+        log.info(String.format("║ %-72s ║", "🔧 Provedor: " + properties.getAi().getProvider()));
+        log.info(String.format("║ %-72s ║", "🧠 Modelo: " + openaiModel));
+        log.info(String.format("║ %-72s ║", "🌡️  Temperatura: " + openaiTemperature));
+        log.info(String.format("║ %-72s ║", "🔑 API Key: " + (System.getenv("OPENAI_API_KEY") != null ? "✅ Encontrada" : "❌ NÃO ENCONTRADA")));
         log.info("╚══════════════════════════════════════════════════════════════════════════════╝");
         return openAiChatModel;
     }
@@ -102,10 +102,10 @@ public class AiProviderConfig {
                 "╔══════════════════════════════════════════════════════════════════════════════╗\n" +
                 "║                       🤖 CONFIGURAÇÃO OLLAMA                                 ║\n" +
                 "╚══════════════════════════════════════════════════════════════════════════════╝");
-        log.info("║{}" + "║", String.format("%-71s", " 🔧 Provedor: " + properties.getAi().getProvider()));
-        log.info("║{}" + "║", String.format("%-71s", " 🌐 URL Base: " + ollamaBaseUrl));
-        log.info("║{}" + "║", String.format("%-71s", " 🧠 Modelo: " + ollamaModel));
-        log.info("║{}" + "║", String.format("%-71s", " 🌡️  Temperatura: " + ollamaTemperature));
+        log.info(String.format("║ %-72s ║", "🔧 Provedor: " + properties.getAi().getProvider()));
+        log.info(String.format("║ %-72s ║", "🌐 URL Base: " + ollamaBaseUrl));
+        log.info(String.format("║ %-72s ║", "🧠 Modelo: " + ollamaModel));
+        log.info(String.format("║ %-72s ║", "🌡️  Temperatura: " + ollamaTemperature));
         log.info("╚══════════════════════════════════════════════════════════════════════════════╝");
         return ollamaChatModel;
     }

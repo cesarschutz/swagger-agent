@@ -103,29 +103,22 @@ public class ChatService {
 
     /**
      * Orquestra o carregamento das ferramentas e a inicialização do cliente de chat.
-     * <p>
-     * Este método lê todas as especificações OpenAPI, gera as ferramentas correspondentes,
-     * as registra e, em seguida, configura o {@link ChatClient} com essas ferramentas.
      */
     public void initializeToolRegistry() {
         try {
             log.info("\n" +
                     "╔══════════════════════════════════════════════════════════════════════════════╗\n" +
                     "║                 🚀 INICIALIZANDO SWAGGER AGENT                               ║\n" +
-                    "╚══════════════════════════════════════════════════════════════════════════════╝\n");
+                    "╚══════════════════════════════════════════════════════════════════════════════╝");
 
-            // Analisa todos os arquivos de especificação OpenAPI para extrair os endpoints.
             List<OpenApiEndpoint> endpoints = openApiParserService.parseAllOpenApiFiles();
-            
-            // Gera as ferramentas dinâmicas (DynamicTool) a partir dos endpoints extraídos.
             availableTools = dynamicToolGeneratorService.generateToolsFromEndpoints(endpoints);
 
             log.info("\n" +
                     "╔══════════════════════════════════════════════════════════════════════════════╗\n" +
                     "║                      🤖 CONFIGURANDO AGENTE IA                               ║\n" +
-                    "╚══════════════════════════════════════════════════════════════════════════════╝\n");
+                    "╚══════════════════════════════════════════════════════════════════════════════╝");
 
-            // Inicializa o cliente de chat com as ferramentas recém-criadas.
             initializeChatClient();
 
             String toolsLine = String.format("  🎯 Total de ferramentas: %d", availableTools.size());
@@ -139,34 +132,27 @@ public class ChatService {
                     "║{}" + "║\n" +
                     "║{}" + "║\n" +
                     "║{}" + "║\n" +
-                    "╚══════════════════════════════════════════════════════════════════════════════╝\n",
+                    "╚══════════════════════════════════════════════════════════════════════════════╝",
                     String.format("%-71s", toolsLine),
                     String.format("%-71s", endpointsLine),
                     String.format("%-71s", agentLine)
             );
 
         } catch (Exception e) {
-            log.error("❌ Erro crítico ao carregar ferramentas e inicializar o chat. O serviço pode não funcionar como esperado.", e);
+            log.error("❌ Erro crítico durante a inicialização do Swagger Agent. O serviço pode não funcionar como esperado.", e);
             throw new RuntimeException("Falha na inicialização do serviço de chat", e);
         }
     }
 
     /**
      * Configura e constrói a instância do {@link ChatClient}.
-     * <p>
-     * Define o prompt de sistema e registra todas as funções de callback (ferramentas)
-     * que o modelo de linguagem poderá invocar.
      */
     private void initializeChatClient() {
         String systemPrompt = systemPromptService.generateSystemPrompt();
         
-        log.info("📝 Carregando prompt do sistema...");
-        log.info("📄 Tamanho do prompt: {} caracteres", systemPrompt.length());
-        
         List<FunctionCallback> functionCallbacks = dynamicToolGeneratorService.convertToFunctionCallbacks(availableTools);
-        log.info("🔧 Configurando {} function callbacks", functionCallbacks.size());
+        log.info("🔧 {} function callbacks registradas e prontas para uso.", functionCallbacks.size());
 
-        // Constrói o cliente de chat com o prompt de sistema e as funções (ferramentas).
         ChatClient.Builder builder = ChatClient.builder(chatModel).defaultSystem(systemPrompt);
 
         if (!functionCallbacks.isEmpty()) {
@@ -174,9 +160,8 @@ public class ChatService {
         }
 
         chatClient = builder.build();
-
-        log.info("✅ ChatClient inicializado com sucesso");
-        log.debug("🔍 Detalhes técnicos: {} function callbacks registrados", functionCallbacks.size());
+        log.info("✅ ChatClient configurado e pronto para receber requisições.");
+        log.debug("ChatClient inicializado com o prompt de sistema e {} ferramentas.", functionCallbacks.size());
     }
 
     /**

@@ -100,26 +100,41 @@ public class DynamicToolGeneratorService {
                 "║                   🛠️  GERANDO FERRAMENTAS DINÂMICAS                          ║\n" +
                 "╚══════════════════════════════════════════════════════════════════════════════╝");
         
-        log.info("📋 Analisados {} endpoints das especificações OpenAPI. Gerando ferramentas...", endpoints.size());
+        log.info("📋 Analisando {} endpoints para geração de ferramentas...", endpoints.size());
 
         List<DynamicTool> tools = endpoints.stream()
                 .map(endpoint -> {
                     try {
                         String toolName = generateUniqueToolName(endpoint, usedNames);
                         usedNames.add(toolName);
-                        DynamicTool tool = generateToolFromEndpoint(endpoint, toolName);
                         
-                        log.info(" Ferramenta gerada: {}", tool.getName());
+                        String description = generateToolDescription(endpoint);
+                        String jsonSchema = generateJsonSchema(endpoint);
+                        Function<Object, String> function = generateFunction(endpoint);
+
+                        DynamicTool tool = DynamicTool.builder()
+                                .name(toolName)
+                                .description(description)
+                                .summary(endpoint.summary())
+                                .endpoint(endpoint)
+                                .function(function)
+                                .jsonSchema(jsonSchema)
+                                .build();
                         
-                        String description = tool.getDescription();
+                        // Log elegante da ferramenta gerada
+                        String header = String.format("  ✅ Ferramenta: %s (%s %s)", toolName, endpoint.method().toUpperCase(), endpoint.path());
+                        log.info(header);
                         String indentedDescription = description.lines()
-                            .map(line -> "   | " + line)
+                            .map(line -> "     " + line)
                             .collect(Collectors.joining("\n"));
-                        log.info("\n" + indentedDescription + "\n" + "   ----------------------------------------------------------------------");
+                        log.info(indentedDescription);
+                        log.info("  --------------------------------------------------------------------");
+
+                        log.debug("     - JSON Schema para '{}': {}", toolName, jsonSchema);
                         
                         return tool;
                     } catch (Exception e) {
-                        log.warn("⚠️  Falha ao gerar ferramenta para {} {}: {}", 
+                        log.warn("  ⚠️  Falha ao gerar ferramenta para a rota {} {}: {}", 
                             endpoint.method().toUpperCase(), endpoint.path(), e.getMessage());
                         return null;
                     }
@@ -151,29 +166,6 @@ public class DynamicToolGeneratorService {
                 .toLowerCase();
         // Remove underscores que possam ter ficado no início ou no fim.
         return snake.replaceAll("^_+|_+$", "");
-    }
-
-    /**
-     * Cria uma única instância de {@link DynamicTool} a partir de um {@link OpenApiEndpoint}.
-     *
-     * @param endpoint o endpoint da API.
-     * @param toolName o nome único já gerado para a ferramenta.
-     * @return a instância de {@link DynamicTool} configurada.
-     */
-    private DynamicTool generateToolFromEndpoint(OpenApiEndpoint endpoint, String toolName) {
-        String description = generateToolDescription(endpoint);
-        String summary = endpoint.summary() != null ? endpoint.summary() : "Nenhum resumo disponível.";
-        String jsonSchema = generateJsonSchema(endpoint);
-        Function<Object, String> function = generateFunction(endpoint);
-
-        return DynamicTool.builder()
-                .name(toolName)
-                .description(description)
-                .summary(summary)
-                .endpoint(endpoint)
-                .function(function)
-                .jsonSchema(jsonSchema)
-                .build();
     }
 
     /**

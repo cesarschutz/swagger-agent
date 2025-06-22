@@ -72,9 +72,10 @@ public class SwaggerAgentProperties {
 
     private Ai ai = new Ai();
     private Tool tool = new Tool();
+    private Security security = new Security();
 
     public static class Ai {
-        private String provider = "openai"; // padrão
+        private String provider;
 
         public String getProvider() {
             return provider;
@@ -86,27 +87,11 @@ public class SwaggerAgentProperties {
     }
 
     public static class Tool {
-        private Logging logging = new Logging();
+        // Classe mantida para futuras propriedades, a configuração de log foi removida.
+    }
 
-        public Logging getLogging() {
-            return logging;
-        }
-
-        public void setLogging(Logging logging) {
-            this.logging = logging;
-        }
-
-        public static class Logging {
-            private boolean enabled = true;
-
-            public boolean isEnabled() {
-                return enabled;
-            }
-
-            public void setEnabled(boolean enabled) {
-                this.enabled = enabled;
-            }
-        }
+    public static class Security {
+        // ... (resto da classe)
     }
     
     // Getters e Setters
@@ -165,5 +150,13 @@ public class SwaggerAgentProperties {
 
     public void setTool(Tool tool) {
         this.tool = tool;
+    }
+
+    public Security getSecurity() {
+        return security;
+    }
+
+    public void setSecurity(Security security) {
+        this.security = security;
     }
 } 

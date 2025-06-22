@@ -44,21 +44,14 @@ public class SystemPromptService {
             log.info("║{}" + "║", String.format("%-71s", " 📏 Tamanho: " + prompt.length() + " caracteres"));
             log.info("║{}" + "║", String.format("%-71s", " 📝 Linhas: " + prompt.lines().count()));
             log.info("╚══════════════════════════════════════════════════════════════════════════════╝");
+
+            log.debug("Prompt do sistema carregado: \n{}", prompt);
             
             return prompt;
         } catch (IOException e) {
-            log.error("❌ Erro ao carregar o prompt do sistema do arquivo: {}. Usando prompt de fallback.", PROMPT_FILE_PATH, e);
+            log.error("❌ Erro ao carregar o prompt do sistema do arquivo '{}'. Um prompt de fallback será usado.", PROMPT_FILE_PATH, e);
             return getFallbackPrompt();
         }
-    }
-
-    /**
-     * Conta as seções principais do prompt para estatísticas.
-     */
-    private int countMainSections(String prompt) {
-        return (int) prompt.lines()
-                .filter(line -> line.startsWith("# "))
-                .count();
     }
 
     /**
