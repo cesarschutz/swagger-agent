@@ -12,7 +12,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Swagger Agent - Demonstração</title>
+    <title>Swagger Agent - Assistente Inteligente</title>
     <meta name="description" content="Assistente de chat profissional especializado em APIs">
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -345,7 +345,6 @@
         .project-header:hover {
             background: var(--bg-tool-hover);
             border-color: var(--accent-blue);
-            transform: translateY(-2px) scale(1.01);
             box-shadow: var(--shadow-md);
         }
 
@@ -355,7 +354,6 @@
         }
 
         .project-header.collapsed .project-icon {
-            transform: rotate(-90deg);
         }
 
         .project-name {
@@ -369,12 +367,12 @@
         }
 
         .project-count {
-            background: var(--bg-tertiary);
-            color: var(--text-secondary);
+            background: var(--accent-blue);
+            color: var(--text-white);
             padding: 0.25rem 0.5rem;
             border-radius: var(--radius-sm);
             font-size: 0.75rem;
-            font-weight: 500;
+            font-weight: 600;
         }
 
         .sidebar.collapsed .project-count {
@@ -415,7 +413,6 @@
         .tool-item:hover {
             background: var(--bg-tool-hover);
             border-color: var(--accent-blue);
-            transform: translateX(6px) scale(1.01);
             box-shadow: var(--shadow-md);
         }
         .tool-item::before {
@@ -433,41 +430,37 @@
             transform: scaleY(1);
         }
         .tool-name {
-            font-weight: 700;
+            font-weight: 600;
             color: var(--text-primary);
             margin-bottom: 0.35rem;
-            font-size: 0.97rem;
+            font-size: 0.9rem;
         }
         .tool-method {
             display: inline-block;
-            padding: 0.22rem 0.55rem;
+            padding: 0.2rem 0.5rem;
             border-radius: var(--radius-sm);
-            font-size: 0.78rem;
+            font-size: 0.7rem;
             font-weight: 600;
             margin-bottom: 0.35rem;
         }
-        .method-get { background: #dbeafe; color: #1d4ed8; }
-        .method-post { background: #dcfce7; color: #166534; }
-        .method-put { background: #fef3c7; color: #92400e; }
-        .method-delete { background: #fee2e2; color: #dc2626; }
-        .method-patch { background: #f3e8ff; color: #7c3aed; }
-
-        [data-theme="dark"] .method-get { background: #1e3a8a; color: #93c5fd; }
-        [data-theme="dark"] .method-post { background: #14532d; color: #86efac; }
-        [data-theme="dark"] .method-put { background: #78350f; color: #fbbf24; }
-        [data-theme="dark"] .method-delete { background: #7f1d1d; color: #fca5a5; }
-        [data-theme="dark"] .method-patch { background: #581c87; color: #c4b5fd; }
+        .method-get { background-color: var(--method-get-bg); color: var(--method-get-text); }
+        .method-post { background-color: var(--method-post-bg); color: var(--method-post-text); }
+        .method-put { background-color: var(--method-put-bg); color: var(--method-put-text); }
+        .method-delete { background-color: var(--method-delete-bg); color: var(--method-delete-text); }
+        .method-patch { background-color: var(--method-patch-bg); color: var(--method-patch-text); }
+        .method-head { background-color: var(--method-head-bg); color: var(--method-head-text); }
+        .method-options { background-color: var(--method-options-bg); color: var(--method-options-text); }
 
         .tool-path {
             font-family: 'JetBrains Mono', 'Fira Code', monospace;
-            font-size: 0.74rem;
+            font-size: 0.7rem;
             color: var(--text-muted);
             margin-bottom: 0.35rem;
             word-break: break-all;
         }
 
         .tool-description {
-            font-size: 0.74rem;
+            font-size: 0.7rem;
             color: var(--text-secondary);
             line-height: 1.4;
         }
@@ -678,6 +671,10 @@
             font-size: 0.96rem;
         }
 
+        .message.user .message-text {
+            white-space: pre-wrap;
+        }
+
         .message-text p {
             margin-bottom: 0.75rem;
         }
@@ -722,6 +719,7 @@
             margin: 0.75rem 0;
             border: 1px solid var(--border-color);
             font-size: 0.88rem;
+            position: relative;
         }
 
         .message-text pre code {
@@ -729,6 +727,46 @@
             padding: 0;
             border: none;
             color: inherit;
+        }
+
+        /* Copy button for code blocks */
+        .copy-button {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            padding: 0.25rem 0.5rem;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: var(--transition);
+            opacity: 1;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            font-family: inherit;
+        }
+
+        .message-text pre:hover .copy-button {
+            /* This rule is no longer needed to show the button, but can be kept for other hover effects if desired. For now, we'll make it do nothing. */
+        }
+
+        .copy-button:hover {
+            background: var(--bg-tool-hover);
+            color: var(--accent-blue);
+            border-color: var(--accent-blue);
+        }
+
+        .copy-button.copied {
+            background: var(--accent-green);
+            color: var(--text-white);
+            border-color: var(--accent-green);
+        }
+
+        .copy-button i {
+            font-size: 0.7rem;
         }
 
         .message-text blockquote {
@@ -1017,7 +1055,23 @@
         }
 
         .tools-modal-close {
-            display: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            border-radius: 50%;
+            color: var(--text-white);
+            font-size: 1.25rem;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .tools-modal-close:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: rotate(90deg);
         }
 
         .tools-modal-body {
@@ -1031,13 +1085,39 @@
             background: var(--bg-secondary);
         }
         .tools-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            display: flex; /* Changed from 'grid' */
+            flex-direction: column; /* To stack project sections */
             gap: 1.5rem;
             margin-top: 0.5rem;
         }
+
+        .modal-project-section {
+            background: var(--bg-tertiary);
+            padding: 1.5rem;
+            border-radius: var(--radius-xl);
+            border: 1px solid var(--border-color);
+        }
+
+        .modal-project-header {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 1.25rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1.5px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .modal-project-tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 1.5rem;
+        }
+
         .tool-card {
-            background: var(--bg-tool-item);
+            background: var(--bg-secondary); /* Changed for contrast */
             border: 1.5px solid var(--border-color);
             border-radius: var(--radius-xl);
             padding: 1.5rem 1.25rem 1.25rem 1.25rem;
@@ -1058,6 +1138,7 @@
         }
         .tool-card-method {
             display: inline-block;
+            align-self: flex-start; /* FIX: Prevents stretching */
             padding: 0.25rem 0.85rem;
             border-radius: var(--radius-sm);
             font-size: 0.82rem;
@@ -1554,7 +1635,7 @@
             <div class="sidebar-header">
                 <div class="logo-container">
                     <!-- Logo inicial -->
-                    <img id="sidebarLogo" src="src/main/resources/static/img/logotransparente.png" alt="Swagger Agent Logo">
+                    <img id="sidebarLogo" src="img/logotransparente.png" alt="Swagger Agent Logo">
                 </div>
             </div>
 
@@ -1609,11 +1690,12 @@
             <div class="chat-input">
                 <form class="input-container" id="chatForm">
                     <div class="input-wrapper">
-                        <textarea 
-                            id="messageInput" 
-                            placeholder="Digite sua mensagem..." 
-                            rows="1" 
-                            required
+                        <textarea
+                            id="messageInput"
+                            class="message-input"
+                            placeholder="Descreva sua necessidade ou faça uma pergunta..."
+                            rows="1"
+                            data-min-rows="1"
                         ></textarea>
                     </div>
                     <button type="submit" class="send-button" id="sendButton">
@@ -1628,13 +1710,16 @@
     <div class="tools-modal" id="toolsModal">
         <div class="tools-modal-content">
             <div class="tools-modal-header">
-                <h2 class="tools-modal-title">🛠️ Todas as Ferramentas</h2>
+                <div style="display: flex; align-items: center; gap: 1rem;">
+                    <h2 class="tools-modal-title">🛠️ Todas as Ferramentas</h2>
+                    <span id="toolsModalCount" class="tools-count">0</span>
+                </div>
                 <button class="tools-modal-close" id="toolsModalClose">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
             <div class="tools-modal-search" style="padding: 0 2rem 1rem 2rem;">
-                <input type="text" id="toolsSearchInput" placeholder="Buscar ferramenta..." style="width: 100%; padding: 0.7rem 1rem; border-radius: 0.5rem; border: 1.5px solid var(--border-color); font-size: 1rem; margin-top: 0.5rem;">
+                <input type="text" id="toolsSearchInput" placeholder="Filtrar por nome, método, caminho..." style="width: 100%; padding: 0.7rem 1rem; border-radius: 0.5rem; border: 1.5px solid var(--border-color); font-size: 1rem; margin-top: 0.5rem;">
             </div>
             <div class="tools-modal-body">
                 <div class="tools-grid" id="toolsGrid">
@@ -1669,11 +1754,12 @@
             sidebarLogo: document.getElementById('sidebarLogo')
         };
         
-        // Flag para trocar logo após a primeira interação do usuário
-        let firstInteraction = true;
-        
         // API URLs
         const apiUrl = window.location.origin + '/api/chat';
+        const toolsApiUrl = window.location.origin + '/api/tools';
+
+        // Flag para verificar a primeira interação do usuário
+        let firstInteraction = true;
 
         // Initialize app
         document.addEventListener('DOMContentLoaded', () => {
@@ -1695,6 +1781,9 @@
             
             // Setup event listeners
             setupEventListeners();
+
+            // Focar no campo de mensagem para permitir digitação imediata
+            elements.messageInput.focus();
         }
 
         function setupEventListeners() {
@@ -1803,63 +1892,26 @@
                 </div>
             `;
 
-            // Simular delay de carregamento
-            setTimeout(() => {
-                // Dados mockados de ferramentas para demonstração
-                const mockData = {
-                    totalTools: 6,
-                    toolsByProject: {
-                        "petstore": [
-                            {
-                                name: "getPets",
-                                description: "Listar todos os pets",
-                                method: "GET",
-                                baseUrl: "https://api.petstore.com",
-                                path: "/pets"
-                            },
-                            {
-                                name: "createPet",
-                                description: "Criar um novo pet",
-                                method: "POST",
-                                baseUrl: "https://api.petstore.com",
-                                path: "/pets"
-                            },
-                            {
-                                name: "getPetById",
-                                description: "Buscar pet por ID",
-                                method: "GET",
-                                baseUrl: "https://api.petstore.com",
-                                path: "/pets/{id}"
-                            }
-                        ],
-                        "ecommerce": [
-                            {
-                                name: "getProducts",
-                                description: "Listar produtos disponíveis",
-                                method: "GET",
-                                baseUrl: "https://api.ecommerce.com",
-                                path: "/products"
-                            },
-                            {
-                                name: "createOrder",
-                                description: "Criar novo pedido",
-                                method: "POST",
-                                baseUrl: "https://api.ecommerce.com",
-                                path: "/orders"
-                            },
-                            {
-                                name: "getCustomerInfo",
-                                description: "Buscar informações do cliente",
-                                method: "GET",
-                                baseUrl: "https://api.ecommerce.com",
-                                path: "/customers/{id}"
-                            }
-                        ]
+            fetch(toolsApiUrl)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
                     }
-                };
-                
-                displayTools(mockData);
-            }, 1000); // Simular 1 segundo de carregamento
+                    return response.json();
+                })
+                .then(data => {
+                    displayTools(data);
+                })
+                .catch(error => {
+                    console.error('Erro ao carregar ferramentas:', error);
+                    elements.toolsContent.innerHTML = `
+                        <div class="loading-tools">
+                            <i class="fas fa-exclamation-triangle" style="color: var(--accent-orange); font-size: 2rem; margin-bottom: 1rem;"></i>
+                            <p style="color: var(--text-secondary); margin-bottom: 0.5rem;">Erro ao carregar ferramentas</p>
+                            <p style="font-size: 0.75rem; color: var(--text-muted);">Verifique sua conexão e recarregue a página</p>
+                        </div>
+                    `;
+                });
         }
 
         function displayTools(data) {
@@ -1976,28 +2028,35 @@
                     <p>Carregando ferramentas...</p>
                 </div>
             `;
-            setTimeout(() => {
-                const mockData = {
-                    totalTools: 6,
-                    toolsByProject: {
-                        "petstore": [
-                            { name: "getPets", description: "Listar todos os pets", method: "GET", baseUrl: "https://api.petstore.com", path: "/pets" },
-                            { name: "createPet", description: "Criar um novo pet", method: "POST", baseUrl: "https://api.petstore.com", path: "/pets" },
-                            { name: "getPetById", description: "Buscar pet por ID", method: "GET", baseUrl: "https://api.petstore.com", path: "/pets/{id}" }
-                        ],
-                        "ecommerce": [
-                            { name: "getProducts", description: "Listar produtos disponíveis", method: "GET", baseUrl: "https://api.ecommerce.com", path: "/products" },
-                            { name: "createOrder", description: "Criar novo pedido", method: "POST", baseUrl: "https://api.ecommerce.com", path: "/orders" },
-                            { name: "getCustomerInfo", description: "Buscar informações do cliente", method: "GET", baseUrl: "https://api.ecommerce.com", path: "/customers/{id}" }
-                        ]
+            fetch(toolsApiUrl)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
                     }
-                };
-                allToolsData = mockData;
-                renderToolsGrid(mockData);
-            }, 800);
+                    return response.json();
+                })
+                .then(data => {
+                    allToolsData = data;
+                    renderToolsGrid(data);
+                })
+                .catch(error => {
+                    console.error('Erro ao carregar ferramentas no modal:', error);
+                    elements.toolsGrid.innerHTML = `
+                        <div class="error-state">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <p>Erro ao carregar ferramentas</p>
+                            <p style="font-size: 0.75rem; margin-top: 0.5rem;">Tente novamente mais tarde</p>
+                        </div>
+                    `;
+                });
         }
 
         function renderToolsGrid(data) {
+            const modalCountEl = document.getElementById('toolsModalCount');
+            if (modalCountEl) {
+                modalCountEl.textContent = data.totalTools;
+            }
+
             if (data.totalTools === 0) {
                 elements.toolsGrid.innerHTML = `
                     <div class="empty-state">
@@ -2008,17 +2067,25 @@
                 `;
                 return;
             }
+
             let html = '';
-            // Ordenar projetos em ordem alfabética
             const sortedProjects = Object.entries(data.toolsByProject).sort(([a], [b]) => a.localeCompare(b));
             
             sortedProjects.forEach(([projectName, tools]) => {
-                // Ordenar ferramentas dentro do projeto por descrição/nome
                 const sortedTools = tools.sort((a, b) => {
                     const aText = (a.description || a.name).toLowerCase();
                     const bText = (b.description || b.name).toLowerCase();
                     return aText.localeCompare(bText);
                 });
+
+                html += `
+                    <div class="modal-project-section">
+                        <h3 class="modal-project-header">
+                            <i class="fas fa-folder-open" style="color: var(--accent-blue);"></i>
+                            ${capitalize(projectName)}
+                        </h3>
+                        <div class="modal-project-tools-grid">
+                `;
                 
                 sortedTools.forEach(tool => {
                     const methodClass = `method-${tool.method.toLowerCase()}`;
@@ -2033,9 +2100,15 @@
                         </div>
                     `;
                 });
+
+                html += `
+                        </div>
+                    </div>
+                `;
             });
+
             elements.toolsGrid.innerHTML = html;
-            // Adicionar event listeners após renderizar o HTML
+
             const toolCards = elements.toolsGrid.querySelectorAll('.tool-card');
             toolCards.forEach(card => {
                 card.addEventListener('click', function() {
@@ -2106,12 +2179,12 @@
             const messageText = elements.messageInput.value.trim();
             if (!messageText) return;
             
-            // Altera o logo após a primeira interação
+            // Altera o logo após a primeira interação do usuário
             if (firstInteraction && elements.sidebarLogo) {
-                elements.sidebarLogo.src = 'src/main/resources/static/img/logo-transparente-ferramenta.png';
+                elements.sidebarLogo.src = 'img/logo-transparente-ferramenta.png';
                 firstInteraction = false;
             }
-            
+
             addMessage(messageText, 'user');
             elements.messageInput.value = '';
             elements.messageInput.style.height = 'auto';
@@ -2126,231 +2199,40 @@
         }
 
         function sendMessageSync(messageText) {
-            // Simular delay de processamento
-            setTimeout(() => {
+            fetch(apiUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ 
+                    message: messageText,
+                    sessionId: sessionId 
+                })
+            })
+            .then(async response => {
                 hideTypingIndicator();
-                
-                // Gerar resposta mockada baseada na mensagem do usuário
-                let mockResponse = '';
-                
-                // Verificar se é uma pergunta sobre ferramentas específicas
-                if (messageText.toLowerCase().includes('getpets') || messageText.toLowerCase().includes('listar pets')) {
-                    mockResponse = `🐕 **DEMO - Ferramenta: getPets**
-
-Esta é uma **demonstração** da ferramenta **getPets**. Em um ambiente real, eu faria uma chamada GET para \`https://api.petstore.com/pets\`.
-
-**Pets disponíveis (dados fictícios):**
-\`\`\`json
-[
-  {
-    "id": 1,
-    "name": "Rex",
-    "type": "dog",
-    "age": 3,
-    "owner": "João Silva"
-  },
-  {
-    "id": 2,
-    "name": "Mimi",
-    "type": "cat", 
-    "age": 2,
-    "owner": "Maria Santos"
-  },
-  {
-    "id": 3,
-    "name": "Buddy",
-    "type": "dog",
-    "age": 1,
-    "owner": "Pedro Costa"
-  }
-]
-\`\`\`
-
-*Esta é apenas uma simulação para fins de demonstração.*`;
-                } else if (messageText.toLowerCase().includes('createpet') || messageText.toLowerCase().includes('criar pet')) {
-                    mockResponse = `🐾 **DEMO - Ferramenta: createPet**
-
-Esta é uma **demonstração** da ferramenta **createPet**. Em um ambiente real, eu faria uma chamada POST para \`https://api.petstore.com/pets\`.
-
-**Pet criado com sucesso (dados fictícios):**
-\`\`\`json
-{
-  "id": 4,
-  "name": "Luna",
-  "type": "cat",
-  "age": 1,
-  "owner": "Ana Oliveira",
-  "status": "created",
-  "createdAt": "2024-01-15T14:30:00Z"
-}
-\`\`\`
-
-**Parâmetros enviados:**
-- **name:** Luna
-- **type:** cat  
-- **age:** 1
-- **owner:** Ana Oliveira
-
-*Esta é apenas uma simulação para fins de demonstração.*`;
-                } else if (messageText.toLowerCase().includes('getpetbyid') || messageText.toLowerCase().includes('buscar pet')) {
-                    mockResponse = `🔍 **DEMO - Ferramenta: getPetById**
-
-Esta é uma **demonstração** da ferramenta **getPetById**. Em um ambiente real, eu faria uma chamada GET para \`https://api.petstore.com/pets/{id}\`.
-
-**Pet encontrado (dados fictícios):**
-\`\`\`json
-{
-  "id": 1,
-  "name": "Rex",
-  "type": "dog",
-  "age": 3,
-  "owner": "João Silva",
-  "breed": "Golden Retriever",
-  "weight": 25.5,
-  "vaccinated": true,
-  "lastVisit": "2024-01-10T09:15:00Z"
-}
-\`\`\`
-
-**Parâmetros utilizados:**
-- **id:** 1
-
-*Esta é apenas uma simulação para fins de demonstração.*`;
-                } else if (messageText.toLowerCase().includes('getproducts') || messageText.toLowerCase().includes('listar produtos')) {
-                    mockResponse = `🛍️ **DEMO - Ferramenta: getProducts**
-
-Esta é uma **demonstração** da ferramenta **getProducts**. Em um ambiente real, eu faria uma chamada GET para \`https://api.ecommerce.com/products\`.
-
-**Produtos disponíveis (dados fictícios):**
-\`\`\`json
-[
-  {
-    "id": 1,
-    "name": "iPhone 15 Pro",
-    "price": 8999.00,
-    "category": "electronics",
-    "stock": 15,
-    "rating": 4.8
-  },
-  {
-    "id": 2,
-    "name": "MacBook Air M2",
-    "price": 12999.00,
-    "category": "electronics", 
-    "stock": 8,
-    "rating": 4.9
-  },
-  {
-    "id": 3,
-    "name": "Apple Watch Series 9",
-    "price": 3999.00,
-    "category": "wearables",
-    "stock": 22,
-    "rating": 4.7
-  }
-]
-\`\`\`
-
-*Esta é apenas uma simulação para fins de demonstração.*`;
-                } else if (messageText.toLowerCase().includes('createorder') || messageText.toLowerCase().includes('criar pedido')) {
-                    mockResponse = `📦 **DEMO - Ferramenta: createOrder**
-
-Esta é uma **demonstração** da ferramenta **createOrder**. Em um ambiente real, eu faria uma chamada POST para \`https://api.ecommerce.com/orders\`.
-
-**Pedido criado com sucesso (dados fictícios):**
-\`\`\`json
-{
-  "id": "ORD-2024-001",
-  "customerId": 12345,
-  "items": [
-    {
-      "productId": 1,
-      "quantity": 1,
-      "price": 8999.00
-    }
-  ],
-  "total": 8999.00,
-  "status": "pending",
-  "createdAt": "2024-01-15T15:45:00Z",
-  "estimatedDelivery": "2024-01-20T10:00:00Z"
-}
-\`\`\`
-
-**Parâmetros enviados:**
-- **customerId:** 12345
-- **items:** [{"productId": 1, "quantity": 1}]
-
-*Esta é apenas uma simulação para fins de demonstração.*`;
-                } else if (messageText.toLowerCase().includes('getcustomerinfo') || messageText.toLowerCase().includes('buscar cliente')) {
-                    mockResponse = `👤 **DEMO - Ferramenta: getCustomerInfo**
-
-Esta é uma **demonstração** da ferramenta **getCustomerInfo**. Em um ambiente real, eu faria uma chamada GET para \`https://api.ecommerce.com/customers/{id}\`.
-
-**Informações do Cliente (dados fictícios):**
-\`\`\`json
-{
-  "id": 12345,
-  "name": "Maria Santos",
-  "email": "maria.santos@email.com",
-  "phone": "(11) 99999-8888",
-  "address": {
-    "street": "Rua das Flores",
-    "number": "123",
-    "city": "São Paulo",
-    "state": "SP",
-    "zipCode": "01234-567"
-  },
-  "status": "active",
-  "totalOrders": 15,
-  "totalSpent": 45000.00,
-  "lastOrder": "2024-01-10T14:30:00Z"
-}
-\`\`\`
-
-**Parâmetros utilizados:**
-- **id:** 12345
-
-*Esta é apenas uma simulação para fins de demonstração.*`;
-                } else if (messageText.toLowerCase().includes('produto') || messageText.toLowerCase().includes('produtos')) {
-                    mockResponse = `🎯 **DEMO - Resposta Mockada**
-
-Esta é uma **demonstração** do Swagger Agent. Em um ambiente real, eu faria uma chamada para a API de produtos.
-
-**Produtos disponíveis (dados fictícios):**
-- 📱 iPhone 15 Pro - R$ 8.999
-- 💻 MacBook Air M2 - R$ 12.999  
-- ⌚ Apple Watch Series 9 - R$ 3.999
-- 🎧 AirPods Pro - R$ 2.499
-
-*Esta é apenas uma simulação para fins de demonstração.*`;
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data && data.content) {
+                        addMessage(data.content, 'bot');
+                    } else {
+                        addMessage('Desculpe, recebi uma resposta inesperada do servidor.', 'bot');
+                    }
                 } else {
-                    mockResponse = `🤖 **DEMO - Resposta Mockada**
-
-Esta é uma **demonstração** do Swagger Agent. Em um ambiente real, eu processaria sua mensagem e executaria as ações necessárias.
-
-**Sua mensagem:** "${messageText}"
-
-**O que eu faria em produção:**
-1. Analisaria sua solicitação
-2. Identificaria a ferramenta/API adequada
-3. Executaria a operação
-4. Retornaria os resultados reais
-
-**Para testar funcionalidades específicas, tente:**
-- "Quais produtos estão disponíveis?"
-- "Crie um novo usuário"
-- "Busque informações do cliente"
-
-*Esta é apenas uma simulação para fins de demonstração.*`;
+                    const errorText = await response.text();
+                    console.error("Server error:", response.status, errorText);
+                    addMessage('Desculpe, ocorreu um erro ao processar sua mensagem. Tente novamente.', 'bot');
                 }
-                
-                addMessage(mockResponse, 'bot');
-                
+            })
+            .catch(error => {
+                hideTypingIndicator();
+                console.error('Error:', error);
+                addMessage('Erro de comunicação com o servidor. Verifique sua conexão e tente novamente.', 'bot');
+            })
+            .finally(() => {
                 document.body.classList.remove('thinking');
                 elements.sendButton.disabled = false;
                 elements.messageInput.disabled = false;
                 elements.messageInput.focus();
-            }, 1500); // Simular 1.5 segundos de processamento
+            });
         }
 
         function addMessage(text, type) {
@@ -2363,7 +2245,7 @@ Esta é uma **demonstração** do Swagger Agent. Em um ambiente real, eu process
             
             if (type === 'bot') {
                 const avatarImg = document.createElement('img');
-                avatarImg.src = 'src/main/resources/static/img/icone.png';
+                avatarImg.src = 'img/icone.png';
                 avatarImg.alt = 'Bot Avatar';
                 avatarImg.onerror = function() {
                     // Fallback to icon if image fails to load
@@ -2401,6 +2283,12 @@ Esta é uma **demonstração** do Swagger Agent. Em um ambiente real, eu process
                     block.style.display = 'block';
                     block.style.overflowX = 'auto';
                 });
+
+                // Add copy buttons to code blocks
+                const preBlocks = textDiv.querySelectorAll('pre');
+                preBlocks.forEach(pre => {
+                    addCopyButton(pre);
+                });
             } else {
                 textDiv.textContent = text;
             }
@@ -2433,7 +2321,7 @@ Esta é uma **demonstração** do Swagger Agent. Em um ambiente real, eu process
             const avatarDiv = document.createElement('div');
             avatarDiv.className = 'message-avatar';
             const avatarImg = document.createElement('img');
-            avatarImg.src = 'src/main/resources/static/img/icone.png';
+            avatarImg.src = 'img/icone.png';
             avatarImg.alt = 'Bot Avatar';
             avatarImg.onerror = function() {
                 this.style.display = 'none';
@@ -2450,29 +2338,23 @@ Esta é uma **demonstração** do Swagger Agent. Em um ambiente real, eu process
 
             const welcomeText = document.createElement('div');
             welcomeText.className = 'message-text';
-            welcomeText.innerHTML = marked.parse(`🎭 **DEMO - Swagger Agent**
+            welcomeText.innerHTML = marked.parse(`👋 **Bem-vindo(a) ao Swagger Agent!**
 
-👋 **Bem-vindo(a) à demonstração do Swagger Agent!**
+🤖 Sou seu assistente inteligente, especializado em interagir com **APIs externas** através de uma conversa natural.
 
-🤖 Esta é uma **versão de demonstração** do assistente inteligente, especializado em interagir com **APIs externas** através de uma conversa natural.
-
-⚠️ **IMPORTANTE:** Esta é apenas uma simulação. As respostas são mockadas para fins de demonstração.
-
-❓ **Como funciona a demonstração?**  
+❓ **Como posso ajudar você hoje?**  
 Basta descrever sua necessidade em linguagem natural, e eu:
-* Simularei a identificação da ferramenta adequada
-* Mostrarei como seria a execução da operação
-* Apresentarei resultados fictícios de forma clara
+* Identificarei a ferramenta mais adequada
+* Executarei a operação desejada
+* Retornarei os resultados de forma clara
 
-💡 **Exemplos para testar:**
+💡 **Exemplos de solicitações:**
 * _"Quais produtos estão disponíveis na loja?"_
 * _"Crie um novo usuário com nome João Silva"_
 * _"Busque informações do cliente com ID 12345"_
 
 🛠️ **Explore as Ferramentas**  
-No painel à esquerda, você encontra todas as APIs disponíveis. Clique em qualquer uma delas para ver exemplos de uso.
-
-*Esta demonstração mostra como seria a experiência real do Swagger Agent.*`);
+No painel à esquerda, você encontra todas as APIs disponíveis. Clique em qualquer uma delas para ver exemplos de uso.`);
 
             const timeDiv = document.createElement('div');
             timeDiv.className = 'message-time';
@@ -2498,7 +2380,7 @@ No painel à esquerda, você encontra todas as APIs disponíveis. Clique em qual
             const avatarDiv = document.createElement('div');
             avatarDiv.className = 'message-avatar';
             const avatarImg = document.createElement('img');
-            avatarImg.src = 'src/main/resources/static/img/icone.png';
+            avatarImg.src = 'img/icone.png';
             avatarImg.alt = 'Bot Avatar';
             avatarDiv.appendChild(avatarImg);
             
@@ -2522,6 +2404,66 @@ No painel à esquerda, você encontra todas as APIs disponíveis. Clique em qual
             const indicator = document.getElementById('typing-indicator');
             if (indicator) {
                 indicator.remove();
+            }
+        }
+
+        // Function to add copy button to code blocks
+        function addCopyButton(preElement) {
+            const copyButton = document.createElement('button');
+            copyButton.className = 'copy-button';
+            copyButton.innerHTML = '<i class="fas fa-copy"></i> Copiar';
+            copyButton.title = 'Copiar código';
+            
+            copyButton.addEventListener('click', async () => {
+                const codeElement = preElement.querySelector('code');
+                const textToCopy = codeElement ? codeElement.textContent : preElement.textContent;
+                
+                try {
+                    await navigator.clipboard.writeText(textToCopy);
+                    
+                    // Visual feedback
+                    copyButton.innerHTML = '<i class="fas fa-check"></i> Copiado!';
+                    copyButton.classList.add('copied');
+                    
+                    // Reset button after 2 seconds
+                    setTimeout(() => {
+                        copyButton.innerHTML = '<i class="fas fa-copy"></i> Copiar';
+                        copyButton.classList.remove('copied');
+                    }, 2000);
+                    
+                } catch (err) {
+                    console.error('Erro ao copiar:', err);
+                    
+                    // Fallback for older browsers
+                    const textArea = document.createElement('textarea');
+                    textArea.value = textToCopy;
+                    document.body.appendChild(textArea);
+                    textArea.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(textArea);
+                    
+                    // Visual feedback
+                    copyButton.innerHTML = '<i class="fas fa-check"></i> Copiado!';
+                    copyButton.classList.add('copied');
+                    
+                    setTimeout(() => {
+                        copyButton.innerHTML = '<i class="fas fa-copy"></i> Copiar';
+                        copyButton.classList.remove('copied');
+                    }, 2000);
+                }
+            });
+            
+            preElement.appendChild(copyButton);
+        }
+
+        // Function to copy text to clipboard
+        async function copyToClipboard(text) {
+            try {
+                await navigator.clipboard.writeText(text);
+                return true;
+            } catch (err) {
+                console.error('Erro ao copiar:', err);
+                return false;
             }
         }
     </script>
