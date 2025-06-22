@@ -63,7 +63,8 @@ public class AiProviderConfig {
      * @param openAiChatModel o modelo OpenAI injetado pelo Spring AI
      * @return o modelo OpenAI configurado como provedor primário
      */
-    @Bean("openAiChatModel")
+    @Bean("primaryChatModel")
+    @Primary
     @ConditionalOnProperty(name = "app.ai.provider", havingValue = "openai", matchIfMissing = true)
     public ChatModel openAiChatModel(OpenAiChatModel openAiChatModel) {
         log.info("🔧 ========================================");
