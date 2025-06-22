@@ -106,40 +106,20 @@ public class ChatService {
      */
     public void initializeToolRegistry() {
         try {
-            log.info("\n" +
-                    "╔══════════════════════════════════════════════════════════════════════════════╗\n" +
-                    "║                 🚀 INICIALIZANDO SWAGGER AGENT                               ║\n" +
-                    "╚══════════════════════════════════════════════════════════════════════════════╝");
+            log.info("🚀 Inicializando Swagger Agent");
 
             List<OpenApiEndpoint> endpoints = openApiParserService.parseAllOpenApiFiles();
             availableTools = dynamicToolGeneratorService.generateToolsFromEndpoints(endpoints);
 
-            log.info("\n" +
-                    "╔══════════════════════════════════════════════════════════════════════════════╗\n" +
-                    "║                      🤖 CONFIGURANDO AGENTE IA                               ║\n" +
-                    "╚══════════════════════════════════════════════════════════════════════════════╝");
-
+            log.info("🤖 Configurando Agente IA");
             initializeChatClient();
 
-            String toolsLine = String.format("  🎯 Total de ferramentas: %d", availableTools.size());
-            String endpointsLine = String.format("  🌐 Endpoints disponíveis: %d", endpoints.size());
-            String agentLine = "  🤖 Agente IA: Configurado e pronto para uso";
-
-            log.info("\n" +
-                    "╔══════════════════════════════════════════════════════════════════════════════╗\n" +
-                    "║                   ✅ INICIALIZAÇÃO CONCLUÍDA                                 ║\n" +
-                    "║                                                                              ║\n" +
-                    "║{}" + "║\n" +
-                    "║{}" + "║\n" +
-                    "║{}" + "║\n" +
-                    "╚══════════════════════════════════════════════════════════════════════════════╝",
-                    String.format("%-71s", toolsLine),
-                    String.format("%-71s", endpointsLine),
-                    String.format("%-71s", agentLine)
-            );
+            log.info("✅ Inicialização concluída");
+            log.info("🎯 Total de ferramentas: {}", availableTools.size());
+            log.info("🌐 Endpoints disponíveis: {}", endpoints.size());
 
         } catch (Exception e) {
-            log.error("❌ Erro crítico durante a inicialização do Swagger Agent. O serviço pode não funcionar como esperado.", e);
+            log.error("❌ Erro crítico durante a inicialização do Swagger Agent", e);
             throw new RuntimeException("Falha na inicialização do serviço de chat", e);
         }
     }
@@ -151,7 +131,7 @@ public class ChatService {
         String systemPrompt = systemPromptService.generateSystemPrompt();
         
         List<FunctionCallback> functionCallbacks = dynamicToolGeneratorService.convertToFunctionCallbacks(availableTools);
-        log.info("🔧 {} function callbacks registradas e prontas para uso.", functionCallbacks.size());
+        log.info("🔧 {} function callbacks registradas", functionCallbacks.size());
 
         ChatClient.Builder builder = ChatClient.builder(chatModel).defaultSystem(systemPrompt);
 
@@ -160,8 +140,7 @@ public class ChatService {
         }
 
         chatClient = builder.build();
-        log.info("✅ ChatClient configurado e pronto para receber requisições.");
-        log.debug("ChatClient inicializado com o prompt de sistema e {} ferramentas.", functionCallbacks.size());
+        log.info("✅ ChatClient configurado e pronto");
     }
 
     /**
@@ -209,8 +188,6 @@ public class ChatService {
             // Registra a interação para auditoria
             auditService.logChatInteraction(sessionId, message, response, durationMs);
 
-            log.debug("Resposta de chat síncrono gerada para a sessão: {}", sessionId);
-
             return new ChatResponse(role, response);
 
         } catch (Exception e) {
@@ -252,9 +229,6 @@ public class ChatService {
         try {
             InMemoryChatMemory chatMemory = chatMemoryService.getOrCreate(sessionId);
 
-            log.debug("Iniciando chat streaming para a sessão: {}", sessionId);
-
-            // Retorna o fluxo (Flux) de respostas, formatando cada chunk como um Server-Sent Event (SSE).
             return chatClient.prompt()
                     .advisors(new MessageChatMemoryAdvisor(chatMemory))
                     .user(message)

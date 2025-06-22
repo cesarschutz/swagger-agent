@@ -41,17 +41,14 @@ public class WebClientConfig {
      */
     @Bean
     public WebClient webClient() {
-        // Configura o pool de conexões com limites e timeouts
         ConnectionProvider provider = ConnectionProvider.builder("swagger-agent-pool")
                 .maxConnections(100)
                 .pendingAcquireTimeout(Duration.ofSeconds(30))
                 .build();
         
-        // Cria o cliente HTTP com o pool configurado e timeout de resposta
         HttpClient httpClient = HttpClient.create(provider)
                 .responseTimeout(Duration.ofSeconds(10));
         
-        // Constrói o WebClient com o conector HTTP personalizado
         return WebClient.builder()
                 .clientConnector(new ReactorClientHttpConnector(httpClient))
                 .build();

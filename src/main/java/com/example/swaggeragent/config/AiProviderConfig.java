@@ -67,15 +67,11 @@ public class AiProviderConfig {
     @Primary
     @ConditionalOnProperty(name = "app.ai.provider", havingValue = "openai", matchIfMissing = true)
     public ChatModel openAiChatModel(OpenAiChatModel openAiChatModel) {
-        log.info("\n" +
-                "╔══════════════════════════════════════════════════════════════════════════════╗\n" +
-                "║                       🤖 CONFIGURAÇÃO OPENAI                                 ║\n" +
-                "╚══════════════════════════════════════════════════════════════════════════════╝");
-        log.info(String.format("║ %-72s ║", "🔧 Provedor: " + properties.getAi().getProvider()));
-        log.info(String.format("║ %-72s ║", "🧠 Modelo: " + openaiModel));
-        log.info(String.format("║ %-72s ║", "🌡️  Temperatura: " + openaiTemperature));
-        log.info(String.format("║ %-72s ║", "🔑 API Key: " + (System.getenv("OPENAI_API_KEY") != null ? "✅ Encontrada" : "❌ NÃO ENCONTRADA")));
-        log.info("╚══════════════════════════════════════════════════════════════════════════════╝");
+        log.info("🤖 Configuração OpenAI ativada");
+        log.info("🔧 Provedor: {}", properties.getAi().getProvider());
+        log.info("🧠 Modelo: {}", openaiModel);
+        log.info("🌡️ Temperatura: {}", openaiTemperature);
+        log.info("🔑 API Key: {}", System.getenv("OPENAI_API_KEY") != null ? "✅ Encontrada" : "❌ NÃO ENCONTRADA");
         return openAiChatModel;
     }
 
@@ -98,15 +94,11 @@ public class AiProviderConfig {
     @Primary
     @ConditionalOnProperty(name = "app.ai.provider", havingValue = "ollama")
     public ChatModel ollamaChatModel(OllamaChatModel ollamaChatModel) {
-        log.info("\n" +
-                "╔══════════════════════════════════════════════════════════════════════════════╗\n" +
-                "║                       🤖 CONFIGURAÇÃO OLLAMA                                 ║\n" +
-                "╚══════════════════════════════════════════════════════════════════════════════╝");
-        log.info(String.format("║ %-72s ║", "🔧 Provedor: " + properties.getAi().getProvider()));
-        log.info(String.format("║ %-72s ║", "🌐 URL Base: " + ollamaBaseUrl));
-        log.info(String.format("║ %-72s ║", "🧠 Modelo: " + ollamaModel));
-        log.info(String.format("║ %-72s ║", "🌡️  Temperatura: " + ollamaTemperature));
-        log.info("╚══════════════════════════════════════════════════════════════════════════════╝");
+        log.info("🤖 Configuração Ollama ativada");
+        log.info("🔧 Provedor: {}", properties.getAi().getProvider());
+        log.info("🌐 URL Base: {}", ollamaBaseUrl);
+        log.info("🧠 Modelo: {}", ollamaModel);
+        log.info("🌡️ Temperatura: {}", ollamaTemperature);
         return ollamaChatModel;
     }
 } 

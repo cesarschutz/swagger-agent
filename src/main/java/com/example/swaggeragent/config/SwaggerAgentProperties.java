@@ -87,11 +87,11 @@ public class SwaggerAgentProperties {
     }
 
     public static class Tool {
-        // Classe mantida para futuras propriedades, a configuração de log foi removida.
+        // Classe mantida para futuras propriedades
     }
 
     public static class Security {
-        // ... (resto da classe)
+        // Classe mantida para futuras propriedades
     }
     
     // Getters e Setters
