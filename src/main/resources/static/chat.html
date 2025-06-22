@@ -674,6 +674,10 @@
             font-size: 0.96rem;
         }
 
+        .message.user .message-text {
+            white-space: pre-wrap;
+        }
+
         .message-text p {
             margin-bottom: 0.75rem;
         }
@@ -718,6 +722,7 @@
             margin: 0.75rem 0;
             border: 1px solid var(--border-color);
             font-size: 0.88rem;
+            position: relative;
         }
 
         .message-text pre code {
@@ -725,6 +730,46 @@
             padding: 0;
             border: none;
             color: inherit;
+        }
+
+        /* Copy button for code blocks */
+        .copy-button {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            padding: 0.25rem 0.5rem;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: var(--transition);
+            opacity: 1;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            font-family: inherit;
+        }
+
+        .message-text pre:hover .copy-button {
+            /* This rule is no longer needed to show the button, but can be kept for other hover effects if desired. For now, we'll make it do nothing. */
+        }
+
+        .copy-button:hover {
+            background: var(--bg-tool-hover);
+            color: var(--accent-blue);
+            border-color: var(--accent-blue);
+        }
+
+        .copy-button.copied {
+            background: var(--accent-green);
+            color: var(--text-white);
+            border-color: var(--accent-green);
+        }
+
+        .copy-button i {
+            font-size: 0.7rem;
         }
 
         .message-text blockquote {
@@ -2134,6 +2179,12 @@
                     block.style.display = 'block';
                     block.style.overflowX = 'auto';
                 });
+
+                // Add copy buttons to code blocks
+                const preBlocks = textDiv.querySelectorAll('pre');
+                preBlocks.forEach(pre => {
+                    addCopyButton(pre);
+                });
             } else {
                 textDiv.textContent = text;
             }
@@ -2249,6 +2300,66 @@ No painel à esquerda, você encontra todas as APIs disponíveis. Clique em qual
             const indicator = document.getElementById('typing-indicator');
             if (indicator) {
                 indicator.remove();
+            }
+        }
+
+        // Function to add copy button to code blocks
+        function addCopyButton(preElement) {
+            const copyButton = document.createElement('button');
+            copyButton.className = 'copy-button';
+            copyButton.innerHTML = '<i class="fas fa-copy"></i> Copiar';
+            copyButton.title = 'Copiar código';
+            
+            copyButton.addEventListener('click', async () => {
+                const codeElement = preElement.querySelector('code');
+                const textToCopy = codeElement ? codeElement.textContent : preElement.textContent;
+                
+                try {
+                    await navigator.clipboard.writeText(textToCopy);
+                    
+                    // Visual feedback
+                    copyButton.innerHTML = '<i class="fas fa-check"></i> Copiado!';
+                    copyButton.classList.add('copied');
+                    
+                    // Reset button after 2 seconds
+                    setTimeout(() => {
+                        copyButton.innerHTML = '<i class="fas fa-copy"></i> Copiar';
+                        copyButton.classList.remove('copied');
+                    }, 2000);
+                    
+                } catch (err) {
+                    console.error('Erro ao copiar:', err);
+                    
+                    // Fallback for older browsers
+                    const textArea = document.createElement('textarea');
+                    textArea.value = textToCopy;
+                    document.body.appendChild(textArea);
+                    textArea.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(textArea);
+                    
+                    // Visual feedback
+                    copyButton.innerHTML = '<i class="fas fa-check"></i> Copiado!';
+                    copyButton.classList.add('copied');
+                    
+                    setTimeout(() => {
+                        copyButton.innerHTML = '<i class="fas fa-copy"></i> Copiar';
+                        copyButton.classList.remove('copied');
+                    }, 2000);
+                }
+            });
+            
+            preElement.appendChild(copyButton);
+        }
+
+        // Function to copy text to clipboard
+        async function copyToClipboard(text) {
+            try {
+                await navigator.clipboard.writeText(text);
+                return true;
+            } catch (err) {
+                console.error('Erro ao copiar:', err);
+                return false;
             }
         }
     </script>
