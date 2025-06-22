@@ -32,14 +32,33 @@ public class SystemPromptService {
      */
     public String generateSystemPrompt() {
         try {
+            log.info("\n" +
+                    "╔══════════════════════════════════════════════════════════════════════════════╗\n" +
+                    "║                    📝 CARREGANDO PROMPT DO SISTEMA                         ║\n" +
+                    "╚══════════════════════════════════════════════════════════════════════════════╝");
+
             ClassPathResource resource = new ClassPathResource(PROMPT_FILE_PATH);
             String prompt = resource.getContentAsString(StandardCharsets.UTF_8);
-            log.info("Prompt do sistema carregado com sucesso do arquivo: {}", PROMPT_FILE_PATH);
+            
+            log.info("║{}" + "║", String.format("%-71s", " 📄 Arquivo: " + PROMPT_FILE_PATH));
+            log.info("║{}" + "║", String.format("%-71s", " 📏 Tamanho: " + prompt.length() + " caracteres"));
+            log.info("║{}" + "║", String.format("%-71s", " 📝 Linhas: " + prompt.lines().count()));
+            log.info("╚══════════════════════════════════════════════════════════════════════════════╝");
+            
             return prompt;
         } catch (IOException e) {
-            log.error("Erro ao carregar o prompt do sistema do arquivo: {}. Usando prompt de fallback.", PROMPT_FILE_PATH, e);
+            log.error("❌ Erro ao carregar o prompt do sistema do arquivo: {}. Usando prompt de fallback.", PROMPT_FILE_PATH, e);
             return getFallbackPrompt();
         }
+    }
+
+    /**
+     * Conta as seções principais do prompt para estatísticas.
+     */
+    private int countMainSections(String prompt) {
+        return (int) prompt.lines()
+                .filter(line -> line.startsWith("# "))
+                .count();
     }
 
     /**

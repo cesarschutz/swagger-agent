@@ -84,16 +84,23 @@ public class DynamicToolGeneratorService {
     }
 
     /**
-     * Gera uma lista de {@link DynamicTool} a partir de uma lista de {@link OpenApiEndpoint}.
+     * Gera ferramentas dinâmicas a partir de uma lista de endpoints OpenAPI.
      * <p>
-     * Garante que cada ferramenta tenha um nome único, combinando o nome do projeto,
-     * o nome do controller (tag) e o ID da operação para evitar colisões.
+     * Este método converte cada endpoint OpenAPI em uma ferramenta que pode ser
+     * utilizada pelo modelo de linguagem para executar chamadas de API.
      *
-     * @param endpoints a lista de endpoints extraídos da especificação OpenAPI.
-     * @return uma lista de ferramentas dinâmicas prontas para serem usadas.
+     * @param endpoints lista de endpoints OpenAPI para converter em ferramentas
+     * @return lista de ferramentas dinâmicas geradas
      */
     public List<DynamicTool> generateToolsFromEndpoints(List<OpenApiEndpoint> endpoints) {
         Set<String> usedNames = new HashSet<>();
+
+        log.info("\n" +
+                "╔══════════════════════════════════════════════════════════════════════════════╗\n" +
+                "║                   🛠️  GERANDO FERRAMENTAS DINÂMICAS                          ║\n" +
+                "╚══════════════════════════════════════════════════════════════════════════════╝");
+        
+        log.info("📋 Analisados {} endpoints das especificações OpenAPI. Gerando ferramentas...", endpoints.size());
 
         List<DynamicTool> tools = endpoints.stream()
                 .map(endpoint -> {
@@ -101,17 +108,27 @@ public class DynamicToolGeneratorService {
                         String toolName = generateUniqueToolName(endpoint, usedNames);
                         usedNames.add(toolName);
                         DynamicTool tool = generateToolFromEndpoint(endpoint, toolName);
-                        log.info("✅ Ferramenta Adicionada: [Nome: {}] para o endpoint [{} {}]", tool.getName(), endpoint.method().toUpperCase(), endpoint.path());
+                        
+                        log.info(" Ferramenta gerada: {}", tool.getName());
+                        
+                        String description = tool.getDescription();
+                        String indentedDescription = description.lines()
+                            .map(line -> "   | " + line)
+                            .collect(Collectors.joining("\n"));
+                        log.info("\n" + indentedDescription + "\n" + "   ----------------------------------------------------------------------");
+                        
                         return tool;
                     } catch (Exception e) {
-                        log.error("Falha ao gerar ferramenta para o endpoint: {} {}", endpoint.method().toUpperCase(), endpoint.path(), e);
+                        log.warn("⚠️  Falha ao gerar ferramenta para {} {}: {}", 
+                            endpoint.method().toUpperCase(), endpoint.path(), e.getMessage());
                         return null;
                     }
                 })
                 .filter(java.util.Objects::nonNull)
                 .collect(Collectors.toList());
-
-        log.info("Total de {} ferramentas geradas com sucesso a partir dos endpoints.", tools.size());
+        
+        log.info("🎯 Total de ferramentas geradas com sucesso: {}", tools.size());
+        log.info("╚══════════════════════════════════════════════════════════════════════════════╝");
         return tools;
     }
 

@@ -67,14 +67,15 @@ public class AiProviderConfig {
     @Primary
     @ConditionalOnProperty(name = "app.ai.provider", havingValue = "openai", matchIfMissing = true)
     public ChatModel openAiChatModel(OpenAiChatModel openAiChatModel) {
-        log.info("🔧 ========================================");
-        log.info("🔧 CONFIGURAÇÃO OPENAI");
-        log.info("🔧 ========================================");
-        log.info("🔧 Provedor configurado: {}", properties.getAi().getProvider());
-        log.info("🔧 Modelo OpenAI: {}", openaiModel);
-        log.info("🔧 Temperatura: {}", openaiTemperature);
-        log.info("🔧 API Key configurada: {}", System.getenv("OPENAI_API_KEY") != null ? "SIM" : "NÃO");
-        log.info("🔧 ========================================");
+        log.info("\n" +
+                "╔══════════════════════════════════════════════════════════════════════════════╗\n" +
+                "║                       🤖 CONFIGURAÇÃO OPENAI                                 ║\n" +
+                "╚══════════════════════════════════════════════════════════════════════════════╝");
+        log.info("║{}" + "║", String.format("%-71s", " 🔧 Provedor: " + properties.getAi().getProvider()));
+        log.info("║{}" + "║", String.format("%-71s", " 🧠 Modelo: " + openaiModel));
+        log.info("║{}" + "║", String.format("%-71s", " 🌡️  Temperatura: " + openaiTemperature));
+        log.info("║{}" + "║", String.format("%-71s", " 🔑 API Key: " + (System.getenv("OPENAI_API_KEY") != null ? "✅ Encontrada" : "❌ NÃO ENCONTRADA")));
+        log.info("╚══════════════════════════════════════════════════════════════════════════════╝");
         return openAiChatModel;
     }
 
@@ -97,15 +98,15 @@ public class AiProviderConfig {
     @Primary
     @ConditionalOnProperty(name = "app.ai.provider", havingValue = "ollama")
     public ChatModel ollamaChatModel(OllamaChatModel ollamaChatModel) {
-        log.info("🔧 ========================================");
-        log.info("🔧 CONFIGURAÇÃO OLLAMA");
-        log.info("🔧 ========================================");
-        log.info("🔧 Provedor configurado: {}", properties.getAi().getProvider());
-        log.info("🔧 URL base do Ollama: {}", ollamaBaseUrl);
-        log.info("🔧 Modelo Ollama: {}", ollamaModel);
-        log.info("🔧 Temperatura: {}", ollamaTemperature);
-        log.info("🔧 Logging de ferramentas: {}", properties.getTool().getLogging().isEnabled());
-        log.info("🔧 ========================================");
+        log.info("\n" +
+                "╔══════════════════════════════════════════════════════════════════════════════╗\n" +
+                "║                       🤖 CONFIGURAÇÃO OLLAMA                                 ║\n" +
+                "╚══════════════════════════════════════════════════════════════════════════════╝");
+        log.info("║{}" + "║", String.format("%-71s", " 🔧 Provedor: " + properties.getAi().getProvider()));
+        log.info("║{}" + "║", String.format("%-71s", " 🌐 URL Base: " + ollamaBaseUrl));
+        log.info("║{}" + "║", String.format("%-71s", " 🧠 Modelo: " + ollamaModel));
+        log.info("║{}" + "║", String.format("%-71s", " 🌡️  Temperatura: " + ollamaTemperature));
+        log.info("╚══════════════════════════════════════════════════════════════════════════════╝");
         return ollamaChatModel;
     }
 } 
