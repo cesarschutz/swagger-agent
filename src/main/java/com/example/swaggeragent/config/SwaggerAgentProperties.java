@@ -12,10 +12,10 @@ import java.time.Duration;
  * permitindo ajustes via arquivo de propriedades ou variáveis de ambiente.
  * <p>
  * <b>Uso:</b> As propriedades podem ser configuradas no arquivo <code>application.yml</code>
- * usando o prefixo <code>swagger-agent</code>.
+ * usando o prefixo <code>app</code>.
  */
 @Component
-@ConfigurationProperties(prefix = "swagger-agent")
+@ConfigurationProperties(prefix = "app")
 public class SwaggerAgentProperties {
     
     /**
@@ -69,6 +69,45 @@ public class SwaggerAgentProperties {
      * <b>Valor padrão:</b> "http://localhost:8080"
      */
     private String defaultFallbackUrl = "http://localhost:8080";
+
+    private Ai ai = new Ai();
+    private Tool tool = new Tool();
+
+    public static class Ai {
+        private String provider = "openai"; // padrão
+
+        public String getProvider() {
+            return provider;
+        }
+
+        public void setProvider(String provider) {
+            this.provider = provider;
+        }
+    }
+
+    public static class Tool {
+        private Logging logging = new Logging();
+
+        public Logging getLogging() {
+            return logging;
+        }
+
+        public void setLogging(Logging logging) {
+            this.logging = logging;
+        }
+
+        public static class Logging {
+            private boolean enabled = true;
+
+            public boolean isEnabled() {
+                return enabled;
+            }
+
+            public void setEnabled(boolean enabled) {
+                this.enabled = enabled;
+            }
+        }
+    }
     
     // Getters e Setters
     
@@ -110,5 +149,21 @@ public class SwaggerAgentProperties {
     
     public void setDefaultFallbackUrl(String defaultFallbackUrl) {
         this.defaultFallbackUrl = defaultFallbackUrl;
+    }
+
+    public Ai getAi() {
+        return ai;
+    }
+
+    public void setAi(Ai ai) {
+        this.ai = ai;
+    }
+
+    public Tool getTool() {
+        return tool;
+    }
+
+    public void setTool(Tool tool) {
+        this.tool = tool;
     }
 } 
