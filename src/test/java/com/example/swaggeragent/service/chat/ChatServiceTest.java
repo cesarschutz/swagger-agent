@@ -1,23 +1,23 @@
 package com.example.swaggeragent.service.chat;
 
-import com.example.swaggeragent.service.parser.OpenApiParserService;
-import com.example.swaggeragent.service.tool.DynamicToolGeneratorService;
-import com.example.swaggeragent.service.SystemPromptService;
-import com.example.swaggeragent.service.tool.ToolLoggerService;
 import com.example.swaggeragent.service.audit.AuditService;
+import com.example.swaggeragent.service.parser.OpenApiParserService;
+import com.example.swaggeragent.service.SystemPromptService;
+import com.example.swaggeragent.service.tool.DynamicToolGeneratorService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.ai.chat.model.ChatModel;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Testes unitários para o {@link ChatService}.
  * <p>
- * Esta classe de teste utiliza mocks para isolar o ChatService e testar
- * sua lógica de negócio de forma independente das dependências externas.
+ * Esta classe testa o comportamento do serviço de chat de forma isolada,
+ * mockando todas as dependências externas para garantir que os testes
+ * sejam determinísticos e rápidos.
  */
 class ChatServiceTest {
     
@@ -25,7 +25,6 @@ class ChatServiceTest {
     @Mock private OpenApiParserService openApiParserService;
     @Mock private DynamicToolGeneratorService dynamicToolGeneratorService;
     @Mock private SystemPromptService systemPromptService;
-    @Mock private ToolLoggerService toolLoggerService;
     @Mock private ChatMemoryService chatMemoryService;
     @Mock private AuditService auditService;
 
@@ -43,7 +42,6 @@ class ChatServiceTest {
                 openApiParserService,
                 dynamicToolGeneratorService,
                 systemPromptService,
-                toolLoggerService,
                 chatMemoryService,
                 auditService
         );

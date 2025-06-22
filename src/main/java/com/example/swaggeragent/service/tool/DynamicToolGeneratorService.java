@@ -3,6 +3,8 @@ package com.example.swaggeragent.service.tool;
 import com.example.swaggeragent.model.domain.DynamicTool;
 import com.example.swaggeragent.model.OpenApiEndpoint;
 import com.example.swaggeragent.model.OpenApiParameter;
+import com.example.swaggeragent.model.OpenApiRequestBody;
+import com.example.swaggeragent.model.OpenApiResponse;
 import com.example.swaggeragent.model.response.ToolExecutionResult;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -25,6 +27,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.Map;
 
 /**
  * Serviço responsável pela geração de ferramentas (tools) dinâmicas a partir de endpoints OpenAPI.
@@ -98,7 +101,7 @@ public class DynamicToolGeneratorService {
                         String toolName = generateUniqueToolName(endpoint, usedNames);
                         usedNames.add(toolName);
                         DynamicTool tool = generateToolFromEndpoint(endpoint, toolName);
-                        log.info("✅ Ferramenta Adicionada: [Nome: {}] para o endpoint [{} {}]\n---\n{}\n---", tool.getName(), endpoint.method().toUpperCase(), endpoint.path(), tool.getDescription());
+                        log.info("✅ Ferramenta Adicionada: [Nome: {}] para o endpoint [{} {}]", tool.getName(), endpoint.method().toUpperCase(), endpoint.path());
                         return tool;
                     } catch (Exception e) {
                         log.error("Falha ao gerar ferramenta para o endpoint: {} {}", endpoint.method().toUpperCase(), endpoint.path(), e);
@@ -256,92 +259,126 @@ public class DynamicToolGeneratorService {
     private String generateToolDescription(OpenApiEndpoint endpoint) {
         StringBuilder description = new StringBuilder();
 
-        description.append(String.format("API: %s. Controller: %s. ", endpoint.projectName(), getControllerName(endpoint)));
-        description.append(String.format("Resumo: %s\n", endpoint.summary() != null ? endpoint.summary() : "Nenhum resumo disponível."));
+        // Cabeçalho da ferramenta
+        description.append(String.format("🏷️  Nome: %s\n", endpoint.operationId() != null ? endpoint.operationId() : "N/A"));
+        description.append(String.format("📝 Descrição: %s\n", endpoint.summary() != null ? endpoint.summary() : "Nenhum resumo disponível."));
+        description.append(String.format("🆔 ID da Operação: %s\n", endpoint.operationId() != null ? endpoint.operationId() : "N/A"));
+        description.append(String.format("🌐 Projeto: %s\n", endpoint.projectName()));
+        description.append(String.format("🎯 Controller: %s\n", getControllerName(endpoint)));
+        description.append(String.format("🔗 Endpoint: %s %s%s\n", endpoint.method().toUpperCase(), endpoint.baseUrl(), endpoint.path()));
+        
+        description.append("------------------------------------------- ENTRADAS ---------------------------------------------\n");
 
+        // Parâmetros da requisição
         if (endpoint.parameters() != null && !endpoint.parameters().isEmpty()) {
-            description.append("Parâmetros da Requisição:\n");
-            endpoint.parameters().stream()
+            // Agrupa os parâmetros por localização
+            Map<String, List<OpenApiParameter>> groupedParameters = endpoint.parameters().stream()
                     .filter(p -> !HEADER_AUTHORIZATION.equalsIgnoreCase(p.name()) && !HEADER_TRAFFIC_CODE.equalsIgnoreCase(p.name()))
-                    .forEach(p -> description.append(String.format("- **%s** (%s, %s): %s%s\n",
-                            p.name(), p.in(), p.type(), p.description(), p.required() ? " (obrigatório)" : "")));
+                    .collect(Collectors.groupingBy(OpenApiParameter::in));
+
+            logGroupedParameters(description, "Path", groupedParameters.get("path"));
+            logGroupedParameters(description, "Query", groupedParameters.get("query"));
+            logGroupedParameters(description, "Header", groupedParameters.get("header"));
+        } else {
+            description.append("  Nenhum parâmetro de entrada definido.\n");
         }
 
-        if (endpoint.requestBody() != null && endpoint.requestBody().content() != null && !endpoint.requestBody().content().isEmpty()) {
-            description.append("Corpo da Requisição (Body):\n");
-            try {
-                // Pega o primeiro media type (geralmente application/json)
-                var firstMediaType = endpoint.requestBody().content().values().iterator().next();
-                if (firstMediaType.schema() != null) {
-                    String schemaJson = openApiParserService.getSchemaAsJson(endpoint.projectName(), firstMediaType.schema());
-                    description.append("```json\n").append(schemaJson).append("\n```\n");
+        // Corpo da requisição
+        logRequestBody(description, endpoint);
+
+        description.append("------------------------------------------- SAÍDAS --------------------------------------------\n");
+        
+        // Respostas possíveis
+        logResponses(description, endpoint);
+
+        description.append("----------------------------------------------------------------------------------------------------\n");
+
+        return description.toString();
+    }
+
+    /**
+     * Adiciona parâmetros agrupados à descrição da ferramenta.
+     */
+    private void logGroupedParameters(StringBuilder description, String groupName, List<OpenApiParameter> params) {
+        if (params != null && !params.isEmpty()) {
+            description.append(String.format("  📥 Parâmetros %s:\n", groupName));
+            for (OpenApiParameter param : params) {
+                String requiredInfo = param.required() ? "OBRIGATÓRIO" : "OPCIONAL";
+                description.append(String.format("     - %s (%s) [%s]: %s\n", 
+                    param.name(), param.type(), requiredInfo, param.description()));
+
+                if (param.format() != null) {
+                    description.append(String.format("       Formato: %s\n", param.format()));
                 }
-            } catch (Exception e) {
-                log.error("Erro ao gerar o schema JSON para o corpo da requisição da ferramenta: {}", endpoint.operationId(), e);
-                description.append("Erro ao gerar o schema do corpo da requisição.\n");
+                if (param.defaultValue() != null) {
+                    description.append(String.format("       Padrão: %s\n", param.defaultValue()));
+                }
+                if (param.enumValues() != null && !param.enumValues().isEmpty()) {
+                    description.append(String.format("       Valores Enum: %s\n", param.enumValues()));
+                }
+                if (param.items() != null) {
+                    description.append(String.format("       Tipo dos Items: %s\n", param.items().type()));
+                }
             }
         }
+    }
 
-        if (endpoint.responses() != null && !endpoint.responses().isEmpty()) {
-            description.append("Respostas Possíveis:\n");
-            endpoint.responses().forEach((code, response) -> {
-                description.append(String.format("- **%s**: %s\n", code, response.description()));
-
-                if (response.headers() != null && !response.headers().isEmpty()) {
-                    description.append("  - Headers da Resposta:\n");
-                    response.headers().forEach((name, header) ->
-                            description.append(String.format("    - **%s**: %s\n", name, header.getDescription()))
-                    );
-                }
-
-                if (response.content() != null && !response.content().isEmpty()) {
-                    response.content().forEach((type, mediaType) -> {
-                        boolean exampleFound = false;
-                        // Prioridade 1: Múltiplos exemplos nomeados
-                        if (mediaType.examples() != null && !mediaType.examples().isEmpty()) {
-                            description.append("  - Exemplos de resposta (`").append(type).append("`):\n");
-                            mediaType.examples().forEach((name, example) -> {
-                                description.append("    - Exemplo '").append(name).append("':\n");
-                                if (example.getDescription() != null) {
-                                    description.append("      > ").append(example.getDescription()).append("\n");
-                                }
-                                if (example.getValue() != null) {
-                                    try {
-                                        description.append("      ```json\n").append(objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(example.getValue())).append("\n      ```\n");
-                                    } catch (JsonProcessingException e) {
-                                        log.error("Erro ao serializar exemplo nomeado '{}' para a ferramenta: {}", name, endpoint.operationId(), e);
-                                    }
-                                }
-                            });
-                            exampleFound = true;
-                        }
-                        // Prioridade 2: Exemplo único
-                        else if (mediaType.example() != null) {
-                            description.append("  - Exemplo de resposta (`").append(type).append("`):\n");
-                            try {
-                                description.append("    ```json\n").append(objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(mediaType.example())).append("\n    ```\n");
-                            } catch (JsonProcessingException e) {
-                                log.error("Erro ao serializar exemplo único para a ferramenta: {}", endpoint.operationId(), e);
-                            }
-                            exampleFound = true;
-                        }
-
-                        // Prioridade 3: Gerar exemplo a partir do Schema
-                        if (!exampleFound && mediaType.schema() != null) {
-                            description.append("  - Estrutura da resposta (`").append(type).append("`):\n");
-                            try {
-                                String schemaJson = openApiParserService.getSchemaAsJson(endpoint.projectName(), mediaType.schema());
-                                description.append("    ```json\n").append(schemaJson).append("\n    ```\n");
-                            } catch (Exception e) {
-                                log.error("Erro ao gerar o schema JSON para a resposta da ferramenta: {}", endpoint.operationId(), e);
-                            }
-                        }
-                    });
+    /**
+     * Adiciona detalhes do corpo da requisição à descrição da ferramenta.
+     */
+    private void logRequestBody(StringBuilder description, OpenApiEndpoint endpoint) {
+        OpenApiRequestBody requestBody = endpoint.requestBody();
+        if (requestBody != null && requestBody.content() != null && !requestBody.content().isEmpty()) {
+            description.append("  📦 Corpo da Requisição:\n");
+            description.append(String.format("     - Obrigatório: %s\n", requestBody.required() ? "Sim" : "Não"));
+            if (requestBody.description() != null && !requestBody.description().isBlank()) {
+                description.append(String.format("     - Descrição: %s\n", requestBody.description()));
+            }
+            requestBody.content().forEach((mediaType, mediaTypeObject) -> {
+                description.append(String.format("     - Tipo: `%s`\n", mediaType));
+                if (mediaTypeObject.schema() != null) {
+                    try {
+                        String schemaJson = openApiParserService.getSchemaAsJson(endpoint.projectName(), mediaTypeObject.schema());
+                        description.append("     - Schema:\n");
+                        description.append(String.format("\n%s\n", schemaJson.indent(6)));
+                    } catch (Exception e) {
+                        log.error("Erro ao gerar o schema JSON para o corpo da requisição da ferramenta: {}", endpoint.operationId(), e);
+                        description.append("     - Erro ao gerar schema\n");
+                    }
                 }
             });
         }
+    }
 
-        return description.toString();
+    /**
+     * Adiciona detalhes das respostas possíveis à descrição da ferramenta.
+     */
+    private void logResponses(StringBuilder description, OpenApiEndpoint endpoint) {
+        Map<String, OpenApiResponse> responses = endpoint.responses();
+        if (responses == null || responses.isEmpty()) {
+            description.append("  Nenhuma resposta de saída definida.\n");
+            return;
+        }
+        description.append("  📤 Respostas Possíveis:\n");
+        responses.forEach((statusCode, response) -> {
+            description.append(String.format("    - **`%s`**: %s\n", statusCode, response.description()));
+            if (response.content() != null) {
+                response.content().forEach((mediaType, mediaTypeObject) -> {
+                    if (mediaTypeObject.schema() != null) {
+                        description.append(String.format("      - Schema (`%s`):\n", mediaType));
+                        try {
+                            String schemaJson = openApiParserService.getSchemaAsJson(endpoint.projectName(), mediaTypeObject.schema());
+                            description.append(String.format("\n%s\n", schemaJson.indent(8)));
+                        } catch (Exception e) {
+                            log.error("Erro ao gerar o schema JSON para a resposta da ferramenta: {}", endpoint.operationId(), e);
+                        }
+                    }
+                    if (mediaTypeObject.example() != null) {
+                        description.append(String.format("      Exemplo: %s\n", mediaTypeObject.example().toString()));
+                    }
+                });
+            }
+        });
     }
 
     /**

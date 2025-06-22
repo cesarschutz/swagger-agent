@@ -17,7 +17,6 @@ import com.example.swaggeragent.model.OpenApiEndpoint;
 import com.example.swaggeragent.service.parser.OpenApiParserService;
 import com.example.swaggeragent.service.tool.DynamicToolGeneratorService;
 import com.example.swaggeragent.service.SystemPromptService;
-import com.example.swaggeragent.service.tool.ToolLoggerService;
 import com.example.swaggeragent.service.audit.AuditService;
 
 import java.time.Instant;
@@ -56,7 +55,6 @@ public class ChatService {
     private final OpenApiParserService openApiParserService;
     private final DynamicToolGeneratorService dynamicToolGeneratorService;
     private final SystemPromptService systemPromptService;
-    private final ToolLoggerService toolLoggerService;
     private final ChatMemoryService chatMemoryService;
     private final AuditService auditService;
 
@@ -76,7 +74,6 @@ public class ChatService {
      * @param openApiParserService       o serviço para analisar arquivos OpenAPI.
      * @param dynamicToolGeneratorService o serviço para criar ferramentas dinâmicas.
      * @param systemPromptService        o serviço para gerar o prompt de sistema.
-     * @param toolLoggerService          o serviço para registrar as ferramentas carregadas.
      * @param chatMemoryService          o serviço para gerenciar memória de chat.
      * @param auditService               o serviço de auditoria.
      */
@@ -85,14 +82,12 @@ public class ChatService {
             OpenApiParserService openApiParserService,
             DynamicToolGeneratorService dynamicToolGeneratorService,
             SystemPromptService systemPromptService,
-            ToolLoggerService toolLoggerService,
             ChatMemoryService chatMemoryService,
             AuditService auditService) {
         this.chatModel = chatModel;
         this.openApiParserService = openApiParserService;
         this.dynamicToolGeneratorService = dynamicToolGeneratorService;
         this.systemPromptService = systemPromptService;
-        this.toolLoggerService = toolLoggerService;
         this.chatMemoryService = chatMemoryService;
         this.auditService = auditService;
     }
@@ -118,8 +113,6 @@ public class ChatService {
             List<OpenApiEndpoint> endpoints = openApiParserService.parseAllOpenApiFiles();
             // Gera as ferramentas dinâmicas (DynamicTool) a partir dos endpoints extraídos.
             availableTools = dynamicToolGeneratorService.generateToolsFromEndpoints(endpoints);
-            // Loga as ferramentas que foram carregadas para fins de depuração e auditoria.
-            toolLoggerService.logTools(availableTools);
 
             // Inicializa o cliente de chat com as ferramentas recém-criadas.
             initializeChatClient();
