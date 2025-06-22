@@ -1877,18 +1877,28 @@
             }
 
             let html = '';
-            Object.entries(data.toolsByProject).forEach(([projectName, tools]) => {
+            // Ordenar projetos em ordem alfabética
+            const sortedProjects = Object.entries(data.toolsByProject).sort(([a], [b]) => a.localeCompare(b));
+            
+            sortedProjects.forEach(([projectName, tools]) => {
+                // Ordenar ferramentas dentro do projeto por descrição/nome
+                const sortedTools = tools.sort((a, b) => {
+                    const aText = (a.description || a.name).toLowerCase();
+                    const bText = (b.description || b.name).toLowerCase();
+                    return aText.localeCompare(bText);
+                });
+                
                 html += `
                     <div class="project-section">
-                        <div class="project-header" onclick="toggleProject(this)" role="button" tabindex="0" onkeypress="if(event.key==='Enter')toggleProject(this)">
+                        <div class="project-header collapsed" onclick="toggleProject(this)" role="button" tabindex="0" onkeypress="if(event.key==='Enter')toggleProject(this)">
                             <i class="fas fa-chevron-down project-icon"></i>
                             <span class="project-name">${capitalize(projectName)}</span>
                             <span class="project-count">${tools.length}</span>
                         </div>
-                        <div class="project-tools">
+                        <div class="project-tools collapsed">
                 `;
                 
-                tools.forEach(tool => {
+                sortedTools.forEach(tool => {
                     const methodClass = `method-${tool.method.toLowerCase()}`;
                     html += `
                         <div class="tool-item" role="button" tabindex="0">
@@ -1999,8 +2009,18 @@
                 return;
             }
             let html = '';
-            Object.entries(data.toolsByProject).forEach(([projectName, tools]) => {
-                tools.forEach(tool => {
+            // Ordenar projetos em ordem alfabética
+            const sortedProjects = Object.entries(data.toolsByProject).sort(([a], [b]) => a.localeCompare(b));
+            
+            sortedProjects.forEach(([projectName, tools]) => {
+                // Ordenar ferramentas dentro do projeto por descrição/nome
+                const sortedTools = tools.sort((a, b) => {
+                    const aText = (a.description || a.name).toLowerCase();
+                    const bText = (b.description || b.name).toLowerCase();
+                    return aText.localeCompare(bText);
+                });
+                
+                sortedTools.forEach(tool => {
                     const methodClass = `method-${tool.method.toLowerCase()}`;
                     html += `
                         <div class="tool-card" role="button" tabindex="0">
