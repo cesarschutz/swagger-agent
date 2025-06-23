@@ -12,8 +12,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Swagger Agent - Assistente Inteligente</title>
-    <meta name="description" content="Assistente de chat profissional especializado em APIs">
+    <title>Swagger Agent - Demo</title>
+    <meta name="description" content="Demo do assistente de chat profissional especializado em APIs">
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -354,6 +354,11 @@
         }
 
         .project-header.collapsed .project-icon {
+            /* Mantém o ícone fa-chevron-right (para o lado) */
+        }
+
+        .project-header:not(.collapsed) .project-icon {
+            /* Mantém o ícone fa-chevron-down (para baixo) */
         }
 
         .project-name {
@@ -668,6 +673,8 @@
         .message-text {
             line-height: 1.6;
             word-wrap: break-word;
+            overflow-wrap: break-word;
+            word-break: break-all;
             font-size: 0.96rem;
         }
 
@@ -1734,6 +1741,138 @@
         const sessionId = Math.random().toString(36).substr(2, 9) + '_' + Date.now();
         let currentTheme = localStorage.getItem('theme') || 'dark';
         
+        // Mock data for demo (apenas Petstore)
+        const mockToolsData = {
+            totalTools: 3,
+            toolsByProject: {
+                "petstore": [
+                    {
+                        name: "findPetsByStatus",
+                        description: "Encontra pets pelo status (disponível, pendente, vendido)",
+                        method: "GET",
+                        path: "/pet/findByStatus",
+                        baseUrl: "https://petstore.swagger.io/v2"
+                    },
+                    {
+                        name: "getPetById",
+                        description: "Busca um pet pelo ID",
+                        method: "GET",
+                        path: "/pet/{petId}",
+                        baseUrl: "https://petstore.swagger.io/v2"
+                    },
+                    {
+                        name: "addPet",
+                        description: "Adiciona um novo pet ao repositório",
+                        method: "POST",
+                        path: "/pet",
+                        baseUrl: "https://petstore.swagger.io/v2"
+                    }
+                ]
+            }
+        };
+
+        // Mock responses for demo (apenas Petstore)
+        const mockResponses = {
+            "Como usar a ferramenta \"findPetsByStatus\"?": `## Como usar a ferramenta findPetsByStatus
+
+Esta ferramenta permite buscar pets pelo status (disponível, pendente, vendido).
+
+### Detalhes da API:
+- **Método:** GET
+- **URL:** \`https://petstore.swagger.io/v2/pet/findByStatus\`
+- **Parâmetros:**
+  - \`status\` (query): Status do pet (available, pending, sold)
+
+### Exemplo de uso:
+\`\`\`json
+{
+  "status": "available"
+}
+\`\`\`
+
+### Resposta esperada:
+\`\`\`json
+[
+  { "id": 1, "name": "Rex", "status": "available" },
+  { "id": 2, "name": "Mia", "status": "available" }
+]
+\`\`\`
+
+Pergunte, por exemplo: *"Quais pets estão disponíveis?"*`,
+
+            "Como usar a ferramenta \"getPetById\"?": `## Como usar a ferramenta getPetById
+
+Esta ferramenta permite buscar um pet pelo seu ID.
+
+### Detalhes da API:
+- **Método:** GET
+- **URL:** \`https://petstore.swagger.io/v2/pet/{petId}\`
+- **Parâmetros:**
+  - \`petId\` (path): ID do pet
+
+### Exemplo de uso:
+\`\`\`json
+{
+  "petId": 1
+}
+\`\`\`
+
+### Resposta esperada:
+\`\`\`json
+{
+  "id": 1,
+  "name": "Rex",
+  "status": "available"
+}
+\`\`\`
+
+Pergunte, por exemplo: *"Me mostre o pet de ID 1"*`,
+
+            "Como usar a ferramenta \"addPet\"?": `## Como usar a ferramenta addPet
+
+Esta ferramenta permite adicionar um novo pet ao repositório.
+
+### Detalhes da API:
+- **Método:** POST
+- **URL:** \`https://petstore.swagger.io/v2/pet\`
+- **Body:** Dados do pet
+
+### Exemplo de uso:
+\`\`\`json
+{
+  "name": "Bidu",
+  "status": "available"
+}
+\`\`\`
+
+### Resposta esperada:
+\`\`\`json
+{
+  "id": 3,
+  "name": "Bidu",
+  "status": "available"
+}
+\`\`\`
+
+Pergunte, por exemplo: *"Adicione um pet chamado Bidu"*`,
+
+            "default": `🤖 **Resposta do Demo**
+
+Esta é uma demonstração do Swagger Agent! Em uma implementação real, eu analisaria sua pergunta e executaria as APIs apropriadas.
+
+### O que você pode fazer:
+- **Explorar ferramentas:** Clique nas ferramentas no painel lateral
+- **Fazer perguntas:** Descreva o que você precisa em linguagem natural
+- **Ver exemplos:** Cada ferramenta tem exemplos de uso
+
+### Exemplos de perguntas:
+- "Quais pets estão disponíveis?"
+- "Me mostre o pet de ID 1"
+- "Adicione um pet chamado Bidu"
+
+Esta é apenas uma demonstração - as APIs não são executadas realmente, mas você pode ver como seria a interação!`
+        };
+
         // DOM elements
         const elements = {
             chatMessages: document.getElementById('chatMessages'),
@@ -1754,9 +1893,7 @@
             sidebarLogo: document.getElementById('sidebarLogo')
         };
         
-        // API URLs
-        const apiUrl = window.location.origin + '/api/chat';
-        const toolsApiUrl = window.location.origin + '/api/tools';
+        // Demo mode - no API URLs needed
 
         // Flag para verificar a primeira interação do usuário
         let firstInteraction = true;
@@ -1892,26 +2029,10 @@
                 </div>
             `;
 
-            fetch(toolsApiUrl)
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    displayTools(data);
-                })
-                .catch(error => {
-                    console.error('Erro ao carregar ferramentas:', error);
-                    elements.toolsContent.innerHTML = `
-                        <div class="loading-tools">
-                            <i class="fas fa-exclamation-triangle" style="color: var(--accent-orange); font-size: 2rem; margin-bottom: 1rem;"></i>
-                            <p style="color: var(--text-secondary); margin-bottom: 0.5rem;">Erro ao carregar ferramentas</p>
-                            <p style="font-size: 0.75rem; color: var(--text-muted);">Verifique sua conexão e recarregue a página</p>
-                        </div>
-                    `;
-                });
+            // Simulate loading delay for demo
+            setTimeout(() => {
+                displayTools(mockToolsData);
+            }, 1000);
         }
 
         function displayTools(data) {
@@ -1943,7 +2064,7 @@
                 html += `
                     <div class="project-section">
                         <div class="project-header collapsed" onclick="toggleProject(this)" role="button" tabindex="0" onkeypress="if(event.key==='Enter')toggleProject(this)">
-                            <i class="fas fa-chevron-down project-icon"></i>
+                            <i class="fas fa-chevron-right project-icon"></i>
                             <span class="project-name">${capitalize(projectName)}</span>
                             <span class="project-count">${tools.length}</span>
                         </div>
@@ -2028,27 +2149,12 @@
                     <p>Carregando ferramentas...</p>
                 </div>
             `;
-            fetch(toolsApiUrl)
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    allToolsData = data;
-                    renderToolsGrid(data);
-                })
-                .catch(error => {
-                    console.error('Erro ao carregar ferramentas no modal:', error);
-                    elements.toolsGrid.innerHTML = `
-                        <div class="error-state">
-                            <i class="fas fa-exclamation-triangle"></i>
-                            <p>Erro ao carregar ferramentas</p>
-                            <p style="font-size: 0.75rem; margin-top: 0.5rem;">Tente novamente mais tarde</p>
-                        </div>
-                    `;
-                });
+            
+            // Simulate loading delay for demo
+            setTimeout(() => {
+                allToolsData = mockToolsData;
+                renderToolsGrid(mockToolsData);
+            }, 1000);
         }
 
         function renderToolsGrid(data) {
@@ -2173,6 +2279,16 @@
             header.classList.toggle('collapsed');
             const tools = header.nextElementSibling;
             tools.classList.toggle('collapsed');
+            
+            // Atualizar o ícone baseado no estado
+            const icon = header.querySelector('.project-icon');
+            if (header.classList.contains('collapsed')) {
+                icon.className = 'fas fa-chevron-right project-icon';
+                icon.style.transform = 'rotate(0deg)'; // Posição normal para o lado
+            } else {
+                icon.className = 'fas fa-chevron-down project-icon';
+                icon.style.transform = 'rotate(0deg)'; // Posição normal para baixo
+            }
         };
 
         function sendMessage() {
@@ -2199,40 +2315,33 @@
         }
 
         function sendMessageSync(messageText) {
-            fetch(apiUrl, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ 
-                    message: messageText,
-                    sessionId: sessionId 
-                })
-            })
-            .then(async response => {
+            // Simulate API delay for demo
+            setTimeout(() => {
                 hideTypingIndicator();
-                if (response.ok) {
-                    const data = await response.json();
-                    if (data && data.content) {
-                        addMessage(data.content, 'bot');
-                    } else {
-                        addMessage('Desculpe, recebi uma resposta inesperada do servidor.', 'bot');
+                
+                // Get mock response based on message
+                let response = mockResponses[messageText] || mockResponses["default"];
+                
+                // If it's a tool-specific question, try to find a specific response
+                if (messageText.includes("ferramenta") && messageText.includes("?")) {
+                    // Extract tool name from the question
+                    const toolMatch = messageText.match(/ferramenta\s+"([^"]+)"/);
+                    if (toolMatch) {
+                        const toolName = toolMatch[1];
+                        const specificResponse = mockResponses[`Como usar a ferramenta "${toolName}"?`];
+                        if (specificResponse) {
+                            response = specificResponse;
+                        }
                     }
-                } else {
-                    const errorText = await response.text();
-                    console.error("Server error:", response.status, errorText);
-                    addMessage('Desculpe, ocorreu um erro ao processar sua mensagem. Tente novamente.', 'bot');
                 }
-            })
-            .catch(error => {
-                hideTypingIndicator();
-                console.error('Error:', error);
-                addMessage('Erro de comunicação com o servidor. Verifique sua conexão e tente novamente.', 'bot');
-            })
-            .finally(() => {
+                
+                addMessage(response, 'bot');
+                
                 document.body.classList.remove('thinking');
                 elements.sendButton.disabled = false;
                 elements.messageInput.disabled = false;
                 elements.messageInput.focus();
-            });
+            }, 2000); // 2 second delay to simulate processing
         }
 
         function addMessage(text, type) {
@@ -2272,7 +2381,7 @@
 
             if (type === 'bot') {
                 // Use marked.js for markdown rendering
-                textDiv.innerHTML = marked.parse(text);
+                textDiv.innerHTML = marked.parse(String(text || ''));
                 
                 // Add syntax highlighting for code blocks
                 const codeBlocks = textDiv.querySelectorAll('pre code');
@@ -2338,23 +2447,30 @@
 
             const welcomeText = document.createElement('div');
             welcomeText.className = 'message-text';
-            welcomeText.innerHTML = marked.parse(`👋 **Bem-vindo(a) ao Swagger Agent!**
+            welcomeText.innerHTML = marked.parse(`👋 **Bem-vindo(a) ao Swagger Agent - Demo!**
 
-🤖 Sou seu assistente inteligente, especializado em interagir com **APIs externas** através de uma conversa natural.
+🤖 Esta é uma **demonstração** do Swagger Agent! Sou seu assistente inteligente, especializado em interagir com **APIs externas** através de uma conversa natural.
+
+🎯 **Esta é uma versão de demonstração:**
+* As respostas são simuladas (mockadas)
+* As APIs não são executadas realmente
+* Você pode explorar todas as funcionalidades da interface
 
 ❓ **Como posso ajudar você hoje?**  
 Basta descrever sua necessidade em linguagem natural, e eu:
 * Identificarei a ferramenta mais adequada
-* Executarei a operação desejada
-* Retornarei os resultados de forma clara
+* Mostrarei exemplos de como seria executada
+* Retornarei respostas simuladas de forma clara
 
 💡 **Exemplos de solicitações:**
-* _"Quais produtos estão disponíveis na loja?"_
-* _"Crie um novo usuário com nome João Silva"_
-* _"Busque informações do cliente com ID 12345"_
+* _"Como usar a ferramenta \"getCustomerById\"?"_
+* _"Como usar a ferramenta \"createCustomer\"?"_
+* _"Como usar a ferramenta \"getProducts\"?"_
 
 🛠️ **Explore as Ferramentas**  
-No painel à esquerda, você encontra todas as APIs disponíveis. Clique em qualquer uma delas para ver exemplos de uso.`);
+No painel à esquerda, você encontra todas as APIs disponíveis. Clique em qualquer uma delas para ver exemplos de uso.
+
+⚠️ **Lembre-se:** Esta é apenas uma demonstração!`);
 
             const timeDiv = document.createElement('div');
             timeDiv.className = 'message-time';
